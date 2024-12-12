@@ -212,6 +212,7 @@
                 <div v-for="(tech, index) in item.techStacks.slice(0, 4)" :key="tech.techStackId" class="inline-flex items-center space-x-2">
                   <img :src="tech.techStackImageUrl" class="w-10 h-10" />
                 </div>
+                
                 <!-- 기술 너무많으면 말줄임표 사용 -->
                 <div v-if="item.techStacks.length > 5" class="inline-flex items-center space-x-2">
                   <span class="text-gray-600 font-bold">...</span>
