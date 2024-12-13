@@ -214,6 +214,7 @@
                 <div v-for="(tech, index) in item.techStacks.slice(0, 4)" :key="tech.techStackId" class="inline-flex items-center space-x-2">
                   <img :src="tech.techStackImageUrl" class="w-10 h-10" />
                 </div>
+
                 <!-- 기술 너무많으면 말줄임표 사용 -->
                 <div v-if="item.techStacks.length > 5" class="inline-flex items-center space-x-2">
                   <span class="text-gray-600 font-bold">...</span>
@@ -576,9 +577,26 @@ const searchfilter = async () => {
     if (res.status === 200) {
       if (Array.isArray(res.data.result)) {
         arr.value.length = 0; // 기존 데이터 비우기
-        arr.value.push(...res.data.result); // 새로운 데이터 추가
+        // arr.value.push(...res.data.result); // 새로운 데이터 추가
+
+        arr.value = res.data.result.map((item) => {
+      const totalRequiredCount = item.positions.reduce((sum, position) => {
+        return sum + position.requiredCount;
+      }, 0);
+
+      const totalCurrentCount = item.positions.reduce((sum, position) => {
+        return sum + position.currentCount; // currentCount 합산
+      }, 0);
+
+      return {
+        ...item,
+        totalRequiredCount, // 총 필요한 인원 수
+        totalCurrentCount // 총 현재 인원 수
+      };
+    });
+  
       } else {
-        console.error('배열이아님:', res.data);
+        console.error('배열이아님:', res.data.result);
       }
     } else {
       console.error('검색필터 오류', res);
