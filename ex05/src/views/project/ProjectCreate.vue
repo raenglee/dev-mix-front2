@@ -19,118 +19,185 @@
       <div class="flex justify-between gap-5 mt-5 flex-wrap">
         <!--🌍지역 / 구분 드롭다운-->
 
-        <div class="flex flex-col">
+        <div class="flex flex-col w-60">
           <h1 class="font-bold text-lg pb-2 text-gray-800">지역 / 구분<span class="text-[#d10000] mx-1">*</span></h1>
-          <select v-model="location" class="w-52 h-10 p-2 border border-gray-200 rounded-full cursor-pointer focus:outline-none">
-            <option disabled value="">지역 / 구분을 선택하세요</option>
-            <option v-for="location in locationOptions" :key="location" :value="location">
-              {{ location }}
-            </option>
-          </select>
+          <div class="relative">
+            <!-- Select Input -->
+            <select
+              v-model="location"
+              class="w-full h-12 px-4 pr-10 border border-gray-300 rounded-full bg-white text-gray-700 shadow-sm cursor-pointer focus:outline-none focus:ring-2 appearance-none transition"
+            >
+              <option disabled value="">지역 / 구분을 선택하세요</option>
+              <option v-for="location in locationOptions" :key="location" :value="location">
+                {{ location }}
+              </option>
+            </select>
+            <!-- Custom Arrow -->
+            <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
         </div>
 
         <!--진행 기간 드롭다운-->
-        <div class="flex flex-col">
+        <div class="flex flex-col w-60">
           <h1 class="font-bold text-lg pb-2 text-gray-800">진행 기간<span class="text-[#d10000] mx-1">*</span></h1>
-          <select v-model="project_period" class="w-52 h-10 p-2 border border-gray-200 rounded-full focus:outline-none">
-            <option value="" disabled>{{ project_period ? project_period : '진행 기간을 선택하세요' }}</option>
-            <option>미정</option>
-            <option>1개월 미만</option>
-            <option>1개월</option>
-            <option>2개월</option>
-            <option>3개월</option>
-            <option>4개월</option>
-            <option>5개월</option>
-            <option>6개월 이상</option>
-          </select>
+          <div class="relative">
+            <!-- Select Input -->
+            <select
+              v-model="project_period"
+              class="w-full h-12 px-4 pr-10 border border-gray-300 rounded-full bg-white text-gray-700 shadow-sm cursor-pointer focus:outline-none focus:ring-2 appearance-none transition"
+            >
+              <option value="" disabled>
+                {{ project_period ? project_period : '진행 기간을 선택하세요' }}
+              </option>
+              <option>미정</option>
+              <option>1개월 미만</option>
+              <option>1개월</option>
+              <option>2개월</option>
+              <option>3개월</option>
+              <option>4개월</option>
+              <option>5개월</option>
+              <option>6개월 이상</option>
+            </select>
+            <!-- Custom Arrow -->
+            <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          </div>
         </div>
 
         <!-- 모집 마감일 -->
         <div class="flex flex-col">
-          <h1 class="font-bold text-lg pb-2 text-gray-800">모집 마감일<span class="text-[#d10000] mx-1">*</span></h1>
-          <input v-model="recruit_end_date" type="date" class="w-52 h-10 p-2 border border-gray-200 rounded-full focus:outline-none" :min="minDate" required />
+          <h1 class="font-bold text-lg pb-2 text-gray-800">
+            모집 마감일
+            <span class="text-[#d10000] mx-1">*</span>
+          </h1>
+          <div class="relative">
+            <!-- 날짜 입력 필드 -->
+            <input
+              v-model="recruit_end_date"
+              type="date"
+              :min="minDate"
+              required
+              class="w-52 h-12 px-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 transition bg-white text-gray-700"
+            />
+            <!-- 커스텀 캘린더 아이콘 -->
+            <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+              <FontAwesomeIcon icon="fa-solid fa-calendar-days" />
+            </span>
+          </div>
         </div>
       </div>
-      <!--✅기술/언어 선택 -> 다중선택, 선택삭제 가능하도록-->
-      <div class="flex flex-col justify-between mt-5" ref="dropdownContainer">
-        <h1 class="font-bold text-lg pb-2 text-gray-800">기술 / 언어<span class="text-sm mx-1">(최대 10개)</span><span class="text-[#d10000] mx-1">*</span></h1>
-        <div class="relative w-full m-auto flex">
-          <div @click="toggleDropdown" class="min-w-72 h-10 p-2 border border-gray-200 rounded-full cursor-pointer flex items-center justify-between">
-            <span>{{ selectedSkill.value || '기술을 선택하세요' }}</span>
-            <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
-          </div>
 
-          <!--드롭다운-->
-          <div v-if="isDropdownOpen" class="absolute bg-white border border-gray-200 rounded-lg mt-12 ml-1 min-w-96 z-10">
-            <div class="grid grid-cols-5 gap-2 p-2">
-              <div v-for="tech in availableTechOptions" :key="tech" @click="selectSkill(tech)" class="cursor-pointer text-sm gap-3">
-                <img :src="tech.imageUrl" class="w-10 h-12 item-center hover:w-12" />
-                <p class="">{{ tech.techStackName }}</p>
+      <div class="flex flex-col justify-between mt-5" ref="dropdownContainer">
+        <h1 class="font-bold text-lg pb-2 text-gray-800">
+          기술 / 언어<span class="text-sm mx-1">(최대 10개)</span>
+          <span class="text-[#d10000] mx-1">*</span>
+        </h1>
+        <div class="w-full">
+          <div class="relative flex flex-row">
+            <!-- 드롭다운 트리거 -->
+            <div @click="toggleDropdown" class="h-12 px-4 border border-gray-300 rounded-full bg-white shadow-sm cursor-pointer flex items-center justify-between transition">
+              <span class="text-gray-700">
+                {{ selectedSkill.value || '기술을 선택하세요' }}
+              </span>
+              <font-awesome-icon icon="chevron-down" class="text-gray-400 pl-2" />
+            </div>
+
+            <!-- 드롭다운 메뉴 -->
+            <div v-if="isDropdownOpen" class="absolute bg-white border border-gray-300 rounded-lg shadow-lg mt-2 top-10 w-96 z-10">
+              <div class="grid grid-cols-5 gap-4 p-4">
+                <div
+                  v-for="tech in availableTechOptions"
+                  :key="tech"
+                  @click="selectSkill(tech)"
+                  class="cursor-pointer text-sm flex flex-col items-center gap-2 hover:bg-gray-100 p-2 rounded-lg transition"
+                >
+                  <img :src="tech.imageUrl" class="w-12 h-12 object-cover hover:scale-110 transition" />
+                  <p class="text-center text-gray-700">{{ tech.techStackName }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-wrap ml-4 gap-2 flex-1">
+              <div
+                v-for="(skill, index) in selectedSkills"
+                :key="index"
+                @click="removeSkill(index)"
+                class="flex items-center gap-2 px-3 py-1 bg-gray-100 border border-gray-200 rounded-full cursor-pointer hover:bg-red-50 transition"
+              >
+                <img :src="skill.imageUrl" class="w-8 h-8 object-cover" />
+                <span class="text-sm text-gray-700">{{ skill.techStackName }}</span>
+                <p class="text-[#d10000] font-bold">x</p>
               </div>
             </div>
           </div>
-
-          <div class="flex flex-wrap">
-            <div v-for="(skill, index) in selectedSkills" :key="index" @click="removeSkill(index)" class="pl-4 mt-1 mb-3 flex items-center gap-2 cursor-pointer">
-              <img :src="skill.imageUrl" class="w-8 h-8" />
-              <span class="text-sm m-auto w-16"> {{ skill.techStackName }}</span>
-              <p class="text-[#d10000] font-bold mx-3">x</p>
-            </div>
-          </div>
         </div>
       </div>
-
+      <!-- 선택된 기술들 -->
       <!--🚹분야별 모집 인원 -> 추가, 삭제 가능하도록-->
-      <div class="flex justify-between mt-5">
+      <div class="flex flex-col mt-5">
         <h1 class="font-bold text-lg pb-2 text-gray-800">
           분야별 모집 인원
           <span class="text-[#d10000] mx-1">*</span>
           <span class="text-gray-500 text-xs text-center">중복 불가, 분야별 최대 5인 까지</span>
         </h1>
-      </div>
-      <div>
-        <div v-for="(position, index) in positions" :key="index" class="flex items-center space-x-7 mb-3">
-          <!-- 포지션 선택 부분 -->
-          <select v-model="position.positionName" class="w-1/2 h-10 p-2 border border-gray-200 rounded-full focus:outline-none">
-            <option disabled value="">분야를 선택하세요</option>
-            <option v-for="positionName in roleOptions" :key="positionName.positionName">{{ positionName.positionName }}</option>
-          </select>
 
-          <!-- 사람 수 조절 버튼 -->
-          <div class="flex items-center gap-1">
-            <button type="button" @click="decreaseCount(index)" class="text-gray-400 w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center active:bg-gray-400 active:text-white">
-              <FontAwesomeIcon icon="fa-solid fa-minus" size="sm" class="" />
-            </button>
-            <span class="w-8 text-center">{{ position.requiredCount }}</span>
-            <button
-              type="button"
-              @click="increaseCount(index)"
-              class="text-gray-400 w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center active:bg-[#d10000] active:text-white"
-            >
-              <FontAwesomeIcon icon="fa-solid fa-plus" size="sm" />
-            </button>
-          </div>
+        <div>
+          <div v-for="(position, index) in positions" :key="index" class="flex items-center space-x-4 mb-4">
+            <!-- 포지션 선택 부분 -->
+            <div class="relative">
+              <select
+                v-model="position.positionName"
+                class="w-64 h-12 px-4 border border-gray-300 rounded-full appearance-none bg-white shadow-sm focus:outline-none focus:ring-2 transition"
+              >
+                <option disabled value="">분야를 선택하세요</option>
+                <option v-for="positionName in roleOptions" :key="positionName.positionName" :value="positionName.positionName">
+                  {{ positionName.positionName }}
+                </option>
+              </select>
+              <!-- 커스텀 화살표 -->
+              <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+                <FontAwesomeIcon icon="fa-solid fa-chevron-down" />
+              </span>
+            </div>
 
-          <!-- 삭제 버튼: 첫 번째 항목에서는 비활성화 -->
-          <div class="flex gap-3">
-            <button
-              type="button"
-              @click="removePosition(index)"
-              v-if="index > 0"
-              class="text-[#d10000] text-sm pl-2 pr-2 border font-bold border-gray-200 rounded-full hover:bg-[#d10000] hover:font-bold hover:text-white hover:border-[#d10000]"
-            >
-              삭제
-            </button>
+            <!-- 사람 수 조절 버튼 -->
+            <div class="flex items-center gap-2">
+              <button type="button" @click="decreaseCount(index)" class="w-8 h-8 rounded-full border border-gray-300 text-gray-400 hover:bg-gray-300 hover:text-white transition">
+                <FontAwesomeIcon icon="fa-solid fa-minus" />
+              </button>
+              <span class="w-5 text-center text-[1.2rem]">{{ position.requiredCount }}</span>
+              <button type="button" @click="increaseCount(index)" class="w-8 h-8 rounded-full border border-gray-300 text-gray-400 hover:bg-[#d10000] hover:text-white transition">
+                <FontAwesomeIcon icon="fa-solid fa-plus" />
+              </button>
+            </div>
 
-            <!-- 마지막 칸에만 추가 버튼 표시 -->
-            <button
-              v-if="index === positions.length - 1"
-              type="button"
-              @click="addPosition"
-              class="text-[#7371fc] text-sm pl-2 pr-2 border font-bold border-gray-200 rounded-full hover:bg-[#7371fc] hover:font-bold hover:text-white hover:border-[#7371fc]"
-            >
-              추가
-            </button>
+            <!-- 추가/삭제 버튼 -->
+            <div class="flex gap-2">
+              <!-- 삭제 버튼 -->
+              <button
+                type="button"
+                @click="removePosition(index)"
+                v-if="index > 0"
+                class="text-[#d10000] text-sm px-4 py-2 border font-bold border-gray-300 rounded-full hover:bg-[#d10000] hover:text-white hover:border-[#d10000] transition"
+              >
+                삭제
+              </button>
+              <!-- 추가 버튼 -->
+              <button
+                v-if="index === positions.length - 1"
+                type="button"
+                @click="addPosition"
+                class="text-[#7371fc] text-sm px-4 py-2 border font-bold border-gray-300 rounded-full hover:bg-[#7371fc] hover:text-white hover:border-[#7371fc] transition"
+              >
+                추가
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -153,7 +220,7 @@
       <!-- 파일 첨부 -->
       <div>
         <!-- 드래그 앤 드롭 영역 -->
-        <div class="dropbox p-10 bg-gray-100 rounded-md" @dragover.prevent @drop.prevent="dropFile" @click="triggerFileInput">
+        <div class="dropbox p-10 bg-gray-100 rounded-md cursor-pointer" @dragover.prevent @drop.prevent="dropFile" @click="triggerFileInput">
           <p v-if="!file" class="text-center text-gray-500 cursor-pointer">
             <FontAwesomeIcon icon="fa-solid fa-image" size="2xl" />
             사진을 드래그하거나 클릭하여 첨부하세요.
@@ -400,7 +467,7 @@ const save = async () => {
   // console.log(JSON.stringify(formData));
   if (res.status === 200) {
     alert('글이 작성되었습니다.');
-    router.push({ name: 'projectlist' });
+    router.push({ name: 'projectmanagement' });
     return;
   }
   alert('빈 항목이 없어야 합니다');
@@ -411,7 +478,7 @@ const cancel = () => {
   const isConfirmed = window.confirm('현재 작성 중인 내용은 저장되지 않습니다. 작성을 취소하시겠습니까?');
   if (isConfirmed) {
     // console.log('게시글 작성 취소버튼 눌리는지 확인');
-    router.push({ name: 'projectlist' });
+    router.push({ name: 'projectmanagement' });
   } else {
     // 취소한 경우 아무런 동작도 하지 않으므로 아무것도 적지 않기
     // console.log('게시글 작성 취소를 취소');

@@ -1,12 +1,10 @@
 <template>
   <!--🔴헤더-->
   <header>
-    <div class="p-3 bg-[#d10000]">
-      <!-- <div class="p-3 bg-[#7371fc]"> -->
-      
+    <div class="p-3 bg-[#bc2b2b]">
       <nav class="flex space-x-5 justify-between items-center m-auto w-4/6">
         <div>
-          <RouterLink to="/" class="text-3xl text-white font-bold">DEVMIX</RouterLink>
+          <RouterLink to="/" class="text-4xl text-white font-bold">DEVMIX</RouterLink>
         </div>
 
         <!--🌐로그인 한 후 아이콘-->
@@ -22,7 +20,7 @@
                 }"
               /> -->
               <p
-                class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer"
+                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
                 @mouseenter="isAlarmHovered = true"
                 @mouseleave="isAlarmHovered = false"
                 :class="{
@@ -38,7 +36,7 @@
                   v-if="isAlarmDropdownOpen"
                   @mouseenter="isAlarmHovered = true"
                   @mouseleave="isAlarmHovered = false"
-                  class="absolute right-0 top-6 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
+                  class="absolute right-0 top-10 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
                   <ul class="text-sm mt-2">
                     <li>
@@ -55,17 +53,17 @@
               </transition>
             </div>
 
-            <RouterLink to="/userprofile" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-white"> 유저정보테스트 </RouterLink>
-            <RouterLink to="/projectcreate" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-white"> 글쓰기 </RouterLink>
+            <RouterLink to="/projectcreate" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer  text-[1.3rem]"
+              :class="hovered ? 'text-[#d10000] bg-red-50' : 'text-white'"
+              @mouseenter="hovered = true"
+              @mouseleave="hovered = false"
+            > 글쓰기 </RouterLink>
             <div class="relative" @mouseenter="openPeopleDropdown" @mouseleave="closePeopleDropdown">
               <p
-                class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer"
+                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer  text-[1.3rem]"
                 @mouseenter="isPeopleHovered = true"
                 @mouseleave="isPeopleHovered = false"
-                :class="{
-                  'text-[#d10000] bg-red-50': isPeopleHovered,
-                  'text-white': !isPeopleHovered
-                }"
+                :class="{'text-[#d10000] bg-red-50': isPeopleHovered, 'text-white': !isPeopleHovered}"
               >
                 내정보
               </p>
@@ -74,7 +72,8 @@
                   v-if="isPeopleDropdownOpen"
                   @mouseenter="isPeopleHovered = true"
                   @mouseleave="isPeopleHovered = false"
-                  class="absolute right-0 top-6 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
+                  class="absolute right-0 top-10 w-max min-w-[150px]
+                    max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
                   <ul class="text-sm">
                     <li>
@@ -172,6 +171,8 @@ const isPeopleDropdownOpen = ref(false);
 const isPeopleHovered = ref(false);
 const isAlarmDropdownOpen = ref(false);
 const isAlarmHovered = ref(false);
+
+const hovered = ref(false);
 // const isapplyDropdownOpen = ref(false);
 
 // 마이페이지 드롭다운 열기

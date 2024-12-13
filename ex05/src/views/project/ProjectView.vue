@@ -66,7 +66,8 @@
                   승인대기
                 </button>
 
-                <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp" class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
+                <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp"
+                 class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
                   지원자 확인
                 </button>
 
@@ -246,7 +247,7 @@ watchEffect(async () => {
 });
 
 const goToProjectApp = () => {
-  router.push({ name: 'projectapplication' }); // 'projectapplication' 경로로 이동
+  router.push({ name: 'projectapplicants' }); // 'projectapplication' 경로로 이동
 };
 
 // 게시글 수정
