@@ -1,10 +1,10 @@
 <template>
   <div class="m-auto w-full">
-    <p class="text-lg font-bold">작성한 프로젝트</p>
+    <p class="text-2xl font-bold">작성한 프로젝트</p>
     <div class="mx-2">
       <div class="flex flex-col gap-4 mb-10 rounded-lg">
         <div class="flex justify-end">
-          <button class="border px-2 py-1 rounded-full text-sm hover:bg-gray-200" @click="goProCreate">글 쓰기</button>
+          <button class="text-[1.1rem] border px-5 py-2 rounded-full text-sm hover:bg-gray-200" @click="goProCreate">프로젝트 생성하기</button>
         </div>
         <div v-if="boardsarr.length === 0" class="text-center text-gray-500 py-8" style="height: 100px">작성한 글이 없습니다.</div>
         <div class="p-1">
@@ -18,7 +18,7 @@
                     <p class="text-sm text-gray-700 mb-1">{{ board.createdAt }}</p>
                     <div class="flex justify-between items-center w-full">
                       <!--지역, 제목, 댓글수, 수정, 삭제 같은라인 배치-->
-                      <div class="flex items-center">
+                      <div class="flex mt-5">
                         <div class="bg-gray-200 rounded-full px-2 mr-2 text-sm whitespace-nowrap">{{ board.location }}</div>
                         <RouterLink :to="`/projectview/${board.boardId}`" class="flex gap-2">
                           <p class="text-gray-700 w-full truncate max-w-[500px] whitespace-nowrap overflow-hidden">
@@ -28,12 +28,18 @@
                         <p class="text-[#d10000] ml-2">[{{ board.commentCount }}]</p>
                       </div>
                       <!-- 수정 삭제를 제목과 댓글 수 오른쪽 끝에 위치시키기 -->
-                      <div class="flex flex-wrap gap-3 text-center justify-center items-center text-sm z-20">
-                        <RouterLink to="/projectapplicants">
-                          <button class="border rounded-full px-2 py-1 mr-10 whitespace-nowrap hover:bg-[#d10000] hover:text-white hover:border-[#d10000]">지원자 확인</button>
-                        </RouterLink>
-                        <p class="flex-shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 whitespace-nowrap">수정</p>
-                        <p class="flex-shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 whitespace-nowrap" @click="doDelete">삭제</p>
+                      <div class="flex flex-row text-center">
+                        <div>
+                          <RouterLink to="/projectapplicants">
+                            <button class="border rounded-full px-4 py-2 m-1 whitespace-nowrap hover:bg-[#d10000] hover:text-white hover:border-[#d10000]">지원자 확인</button>
+                          </RouterLink>
+                        </div>
+                        <div>
+                          <p class="border rounded-full px-4 py-2 m-1 whitespace-nowrap hover:bg-[#d10000] hover:text-white hover:border-[#d10000]">수정</p>
+                        </div>
+                        <div>
+                          <p class="border rounded-full px-4 py-2 m-1 whitespace-nowrap hover:bg-[#d10000] hover:text-white hover:border-[#d10000]" @click="doDelete">삭제</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -75,7 +81,7 @@
     </div> -->
 
     <!-- <div v-if="boardsarr.length === 0" class="text-center text-gray-500 py-8" style="height: 100px;">참여중인 프로젝트가 없습니다.</div> -->
-    <p class="my-4 text-lg font-bold mt-10">참여 중인 프로젝트</p>
+    <p class="my-4 text-2xl font-bold mt-10">참여 중인 프로젝트</p>
     <!--내가 참여중인 프로젝트 카드 시작-->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10">
       <div class="cursor-pointer border rounded-2xl p-4 relative project-card">

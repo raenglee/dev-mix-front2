@@ -16,7 +16,8 @@
               <!-- 드롭다운 버튼 -->
               <div
                 @click="toggleDropdown('location')"
-                class="min-w-36 max-w-36 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray
+                       rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
               >
                 <span class="truncate w-full" v-if="selectedLocation">{{ selectedLocation }}</span>
                 <span class="truncate w-full text-gray-800" v-else>지역 / 구분</span>
@@ -49,7 +50,7 @@
             <!-- 드롭다운 버튼 -->
             <div
               @click="toggleDropdown('position')"
-              class="min-w-36 max-w-36 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+              class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
             >
               <span class="truncate w-full" v-if="selectedPosition">{{ selectedPosition.positionName }}</span>
               <span class="truncate w-full text-gray-800" v-else>포지션</span>
@@ -77,7 +78,8 @@
 
           <!-- 기술/언어 드롭다운 -->
           <div class="relative">
-            <div @click="toggleDropdown('tech')" class="min-w-36 max-w-36 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
+            <div @click="toggleDropdown('tech')" 
+            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
               <span class="text-gray-800">기술 / 언어</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
@@ -125,7 +127,7 @@
           </div>
           <!-- <div class="flex flex-wrap gap-3"> -->
           <button
-            class="min-w-36 max-h-8 px-4 py-1 my-5 border border-gray rounded-full outline-none text-gray-800 hover:border-[#d10000]"
+            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
             :class="{
               'bg-[#d10000] text-white': onlyBookmarked,
               'bg-white text-black': !onlyBookmarked
@@ -136,7 +138,7 @@
           </button>
 
           <button
-            class="min-w-36 max-h-8 px-4 py-1 my-5 border border-gray rounded-full outline-none text-gray-800 hover:border-[#d10000]"
+            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
             :class="{
               'bg-[#d10000] text-white': onlyNeeded,
               'bg-white text-black': !onlyNeeded
@@ -150,9 +152,9 @@
           </button>
           <!-- </div> -->
         </div>
-
-        <div class="flex items-center border border-gray-300 rounded-full px-4 py-1">
-          <input type="text" placeholder="# 검색어를 입력하세요" class="flex-grow focus:outline-none" v-model="searchText" />
+        <!-- text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500 -->
+        <div class="text-[1.1rem] flex items-center border border-gray-300 rounded-full px-4 py-1 bg-gray-100">
+          <input type="text" placeholder="# 검색어를 입력하세요" class="flex-grow focus:outline-none bg-gray-100" v-model="searchText" />
           <button><img src="/img/search.png" class="h-5 w-5" /></button>
         </div>
       </div>
