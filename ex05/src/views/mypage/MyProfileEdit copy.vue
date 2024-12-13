@@ -109,28 +109,25 @@
               <span>{{ selectedSkill.value || '기술을 선택하세요' }}</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
-
-            
             <!--드롭다운-->
             <div v-if="isDropdownOpen" class="absolute bg-white border border-gray-200 rounded-lg mt-12 ml-1 min-w-96 z-10">
-            <div class="grid grid-cols-5 gap-2 p-2">
-              <div v-for="tech in getAvailableTechOptions()" :key="tech.techStackName.result" @click="selectSkill(tech)" class="cursor-pointer text-sm gap-3">
-                <img :src="tech.imageUrl" class="w-10 h-12 item-center hover:w-12" />
-                <p class="">{{ tech.techStackName }}</p>
+              <div class="grid grid-cols-5 gap-2 p-2">
+                <div v-for="tech in getAvailableTechOptions()" :key="tech.techStackName" @click="selectSkill(tech)" class="cursor-pointer text-sm gap-3">
+                  <img :src="tech.imageUrl" class="w-10 h-12 item-center hover:w-12" />
+                  <p class="">{{ tech.techStackName }}</p>
+                </div>
               </div>
             </div>
-          </div>
-
 
             <div class="min-w-[400px] flex flex-wrap">
               <div v-for="(skill, index) in selectedSkills" :key="index" @click="removeSkill(index)" class="pl-4 mt-1 mb-3 flex items-center gap-2 cursor-pointer">
-              <img :src="skill.imageUrl" class="w-8 h-8" />
-              <span class="text-sm m-auto w-16"> {{ skill.techStackName }}</span>
-              <p class="text-[#d10000] font-bold mx-3">x</p>
+                <img :src="skill.imageUrl" class="w-8 h-8" />
+                <span class="text-sm m-auto w-16"> {{ skill.techStackName }}</span>
+                <span class="text-[#d10000] font-bold mx-3">x</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
         <!-- 버튼 -->
         <div class="flex justify-center gap-4 mt-20 mb-40">
@@ -320,47 +317,39 @@ const updateTechstacks = async () => {
     console.error('실패:', error);
   }
 };
-
-
-
 // 기술 선택
 const selectSkill = (tech) => {
   if (!selectedSkills.value.includes(tech) && selectedSkills.value.length < 10) {
-    selectedSkills.value.push(tech);
+    if (!selectedSkills.value.includes(tech)) {
+      selectedSkills.value.push(tech);
+      const indexToRemove = availableTechOptions.value.indexOf(tech); // "b"의 인덱스를 찾음
+      if (indexToRemove !== -1) {
+        availableTechOptions.value.splice(indexToRemove, 1); // 인덱스 위치에서 1개 요소 삭제
+      }
+    }
   }
-// 선택 후 남은 기술이 없으면 드롭다운 닫기
-if (availableTechOptions.value.length === 0) {
+  if (availableTechOptions.value.length === 0) {
+    isDropdownOpen.value = false;
+  }
+  console.log(selectedSkills.value);
+};
+// 선택된 기술을 제외한 선택 가능한 기술목록을 반환하는 메서드
+const getAvailableTechOptions = () => {
+  return techOptions.value.filter((tech) => !selectedSkills.value.includes(tech));
+};
+
+const removeSkill = (index) => {
+  const removedSkill = selectedSkills.value[index]; // 삭제할 기술을 가져옵니다.
+  selectedSkills.value.splice(index, 1); // 선택된 기술에서 해당 기술 삭제
+
+  // 기술을 availableTechOptions에 다시 추가
+  availableTechOptions.value.push(removedSkill);
+
+  // 삭제 후 남은 기술이 없으면 드롭다운 닫기
+  if (availableTechOptions.value.length === 0) {
     isDropdownOpen.value = false;
   }
 };
-
-// 선택된 기술을 제외한 선택 가능한 기술목록
-const getAvailableTechOptions = () => {
-  return techOptions.value.filter(
-    (tech) =>
-      !selectedSkills.value.map((skill) => skill.techStackName).includes(tech.techStackName)
-  );
-};
-
-// const removeSkill = (index) => {
-//   const removedSkill = selectedSkills.value[index]; // 삭제할 기술을 가져옵니다.
-//   selectedSkills.value.splice(index, 1); // 선택된 기술에서 해당 기술 삭제
-
-//   // 기술을 availableTechOptions에 다시 추가
-//   availableTechOptions.value.push(removedSkill);
-
-//   // 삭제 후 남은 기술이 없으면 드롭다운 닫기
-//   if (availableTechOptions.value.length === 0) {
-//     isDropdownOpen.value = false;
-//   }
-// };
-
-
-// 기술 삭제
-const removeSkill = (index) => {
-  selectedSkills.value.splice(index, 1);
-};
-
 
 const handlePositionChange = (positionName) => {
   // 체크된 경우

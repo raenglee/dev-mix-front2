@@ -59,7 +59,7 @@
           <!--드롭다운-->
           <div v-if="isDropdownOpen" class="absolute bg-white border border-gray-200 rounded-lg mt-12 ml-1 min-w-96 z-10">
             <div class="grid grid-cols-5 gap-2 p-2">
-              <div v-for="tech in availableTechOptions" :key="tech" @click="selectSkill(tech)" class="cursor-pointer text-sm gap-3">
+              <div v-for="tech in getAvailableTechOptions()" :key="tech.techStackName.result" @click="selectSkill(tech)" class="cursor-pointer text-sm gap-3">
                 <img :src="tech.imageUrl" class="w-10 h-12 item-center hover:w-12" />
                 <p class="">{{ tech.techStackName }}</p>
               </div>
@@ -248,9 +248,13 @@ const updateTechstacks = async () => {
 };
 
 // 선택된 기술을 제외한 선택 가능한 기술목록
-const availableTechOptions = computed(() => {
-  return techOptions.value.filter((tech) => !selectedSkills.value.includes(tech));
-});
+const getAvailableTechOptions = () => {
+  return techOptions.value.filter(
+    (tech) =>
+      !selectedSkills.value.map((skill) => skill.techStackName).includes(tech.techStackName)
+  );
+};
+
 
 // 드롭다운 열고 닫기
 const toggleDropdown = () => {
@@ -264,7 +268,7 @@ const selectSkill = (tech) => {
   }
 
   // 선택 후 남은 기술이 없으면 드롭다운 닫기
-  if (availableTechOptions.value.length === 0) {
+  if (getAvailableTechOptions.value.length === 0) {
     isDropdownOpen.value = false;
   }
 };
