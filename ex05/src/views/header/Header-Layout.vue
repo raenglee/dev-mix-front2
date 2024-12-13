@@ -122,6 +122,7 @@ import { RouterLink } from 'vue-router';
 import { loginUsers } from '@/api/loginApi';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
+import { sse } from '@/api/sseApi';
 
 //모달
 const isModal = ref(false);
@@ -236,7 +237,10 @@ const leave = (el, done) => {
 
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
+  sse();
 });
+
+
 </script>
 
 <!--스타일-->
