@@ -7,7 +7,7 @@ const url = 'http://localhost:8080/api/v1/users';
 
 //특정 유저 프로필 
 export const getUserInfo = async (user_id) => {
-  console.log('특정 유저 프로필api user_id: ',user_id);
+  // console.log('특정 유저 프로필api user_id: ',user_id);
     try {
       const res = await axios.get(`${url}/${user_id}`, {
         headers: {
@@ -15,8 +15,8 @@ export const getUserInfo = async (user_id) => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      console.log(res.data);
-      return res.data;
+      // console.log('타유저정보 res값',res);
+      return res;
     } catch (err) {
       console.error(err);
       return err;

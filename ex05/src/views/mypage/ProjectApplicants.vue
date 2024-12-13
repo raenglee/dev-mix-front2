@@ -38,7 +38,11 @@
 
           <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100">
             <tr>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400">{{ applicant.userNickname }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400" @click.stop="openProfile(user_id)">{{ applicant.userNickname }}</td>
+
+              <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" />
+
+
               <RouterLink :to="`/projectview/${applicant.boardId}`">
                 <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer hover:text-gray-400" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
               </RouterLink>
@@ -95,6 +99,23 @@ import { ref, watchEffect } from 'vue';
 // user_id 가져오기
 const useStore = useUserStore();
 const applicantsarr = ref([]);
+
+// //유저프로필 모달
+// const isModal = ref(false);  // 모달의 가시성 상태
+// const user_id = ref(null);  // 클릭된 유저의 ID
+
+// // 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+// const openProfile = (userId) => {
+//   user_id.value = userId;
+//   isModal.value = true;  // 모달을 열기
+// };
+
+// // 모달을 닫는 함수
+// const closeProfileModal = () => {
+//   isModal.value = false;
+//   user_id.value = null;  // 모달 닫으면 user_id 초기화
+// };
+
 
 // 지원자 정보 Api
 const applicants = async () => {
