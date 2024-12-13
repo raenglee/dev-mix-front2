@@ -139,7 +139,7 @@ const reject = async () => {
 
   if (selectedApplicant.value) {
     const { boardId, userNickname, positionName, participationStatus } = selectedApplicant.value;
-    console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
+    // console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
 
     const data = {
       boardId,
@@ -151,7 +151,7 @@ const reject = async () => {
     try {
       const res = await admitApplicants(data); // API 호출
       if (res.status === 200) {
-        alert('거절되었습니다.');
+        alert('신청을 거절하였습니다.');
         isConfirmModal.value = true;
         closeModal(); // 모달 닫기
         applicants(); // 지원자 목록 업데이트
@@ -170,7 +170,7 @@ const admit = async () => {
 
   if (selectedApplicant.value) {
     const { boardId, userNickname, positionName, participationStatus } = selectedApplicant.value;
-    console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
+    // console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
 
     const data = {
       boardId,
@@ -183,7 +183,7 @@ const admit = async () => {
       const res = await admitApplicants(data);
       if (res.status === 200) {
         isConfirmModal.value = true;
-        alert('승인하였습니다.');
+        alert('신청을 승인하였습니다.');
         closeModal(); // 모달 닫기
         applicants();
       } else {

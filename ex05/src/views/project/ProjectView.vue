@@ -7,11 +7,16 @@
             {{ recruitmentStatus }}
           </p>
           <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
-          <div class="flex space-x-2 items-center justify-center">
+
+          <div class="flex space-x-2 items-center justify-center" @click.stop="openProfile(user_id)">
             <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full" />
             <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
             <p>{{ nickname }}</p>
           </div>
+
+          <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" />
+
+
           <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
           <div class="my-3 mb-20">
             <hr class="border-t-4 border-[#d10000]" />
@@ -66,8 +71,7 @@
                   승인대기
                 </button>
 
-                <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp"
-                 class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
+                <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp" class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
                   지원자 확인
                 </button>
 
@@ -202,6 +206,7 @@ import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { applyProject } from '@/api/projectApi'; // API 임포트
 import { useUserStore } from '@/store/userStore';
+import UserProfile from '../Component/UserProfile.vue';
 
 const useStore = useUserStore();
 const route = useRoute();
@@ -222,10 +227,27 @@ const positions = ref([]);
 const recruitmentStatus = ref('');
 const files = ref([]);
 
+//유저프로필 모달
+const isModal = ref(false);  // 모달의 가시성 상태
+const user_id = ref(null);  // 클릭된 유저의 ID
+
+// 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+const openProfile = (userId) => {
+  user_id.value = userId;
+  isModal.value = true;  // 모달을 열기
+};
+
+// 모달을 닫는 함수
+const closeProfileModal = () => {
+  isModal.value = false;
+  user_id.value = null;  // 모달 닫으면 user_id 초기화
+};
+
+//게시글 가져오기
 watchEffect(async () => {
   const res = await getProjectView(route.params.board_id);
   if (res.status == 200) {
-    // console.log('게시글 정보', res.data.result);
+    console.log('게시글 정보', res.data.result);
     title.value = res.data.result.title;
     content.value = res.data.result.content;
     location.value = res.data.result.location;
@@ -407,7 +429,7 @@ const confirmSubmit = async () => {
     const res = await applyProject(route.params.board_id, data);
     // console.log('보드아이디,내용', route.params.board_id, data);
     // console.log('지원하기 모달', res);
-    
+
     if (res.status === 200) {
       isPending.value = true;
       console.log('isPending:', isPending.value);
@@ -429,27 +451,6 @@ const closeConfirmModal = () => {
 </script>
 
 <style lang="scss" scoped>
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
 input,
 textarea {
   width: 100%;
@@ -463,9 +464,5 @@ textarea {
   height: 120px;
   resize: none;
   overflow-y: auto;
-}
-
-.isVisible {
-  display: none;
 }
 </style>

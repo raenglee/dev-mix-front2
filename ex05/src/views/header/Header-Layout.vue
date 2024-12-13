@@ -53,6 +53,9 @@
               </transition>
             </div>
 
+            <RouterLink to="/userprofile" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer  text-[1.3rem]"
+            > 유저정보테스트 </RouterLink>
+
             <RouterLink to="/projectcreate" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer  text-[1.3rem]"
               :class="hovered ? 'text-[#d10000] bg-red-50' : 'text-white'"
               @mouseenter="hovered = true"
