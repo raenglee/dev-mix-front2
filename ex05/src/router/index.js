@@ -13,6 +13,7 @@ import MyProfile from '@/views/mypage/MyProfile.vue';
 import ProjectManagement from '@/views/mypage/ProjectManagement.vue';
 import Projectapplication from '@/views/mypage/ProjectApplication.vue';
 import ProjectApplicants from '@/views/mypage/ProjectApplicants.vue';
+import UserProfile from '@/views/user/UserProfile.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -90,6 +91,11 @@ const router = createRouter({
       path: '/projectapplicants',
       name: 'projectapplicants',
       component: ProjectApplicants
+    },
+    {
+      path: '/userprofile',
+      name: 'userprofile',
+      component: UserProfile
     }
   ],
   scrollBehavior(to, from, savedPosition) {

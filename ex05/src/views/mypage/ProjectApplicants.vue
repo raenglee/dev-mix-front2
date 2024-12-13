@@ -36,13 +36,13 @@
             </tr>
           </tbody>
 
-          <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center">
+          <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100">
             <tr>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400">{{ applicant.userNickname }}</td>
               <RouterLink :to="`/projectview/${applicant.boardId}`">
                 <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer hover:text-gray-400" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
               </RouterLink>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap">{{ applicant.positionName }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer" @click="openModal(applicant)">{{ applicant.positionName }}</td>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400" @click="openModal(applicant)">
                 {{ applicant.applyNote }}
               </td>
@@ -135,7 +135,7 @@ const isConfirmModal = ref(false);
 
 //지원자 거절 Api
 const reject = async () => {
-  console.log('거절 시 지원정보', selectedApplicant.value);
+  //console.log('거절 시 지원정보', selectedApplicant.value);
 
   if (selectedApplicant.value) {
     const { boardId, userNickname, positionName, participationStatus } = selectedApplicant.value;
@@ -166,7 +166,7 @@ const reject = async () => {
 
 //지원자 승인 Api
 const admit = async () => {
-  console.log('승인 시 지원정보', selectedApplicant.value);
+  //console.log('승인 시 지원정보', selectedApplicant.value);
 
   if (selectedApplicant.value) {
     const { boardId, userNickname, positionName, participationStatus } = selectedApplicant.value;

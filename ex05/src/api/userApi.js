@@ -6,7 +6,7 @@ import axios from 'axios';
 const url = 'http://localhost:8080/api/v1/users';
 
 //특정 유저 프로필 
-export const userInfo = async (user_id) => {
+export const getUserInfo = async (user_id) => {
     try {
       const res = await axios.get(`${url}/${user_id}`, {
         headers: {
@@ -22,7 +22,7 @@ export const userInfo = async (user_id) => {
     }
   };
 
-
+//프로필 수정
   export const patchUserInfo = async (user_id) => {
     try {
       const res = await axios.patch(`${url}/${user_id}`, {

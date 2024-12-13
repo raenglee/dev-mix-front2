@@ -2,6 +2,8 @@
   <!--🔴헤더-->
   <header>
     <div class="p-3 bg-[#d10000]">
+      <!-- <div class="p-3 bg-[#7371fc]"> -->
+      
       <nav class="flex space-x-5 justify-between items-center m-auto w-4/6">
         <div>
           <RouterLink to="/" class="text-3xl text-white font-bold">DEVMIX</RouterLink>
@@ -53,6 +55,7 @@
               </transition>
             </div>
 
+            <RouterLink to="/userprofile" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-white"> 유저정보테스트 </RouterLink>
             <RouterLink to="/projectcreate" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-white"> 글쓰기 </RouterLink>
             <div class="relative" @mouseenter="openPeopleDropdown" @mouseleave="closePeopleDropdown">
               <p
