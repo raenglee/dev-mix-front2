@@ -8,6 +8,11 @@ export const sse = () => {
   const token = localStorage.getItem('token');
   const proxySource = new EventSource(`${url}/connect?token=${token}`);
 
+  proxySource.addEventListener('sse', (event) => {
+    console.log('Received event:', event);
+    alert(event.data);
+  });
+
   proxySource.onmessage = (event) => {
     console.log(event.data);
   };
