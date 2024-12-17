@@ -21,17 +21,22 @@
         </div>
       </div>
 
-      <div class="flex flex-col">
+      <div class="flex flex-col items-center">
         <div class="flex mb-4 gap-2">
           <p class="font-bold whitespace-nowrap">소속</p>
-          <p class="whitespace-nowrap">소속</p>
+          <p class="whitespace-nowrap">{{ groupName }}</p>
           <p class="font-bold whitespace-nowrap">거주 지역</p>
-          <p class="whitespace-nowrap">온라인 등</p>
+          <p class="whitespace-nowrap">{{ location }}</p>
         </div>
         <p class="font-bold whitespace-nowrap">포지션</p>
-        <p class="whitespace-nowrap">선택한 포지션</p>
+        <p class="whitespace-nowrap">{{ positionName }}</p>
         <p class="font-bold whitespace-nowrap">기술 스택</p>
-        <p class="whitespace-nowrap">ㅎㅎ</p>
+        <div class="flex gap-4 items-center">
+          <div class="py-2" v-for="tech in techStacks" :key="tech">
+            <img :src="tech.imageUrl" class="w-10 h-10" />
+            <span class="text-sm py-4">{{ tech.techStackName }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -83,7 +88,7 @@ const getUsersInfo = async () => {
       positions.value = res.data.result.positions;
       techStacks.value = res.data.result.techStacks;
     }
-    // console.log(res.data.result);
+    console.log(res.data.result);
   } catch (error) {
     console.error('유저 정보 가져오기 실패:', error);
   }
