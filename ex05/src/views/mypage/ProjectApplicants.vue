@@ -38,16 +38,16 @@
 
           <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100">
             <tr>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400" @click.stop="openProfile(user_id)">{{ applicant.userNickname }}</td>
-
-              <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" />
-
-
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400"
+                  @click.stop="openProfile(applicant.userId)">{{ applicant.userNickname }}</td>
               <RouterLink :to="`/projectview/${applicant.boardId}`">
                 <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer hover:text-gray-400" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
               </RouterLink>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer" @click="openModal(applicant)">{{ applicant.positionName }}</td>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400" @click="openModal(applicant)">
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer"
+                  @click="openModal(applicant)">{{ applicant.positionName }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate
+                        max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400"
+                  @click="openModal(applicant)">
                 {{ applicant.applyNote }}
               </td>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap">{{ applicant.applyDate }}</td>
@@ -79,6 +79,12 @@
         </div>
       </div>
 
+      <!-- 프로필 모달-->
+      <UserProfile
+                :isModal="isModal"
+                :user_id="user_id"
+                @update:isModal="closeProfileModal" />
+
       <!-- 승인대기 모달
       <div v-if="isConfirmModal" class="modal-container" @click.self="closeConfirmModal">
         <div class="modal-content">
@@ -95,38 +101,37 @@
 import { admitApplicants, getApplicants } from '@/api/applyApi';
 import { useUserStore } from '@/store/userStore';
 import { ref, watchEffect } from 'vue';
+import UserProfile from '@/views/Component/UserProfile.vue';
 
 // user_id 가져오기
 const useStore = useUserStore();
 const applicantsarr = ref([]);
 
 // //유저프로필 모달
-// const isModal = ref(false);  // 모달의 가시성 상태
-// const user_id = ref(null);  // 클릭된 유저의 ID
+const isModal = ref(false);  // 모달의 가시성 상태
+const user_id = ref(null);  // 클릭된 유저의 ID
 
 // // 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
-// const openProfile = (userId) => {
-//   user_id.value = userId;
-//   isModal.value = true;  // 모달을 열기
-// };
+const openProfile = (userId) => {
+  user_id.value = userId;
+  isModal.value = true;  // 모달을 열기
+  console.log(user_id.value);
+  console.log(isModal.value);
+};
 
-// // 모달을 닫는 함수
-// const closeProfileModal = () => {
-//   isModal.value = false;
-//   user_id.value = null;  // 모달 닫으면 user_id 초기화
-// };
-
+// 회원정보 모달을 닫는 함수
+const closeProfileModal = () => {
+  isModal.value = false;
+};
 
 // 지원자 정보 Api
 const applicants = async () => {
   try {
     const res = await getApplicants(useStore.userId);
-    // console.log(useStore.userId);
-    // console.log('지원자리스트 확인: ', res.data);
-
     // 데이터 구조 확인 후, applicantsarr에 할당
     if (Array.isArray(res.data.result)) {
       applicantsarr.value = res.data.result;
+      console.log(res.data.result);
     } else {
       console.error('지원자 res, data, result 확인해보기: ', res);
     }
@@ -141,6 +146,7 @@ const selectedApplicant = ref({
   boardId: 0,
   userNickname: '',
   positionName: '',
+  applyNote: '',
   participationStatus: ''
 });
 
@@ -216,7 +222,7 @@ const admit = async () => {
   }
 };
 
-// 모달을 닫기 위한 함수
+// 지원정보 모달을 닫기 위한 함수
 const closeModal = () => {
   showModal.value = false;
 };

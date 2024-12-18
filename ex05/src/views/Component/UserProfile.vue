@@ -63,6 +63,9 @@ const props = defineProps({
   user_id: Number // 유저 ID
 });
 
+
+//console.log(JSON.stringify(props));
+
 // emit 정의
 const emit = defineEmits(['update:isModal']);
 

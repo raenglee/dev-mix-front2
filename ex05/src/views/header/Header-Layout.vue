@@ -210,12 +210,6 @@ const initializeSSE = () => {
     console.error('SSE 연결 오류:', error);
     eventSource.value.close();
     eventSource.value = null;
-
-    // 일정 시간 후 재연결 시도
-    // setTimeout(() => {
-    //   console.log('SSE 재연결 시도 중...');
-    //   initializeSSE();
-    // }, 5000); // 5초 후 재연결 시도
   };
 };
 
