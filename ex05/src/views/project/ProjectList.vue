@@ -312,35 +312,35 @@ const getTotalPages = async () => {
   }
 };
 
-// 프로젝트 가져오기
-const getProjects = async (num = 1) => {
-  try {
-    const res = await listProject(num);
-    // console.log('북마크 API 응답 데이터:', res);
-    // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
-    arr.value = res.map((item) => {
-      const totalRequiredCount = item.positions.reduce((sum, position) => {
-        return sum + position.requiredCount;
-      }, 0);
+// // 프로젝트 가져오기
+// const getProjects = async (num = 1) => {
+//   try {
+//     const res = await listProject(num);
+//     // console.log('북마크 API 응답 데이터:', res);
+//     // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
+//     arr.value = res.map((item) => {
+//       const totalRequiredCount = item.positions.reduce((sum, position) => {
+//         return sum + position.requiredCount;
+//       }, 0);
 
-      const totalCurrentCount = item.positions.reduce((sum, position) => {
-        return sum + position.currentCount; // currentCount 합산
-      }, 0);
+//       const totalCurrentCount = item.positions.reduce((sum, position) => {
+//         return sum + position.currentCount; // currentCount 합산
+//       }, 0);
 
-      return {
-        ...item,
-        isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
-        totalRequiredCount, // 총 필요한 인원 수
-        totalCurrentCount // 총 현재 인원 수
-      };
-    });
+//       return {
+//         ...item,
+//         isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
+//         totalRequiredCount, // 총 필요한 인원 수
+//         totalCurrentCount // 총 현재 인원 수
+//       };
+//     });
 
-    // applySort();
-    // console.log('프로젝트 내용: ', arr.value);
-  } catch (error) {
-    console.error('프로젝트 가져오기 오류:', error);
-  }
-};
+//     // applySort();
+//     // console.log('프로젝트 내용: ', arr.value);
+//   } catch (error) {
+//     console.error('프로젝트 가져오기 오류:', error);
+//   }
+// };
 
 // 각 게시글과 연결
 const viewPage = (board_id) => {
@@ -348,15 +348,7 @@ const viewPage = (board_id) => {
   router.push(data);
 };
 
-// 북마크만 보기
-const clickBookmarkonly = () => {
-  onlyBookmarked.value = !onlyBookmarked.value;
-};
 
-// 모집중만 보기
-const clickneededonly = () => {
-  onlyNeeded.value = !onlyNeeded.value;
-};
 
 // 특정 게시물의 북마크 상태 변경
 const toggleBookmark = async (item) => {
@@ -541,6 +533,16 @@ const removeTechStack = (index) => {
   selectedTech.value.splice(index, 1); // 해당 인덱스의 기술 스택 제거
 };
 
+// 북마크만 보기
+const clickBookmarkonly = () => {
+  onlyBookmarked.value = !onlyBookmarked.value;
+};
+
+// 모집중만 보기
+const clickneededonly = () => {
+  onlyNeeded.value = !onlyNeeded.value;
+};
+
 //검색필터
 const searchfilter = async () => {
   try {
@@ -565,7 +567,7 @@ const searchfilter = async () => {
       positions: selectedPosition.value.positionName,
       // positions:position,
       tech: tech,
-
+ 
       // bookmarked: item.isBookmarked
       // recruitmentStatus: onlyNeeded.value
     });
@@ -604,6 +606,17 @@ const searchfilter = async () => {
   } catch (error) {
     const errorMessage = error.response ? error.response : error.message || '알 수 없는 오류';
     console.error('검색필터 실패:', errorMessage);
+  }
+};
+
+// 프로젝트 가져오기
+const getProjects = async () => {
+  try {
+    const res = await searchfilter();
+    console.log('프로젝트 가져오기:', res);
+
+  } catch (error) {
+    console.error('프로젝트 가져오기 오류:', error);
   }
 };
 

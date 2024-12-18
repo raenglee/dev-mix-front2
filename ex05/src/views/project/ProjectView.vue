@@ -297,7 +297,7 @@ watchEffect(async () => {
   if (res.status === 200 && res.data.result) {
     comments.value = res.data.result; // 댓글 데이터 배열을 할당
   }
-  console.log('댓글값 comments.value:', comments.value);
+  // console.log('댓글값 comments.value:', comments.value);
 });
 
 // 댓글 작성
@@ -332,7 +332,7 @@ const startEditing = (comment) => {
 // 댓글 수정
 const commentupdate = async (commentId) => {
   const comment = comments.value.find((c) => c.commentId === commentId);
-  console.log('댓글', comments.value);
+  // console.log('댓글', comments.value);
   // console.log('댓글id',commentId)
   const data = {
     id: commentId,
@@ -394,14 +394,14 @@ const commentUserId = ref(null);
 const openProfile = (userId) => {
   user_id.value = userId;
   isModal.value = true; // 모달 열기
-  console.log('유저ID', user_id.value);
+  // console.log('유저ID', user_id.value);
 };
 
 // 댓글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
 const openCommentProfile = (userId) => {
   commentUserId.value = userId;
   isCommentModal.value = true;
-  console.log('유저ID', commentUserId.value);
+  // console.log('유저ID', commentUserId.value);
 };
 
 // 게시판 모달 닫기
@@ -446,7 +446,7 @@ const confirmSubmit = async () => {
       positionName: positionName.value,
       note: note.value
     };
-    console.log('isPending:', isPending.value);
+    // console.log('isPending:', isPending.value);
 
     const res = await applyProject(route.params.board_id, data);
     // console.log('보드아이디,내용', route.params.board_id, data);

@@ -20,7 +20,7 @@
                 }"
               /> -->
               <p
-                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
+                class="mt-1 px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
                 @mouseenter="isAlarmHovered = true"
                 @mouseleave="isAlarmHovered = false"
                 :class="{
@@ -28,7 +28,7 @@
                   'text-white': !isAlarmHovered
                 }"
               >
-              알람
+                알림
               </p>
               <!-- 알람 드롭다운 메뉴 -->
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
@@ -36,17 +36,19 @@
                   v-if="isAlarmDropdownOpen"
                   @mouseenter="isAlarmHovered = true"
                   @mouseleave="isAlarmHovered = false"
-                  class="absolute right-0 top-10 w-max min-w-[250px] max-w-[500px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
+                  class="absolute right-0 top-10 w-max min-w-[250px] max-w-[500px] bg-red-50 rounded-tl-md rounded-b-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
+                  <div v-if="notifications.length === 0" class="text-center text-gray-800 py-4">알림이 없습니다.</div>
+
                   <template v-if="notifications?.length > 0">
                     <div class="cursor-pointer">
-                      <h1 class="text-2xl p-3 bg-white">💨 알림</h1>
-                      <div class="p-3 bg-slate-100">
-                        <ul class="text-sm mt-2">
-                          <li v-for="notification in notifications" :key="notification.id" class="p-2 border border-gray-400 m-2 bg-white">
-                            {{ notification.content }}
+                      <!-- <h1 class=" font-bold text-lg pt-2 px-3 bg-red-50 rounded-tl-md">알림</h1> -->
+                      <div class="bg-red-50">
+                        <ul class="text-sm">
+                          <li v-for="notification in notifications" :key="notification.id" class="p-2 rounded-lg m-2 bg-white">
+                            🔔 {{ notification.content }}
                             <!-- 알림 내용을 표시 -->
-                            <button class="hover:bg-slate-300 p-2 m-2 border border-gray-300 outline-none" @click="markAsRead(notification.id)">읽음 처리</button>
+                            <button class="hover:bg-[#d10000] hover:text-white px-2 m-2 rounded-full border border-[#d10000]" @click="markAsRead(notification.id)">확인</button>
                           </li>
                         </ul>
                       </div>
@@ -58,7 +60,7 @@
 
             <RouterLink
               to="/projectcreate"
-              class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-[1.3rem]"
+              class="mt-1 px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-[1.3rem]"
               :class="hovered ? 'text-[#d10000] bg-red-50' : 'text-white'"
               @mouseenter="hovered = true"
               @mouseleave="hovered = false"
@@ -67,7 +69,7 @@
             </RouterLink>
             <div class="relative" @mouseenter="openPeopleDropdown" @mouseleave="closePeopleDropdown">
               <p
-                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
+                class="mt-1 px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
                 @mouseenter="isPeopleHovered = true"
                 @mouseleave="isPeopleHovered = false"
                 :class="{ 'text-[#d10000] bg-red-50': isPeopleHovered, 'text-white': !isPeopleHovered }"
@@ -79,7 +81,7 @@
                   v-if="isPeopleDropdownOpen"
                   @mouseenter="isPeopleHovered = true"
                   @mouseleave="isPeopleHovered = false"
-                  class="absolute right-0 top-10 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
+                  class="absolute right-0 top-10 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-tl-md rounded-b-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
                   <ul class="text-sm">
                     <li>

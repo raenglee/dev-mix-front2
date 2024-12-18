@@ -18,7 +18,7 @@
         <table class="min-w-full border-separate border-spacing-0 rounded-lg overflow-hidden">
           <thead class="bg-gray-50">
             <tr>
-              <th class="border-b text-center p-3 text-gray-800 rounded-tl-lg">신청자</th>
+              <th class="border-b text-center p-3 text-gray-800 rounded-tl-lg">닉네임</th>
               <th class="border-b text-center p-3 text-gray-800">프로젝트명</th>
               <th class="border-b text-center p-3 text-gray-800">포지션</th>
               <th class="border-b text-center p-3 text-gray-800">내용</th>
@@ -66,9 +66,9 @@
           </div>
           <div class="flex flex-col mb-4 gap-2">
             <p class="font-bold">지원 직군</p>
-            <p class="text-sm bg-gray-100 rounded-lg p-4">{{ selectedApplicant?.positionName }}</p>
+            <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.positionName }}</p>
             <p class="font-bold">지원 사유 및 한마디</p>
-            <p class="text-sm bg-gray-100 rounded-lg p-4">{{ selectedApplicant?.applyNote }}</p>
+            <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.applyNote }}</p>
           </div>
           <div class="flex justify-center gap-3 mb-4">
             <button type="button" class="border border-gray-300 bg-gray-300 rounded-full py-1 px-3" @click="reject">거절</button>
