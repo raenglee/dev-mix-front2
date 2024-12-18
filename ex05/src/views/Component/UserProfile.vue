@@ -13,8 +13,8 @@
       </div>
 
       <div class="flex flex-col items-center mb-4 gap-2">
-        <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full" />
-        <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
+        <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
+        <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
         <div class="flex">
           <p class="font-bold whitespace-nowrap px-2">닉네임</p>
           <p>{{ nickname }}</p>
@@ -24,14 +24,21 @@
       <div class="flex flex-col items-center">
         <div class="flex mb-4 gap-2">
           <p class="font-bold whitespace-nowrap">소속</p>
+          <div v-if="groupName.length === 0" class="text-center text-gray-500">없음</div>
           <p class="whitespace-nowrap">{{ groupName }}</p>
+
           <p class="font-bold whitespace-nowrap">거주 지역</p>
+          <div v-if="location.length === 0" class="text-center text-gray-500">없음</div>
           <p class="whitespace-nowrap">{{ location }}</p>
         </div>
         <p class="font-bold whitespace-nowrap">포지션</p>
-        <p class="whitespace-nowrap">{{ positionName }}</p>
+        <ul class="item-center mb-4">
+          <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap">
+            {{ position }}
+          </p>
+        </ul>
         <p class="font-bold whitespace-nowrap">기술 스택</p>
-        <div class="flex gap-4 items-center">
+        <div class="flex gap-4 items-center mb-4">
           <div class="py-2" v-for="tech in techStacks" :key="tech">
             <img :src="tech.imageUrl" class="w-10 h-10" />
             <span class="text-sm py-4">{{ tech.techStackName }}</span>

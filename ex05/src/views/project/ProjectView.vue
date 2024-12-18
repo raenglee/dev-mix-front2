@@ -9,8 +9,8 @@
           <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
 
           <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(user_id)">
-            <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full" />
-            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
+            <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover" />
+            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
             <p>{{ nickname }}</p>
           </div>
           <!--게시글 작성자 프로필-->
@@ -107,8 +107,8 @@
         <div class="ml-30 justify-center items-center w-full">
           <div class="flex items-center pt-3">
             <div class="flex items-center w-8 h-8">
-              <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-8 w-8 rounded-full" />
-              <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
+              <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-8 w-8 rounded-full object-cover" />
+              <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
             </div>
             <p class="ml-3">{{ useStore.nickname }}</p>
           </div>
@@ -126,8 +126,8 @@
             <div v-for="comment in comments" :key="comment.id">
               <!-- 댓글 방식 확인 {{ comment }} -->
               <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
-                <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full" />
-                <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
+                <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
+                <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
                 <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
               </div>
 
