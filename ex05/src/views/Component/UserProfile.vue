@@ -31,13 +31,15 @@
           <div v-if="location.length === 0" class="text-center text-gray-500">없음</div>
           <p class="whitespace-nowrap">{{ location }}</p>
         </div>
-        <p class="font-bold whitespace-nowrap">포지션</p>
+        <p class="font-bold whitespace-nowrap mb-1">포지션</p>
+        <div v-if="positions.length === 0" class="text-center text-gray-500">없음</div>
         <ul class="item-center mb-4">
           <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap">
             {{ position }}
           </p>
         </ul>
-        <p class="font-bold whitespace-nowrap">기술 스택</p>
+        <p class="font-bold whitespace-nowrap mb-1">기술 스택</p>
+
         <div class="flex gap-4 items-center mb-4">
           <div class="py-2" v-for="tech in techStacks" :key="tech">
             <img :src="tech.imageUrl" class="w-10 h-10" />
