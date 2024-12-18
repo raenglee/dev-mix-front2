@@ -1,9 +1,9 @@
 import axios from 'axios';
-// import { GLOBAL_URL } from './util';
+import { GLOBAL_URL } from './util';
 
 // const url = 'http://192.168.0.61:8080/api/v1/boards';
-const url = 'http://localhost:8080/api/v1/boards';
-// const url = `${GLOBAL_URL}/api/v1/boards`;
+// const url = 'http://localhost:8080/api/v1/boards';
+const url = `${GLOBAL_URL}/api/v1/boards`;
 
 // 프로젝트 전체 리스트
 export const listProject = async (pageNumber = 1, pageSize = 16) => {

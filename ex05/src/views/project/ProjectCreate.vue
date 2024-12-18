@@ -88,7 +88,6 @@
             />
             <!-- 커스텀 캘린더 아이콘 -->
             <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
-              <FontAwesomeIcon icon="fa-solid fa-calendar-days" />
             </span>
           </div>
         </div>

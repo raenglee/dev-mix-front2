@@ -28,7 +28,7 @@
                   'text-white': !isAlarmHovered
                 }"
               >
-                알람
+              알람
               </p>
               <!-- 알람 드롭다운 메뉴 -->
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
@@ -36,37 +36,41 @@
                   v-if="isAlarmDropdownOpen"
                   @mouseenter="isAlarmHovered = true"
                   @mouseleave="isAlarmHovered = false"
-                  class="absolute right-0 top-10 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
+                  class="absolute right-0 top-10 w-max min-w-[250px] max-w-[500px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
-                  <ul class="text-sm mt-2">
-                    <li>
-                      <p class="px-4 py-2">지원자 신청이 도착하였습니다.</p>
-                    </li>
-                    <li>
-                      <p class="px-4 py-2">[....]에 댓글이 작성되었습니다.</p>
-                    </li>
-                    <li>
-                      <p class="px-4 py-2">지원자 신청이 도착하였습니다.</p>
-                    </li>
-                  </ul>
+                  <template v-if="notifications?.length > 0">
+                    <div class="cursor-pointer">
+                      <h1 class="text-2xl p-3 bg-white">💨 알림</h1>
+                      <div class="p-3 bg-slate-100">
+                        <ul class="text-sm mt-2">
+                          <li v-for="notification in notifications" :key="notification.id" class="p-2 border border-gray-400 m-2 bg-white">
+                            {{ notification.content }}
+                            <!-- 알림 내용을 표시 -->
+                            <button class="hover:bg-slate-300 p-2 m-2 border border-gray-300 outline-none" @click="markAsRead(notification.id)">읽음 처리</button>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </transition>
             </div>
 
-            <RouterLink to="/userprofile" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer  text-[1.3rem]"
-            > 유저정보테스트 </RouterLink>
-
-            <RouterLink to="/projectcreate" class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer  text-[1.3rem]"
+            <RouterLink
+              to="/projectcreate"
+              class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-[1.3rem]"
               :class="hovered ? 'text-[#d10000] bg-red-50' : 'text-white'"
               @mouseenter="hovered = true"
               @mouseleave="hovered = false"
-            > 글쓰기 </RouterLink>
+            >
+              팀원모집하기
+            </RouterLink>
             <div class="relative" @mouseenter="openPeopleDropdown" @mouseleave="closePeopleDropdown">
               <p
-                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer  text-[1.3rem]"
+                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
                 @mouseenter="isPeopleHovered = true"
                 @mouseleave="isPeopleHovered = false"
-                :class="{'text-[#d10000] bg-red-50': isPeopleHovered, 'text-white': !isPeopleHovered}"
+                :class="{ 'text-[#d10000] bg-red-50': isPeopleHovered, 'text-white': !isPeopleHovered }"
               >
                 내정보
               </p>
@@ -75,8 +79,7 @@
                   v-if="isPeopleDropdownOpen"
                   @mouseenter="isPeopleHovered = true"
                   @mouseleave="isPeopleHovered = false"
-                  class="absolute right-0 top-10 w-max min-w-[150px]
-                    max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
+                  class="absolute right-0 top-10 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
                   <ul class="text-sm">
                     <li>
@@ -119,12 +122,117 @@
 
 <!--스크립트-->
 <script setup>
-import { ref, watchEffect } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { RouterLink } from 'vue-router';
 import { loginUsers } from '@/api/loginApi';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
+import axios from 'axios';
+
+const notifications = ref([]); // 알림 목록
+const eventSource = ref(null); // SSE 이벤트 소스
+
+// 읽음 처리 api 호출
+const markAsRead = async (notification_id) => {
+  console.log('읽음 처리할 알림 ID:', notification_id);
+  try {
+    await axios.patch(`http://localhost:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    notifications.value = notifications.value.filter((notification) => notification.id !== notification_id);
+    saveNotificationsToStorage();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// 로컬 스토리지에서 알림 복원
+const loadNotificationsFromStorage = () => {
+  const savedNotifications = localStorage.getItem('notifications');
+  if (savedNotifications) {
+    notifications.value = JSON.parse(savedNotifications);
+  }
+};
+
+// 알림 목록을 로컬 스토리지에 저장
+const saveNotificationsToStorage = () => {
+  localStorage.setItem('notifications', JSON.stringify(notifications.value));
+};
+
+// SSE 초기화
+const initializeSSE = () => {
+  const token = localStorage.getItem('token'); // 사용자 인증 토큰
+
+  if (!token) {
+    console.error('토큰이 없습니다. SSE 연결을 중단합니다.');
+    return;
+  }
+
+  const sseUrl = `http://localhost:8080/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
+  eventSource.value = new EventSource(sseUrl);
+
+  // SSE 연결 성공
+  eventSource.value.onopen = () => {
+    console.log('SSE 연결이 성공적으로 열렸습니다.');
+  };
+
+  // SSE 데이터 수신
+  eventSource.value.addEventListener('connect', (event) => {
+    try {
+      console.log(`SSE ${event}`);
+    } catch (error) {
+      console.error('SSE 데이터 처리 중 오류:', error);
+    }
+  });
+
+  // SSE 데이터 수신
+  eventSource.value.addEventListener('sse', (event) => {
+    try {
+      const data = JSON.parse(event.data);
+
+      // 중복 알림 방지 (ID 기준)
+      if (!notifications.value.some((notification) => notification.id === data.id)) {
+        notifications.value.push(data);
+        saveNotificationsToStorage(); // 새로운 알림 저장
+      }
+    } catch (error) {
+      console.error('SSE 데이터 처리 중 오류:', error);
+    }
+  });
+
+  // SSE 연결 오류
+  eventSource.value.onerror = (error) => {
+    console.error('SSE 연결 오류:', error);
+    eventSource.value.close();
+    eventSource.value = null;
+
+    // 일정 시간 후 재연결 시도
+    // setTimeout(() => {
+    //   console.log('SSE 재연결 시도 중...');
+    //   initializeSSE();
+    // }, 5000); // 5초 후 재연결 시도
+  };
+};
+
+// 컴포넌트 마운트 시 처리
+onMounted(() => {
+  loadNotificationsFromStorage(); // 로컬 스토리지에서 알림 복원
+  initializeSSE(); // SSE 연결 초기화
+});
+
+// 컴포넌트 언마운트 시 처리
+onBeforeUnmount(() => {
+  if (eventSource.value) {
+    eventSource.value.close(); // SSE 연결 종료
+    eventSource.value = null;
+  }
+  saveNotificationsToStorage(); // 알림 목록 저장
+});
 
 //모달
 const isModal = ref(false);
