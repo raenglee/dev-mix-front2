@@ -141,7 +141,6 @@ const useStore = useUserStore();
 const router = useRouter();
 // const route = useRoute();
 
-// const isDuplicate = ref(false); // 닉네임 중복 여부 상태
 const checkNickMessage = ref(''); // 닉네임 유효성 메시지
 const isDuplicate = ref(false); //닉넴중복
 const isValidNickname = ref(false); //형식틀림
@@ -382,6 +381,9 @@ const selectFile = () => {
 
 // 사용자가 입력한 데이터 저장
 const handleSubmit = async () => {
+  // if (!isDuplicateChecked.value) {
+  //   alert('닉네임 중복확인을 해주세요.');
+  // }else{
   const formData = new FormData();
   const user = await loginUsers(); // 로그인된 사용자 정보 가져오기
 
@@ -406,22 +408,18 @@ const handleSubmit = async () => {
     formData.append('profileImage', file, file.name); // 여기서 file.name으로 파일명 설정
   }
   formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
-  console.log('폼데이터최종', JSON.stringify(userProfile));
-  if (!checkNicknameAvailability.value) {
-    watchNickname.value = false;
-  }
+  // console.log('폼데이터최종', JSON.stringify(userProfile));
+
   try {
     await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
     const data = await loginUsers();
     await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
 
-    if (!isDuplicateChecked.value) {
-      alert('닉네임 중복확인을 해주세요.');
-    } else if (isDuplicate.value) {
+    if (isDuplicate.value) {
       alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요.');
     } else if (isValidNickname.value) {
       alert('닉네임 형식을 확인해주세요.');
-    } else if(!isDuplicate.value && !isValidNickname.value && isDuplicateChecked.value) {
+    } else if(isDuplicateChecked.value) {
       alert('회원가입이 완료되었습니다.');
       router.push('/'); // 성공 시 프로필 페이지로 이동
     }
@@ -429,6 +427,7 @@ const handleSubmit = async () => {
     // 에러 처리
     alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
   }
+
 };
 
 //회원가입 취소
@@ -438,9 +437,10 @@ const handleCancel = async () => {
   router.push('/');
 };
 
-// 사용자 데이터 삭제
+// 사용자 데이터 삭제(헤더로고 혹은 취소 버튼 눌러서 페이지 벗어날 때)
 const removeUserData = async () => {
   if (!isSubmitted.value) {
+    localStorage.removeItem('token');
     try {
       await deleteUser(); // 사용자 정보 삭제 요청
       useStore.logout(); // Pinia 스토어에서 로그아웃 처리

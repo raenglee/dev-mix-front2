@@ -18,7 +18,7 @@
               </div>
             </div>
             <!-- 삭제 아이콘 -->
-            <img :src="imageSrc" @click.stop="removeFile" @mouseover="hoverImage" @mouseleave="resetImage" class=" w-[20px] h-[20px] text-gray-500 text-lg" />
+            <img :src="imageSrc" @click.stop="removeFile" @mouseover="hoverImage" @mouseleave="resetImage" class="w-[20px] h-[20px] text-gray-500 text-lg" />
           </div>
         </div>
 
@@ -34,11 +34,14 @@
         <!-- 닉네임 -->
         <div class="grid grid-cols-4 items-center gap-x-4">
           <label class="text-gray-700 text-lg font-semibold">닉네임 <span class="text-red-500">*</span></label>
-          <div class="col-span-2 flex items-center">
+          <div class="col-span-2 items-center">
             <input type="text" v-model="nickname" placeholder="nickname" class="flex-1 border p-2 rounded-full" required />
-            <button type="button" @click="checkNickname" class="ml-2 border p-2 rounded-full text-gray-600">중복확인</button>
+            <button type="button" @click="checkNicknameAvailability" class="ml-2 border p-2 rounded-full text-gray-600">중복확인</button>
+            <p class="col-start-2 col-span-2 text-xs mt-1 text-gray-500">한글 영어 숫자, 2~8글자 이하 (공백 및 특수문자 X)</p>
+            <p class="text-red-500 col-start-2 col-span-2 text-xs mt-1">
+              {{ checkNickMessage }}
+            </p>
           </div>
-          <p class="col-start-2 col-span-2 text-xs text-gray-500 mt-1">한글 또는 영어, 8글자 이하 (공백X)</p>
         </div>
         <!-- 소속 -->
         <div class="grid grid-cols-4 items-center gap-x-4">
@@ -109,28 +112,25 @@
               <span>{{ selectedSkill.value || '기술을 선택하세요' }}</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
-
-            
             <!--드롭다운-->
             <div v-if="isDropdownOpen" class="absolute bg-white border border-gray-200 rounded-lg mt-12 ml-1 min-w-96 z-10">
-            <div class="grid grid-cols-5 gap-2 p-2">
-              <div v-for="tech in getAvailableTechOptions()" :key="tech.techStackName.result" @click="selectSkill(tech)" class="cursor-pointer text-sm gap-3">
-                <img :src="tech.imageUrl" class="w-10 h-12 item-center hover:w-12" />
-                <p class="">{{ tech.techStackName }}</p>
+              <div class="grid grid-cols-5 gap-2 p-2">
+                <div v-for="tech in getAvailableTechOptions()" :key="tech.techStackName.result" @click="selectSkill(tech)" class="cursor-pointer text-sm gap-3">
+                  <img :src="tech.imageUrl" class="w-10 h-12 item-center hover:w-12" />
+                  <p class="">{{ tech.techStackName }}</p>
+                </div>
               </div>
             </div>
-          </div>
-
 
             <div class="min-w-[400px] flex flex-wrap">
               <div v-for="(skill, index) in selectedSkills" :key="index" @click="removeSkill(index)" class="pl-4 mt-1 mb-3 flex items-center gap-2 cursor-pointer">
-              <img :src="skill.imageUrl" class="w-8 h-8" />
-              <span class="text-sm m-auto w-16"> {{ skill.techStackName }}</span>
-              <p class="text-[#d10000] font-bold mx-3">x</p>
+                <img :src="skill.imageUrl" class="w-8 h-8" />
+                <span class="text-sm m-auto w-16"> {{ skill.techStackName }}</span>
+                <span class="text-[#d10000] font-bold mx-3">x</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
         <!-- 버튼 -->
         <div class="flex justify-center gap-4 mt-20 mb-40">
@@ -145,19 +145,24 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onBeforeUnmount } from 'vue';
+import { ref, watchEffect, onBeforeUnmount, watch } from 'vue';
 import { useUserStore } from '@/store/userStore';
 import { loginUsers, uploadprofile, checkNickname } from '@/api/loginApi';
 import { useRouter } from 'vue-router';
-import { getPositions, getTechstacks, getLocation } from '@/api/projectApi';
+import { getPositions, getTechstacks } from '@/api/projectApi';
 
 const useStore = useUserStore();
 const router = useRouter();
 
+const checkNickMessage = ref(''); // 닉네임 유효성 메시지
+const isDuplicate = ref(false); //닉넴중복
+const isValidNickname = ref(false); //형식틀림
+const isDuplicateChecked = ref(false); // 중복확인 여부
+
+const originalNickname = ref(useStore.nickname); // 예시: 기존 닉네임을 불러온 데이터로 대체
 const nickname = ref(useStore.nickname);
 const groupName = ref(useStore.groupName);
 const positionList = ref([]);
-const techStackList = ref([]);
 const location = ref(useStore.location);
 const profileImage = ref(useStore.profileImage); //기존 파일
 const fileInput = ref(null);
@@ -167,11 +172,54 @@ const selectedSkill = ref(''); // 현재 선택된 기술 저장
 const selectedSkills = ref([]); // 선택된 기술들의 배열
 const techOptions = ref([]); // 서버에서 전달 받은 기술 저장
 
+const checkNicknameAvailability = async () => {
+  const res = await checkNickname(nickname.value); // API 호출
+  try {
+    if (res.code === 'SUCCESS' || nickname.value === originalNickname.value) {
+      isDuplicate.value = false; //중복닉
+      isValidNickname.value = false; // 형식오류
+      isDuplicateChecked.value = true;
+      alert('사용 가능한 닉네임입니다.');
+    } else if (res.code === 'DUPLICATED_NICKNAME') {
+      isDuplicate.value = true; //중복닉
+      isValidNickname.value = false; // 형식오류
+      isDuplicateChecked.value = true;
+      alert('중복된 닉네임입니다.');
+    } else if (res.code === 'VALIDATION_FAILED') {
+      isDuplicate.value = false; //중복닉
+      isValidNickname.value = true; // 형식오류
+      isDuplicateChecked.value = true;
+      alert('닉네임 형식 오류입니다.');
+    }
+    // else if (res.code === 'AUTHORIZATION_FAILED') {
+    //   isDuplicate.value = false; //중복닉
+    //   isValidNickname.value = true; // 형식오류
+    //   isDuplicateChecked.value = true;
+    // }
+  } catch (err) {
+    console.error('닉네임 확인 중 오류 발생:', err);
+    isDuplicateChecked.value = false;
+  }
+};
+
+watch(nickname, (newVal) => {
+  const nicknameValue = newVal.trim();
+  if (nicknameValue === '') {
+    checkNickMessage.value = '닉네임을 입력해주세요.';
+  } else if (nicknameValue.length < 2 || nicknameValue.length > 8) {
+    checkNickMessage.value = '닉네임은 2~8글자여야 합니다.';
+  } else if (!/^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(nicknameValue)) {
+    checkNickMessage.value = '공백 및 특수문자는 사용할 수 없습니다.';
+  } else {
+    checkNickMessage.value = '';
+  }
+});
+
 //🚹 분야별 모집 인원 관련 scripts
 const roleOptions = ref([]); // 서버에서 전달 받은 포지션 저장
 const userProfile = ref(null);
 
-const isDropdownOpen = ref(false); // 드롭다운 열림 상태
+const isDropdownOpen = ref(false); // 드롭다운 닫힌 상태
 const availableTechOptions = ref([]);
 
 // 사용자 정보 API 호출
@@ -179,7 +227,7 @@ const loadUserProfile = async () => {
   try {
     const profile = await loginUsers(); // API로부터 사용자 프로필 정보 가져오기
     userProfile.value = profile.result; // API에서 받은 데이터를 userProfile에 저장
-    console.log('통신하고 나서 출력' + JSON.stringify(userProfile.value));
+    // console.log('통신하고 나서 출력' + JSON.stringify(userProfile.value));
 
     // 원래 있는 기술 넣기
     const updatedTechStacks = userProfile.value.techStacks.map(({ techStackName, techStackImageUrl }) => ({
@@ -198,6 +246,7 @@ const loadUserProfile = async () => {
     profile.result.techStacks.map((techStacks) => {
       excludedTechStacks.push(techStacks.techStackName);
     });
+
     const filteredTechStacks = availableTechOptions.value.filter((stack) => !excludedTechStacks.includes(stack.techStackName));
     availableTechOptions.value = filteredTechStacks;
   } catch (error) {
@@ -213,7 +262,6 @@ const onFileChange = (event) => {
     profileImage.value = URL.createObjectURL(file); // 이미지 미리보기 URL을 설정
   }
 };
-
 
 // 이미지 소스를 ref로 관리
 const imageSrc = ref('/img/trash.png');
@@ -249,55 +297,68 @@ watchEffect(() => {
 
 // 사용자가 입력한 데이터 저장
 const handleSubmit = async () => {
-  const formData = new FormData();
-  const user = await loginUsers(); // 로그인된 사용자 정보 가져오기
+  if (!isDuplicateChecked.value) {
+    alert('닉네임 중복확인을 해주세요.');
+  } else if (isDuplicateChecked.value) {
+    const formData = new FormData();
+    const user = await loginUsers(); // 로그인된 사용자 정보 가져오기
 
-  positionList.value = Array.from(new Set(positionList.value));
-  const techStackNames = selectedSkills.value.reduce((acc, skill) => {
-    acc.push(skill.techStackName);
-    return acc;
-  }, []);
+    positionList.value = Array.from(new Set(positionList.value));
+    const techStackNames = selectedSkills.value.reduce((acc, skill) => {
+      acc.push(skill.techStackName);
+      return acc;
+    }, []);
 
-  const userProfile = {
-    email: user.result.email,
-    nickname: nickname.value,
-    groupName: groupName.value,
-    location: location.value,
-    positionList: positionList.value,
-    techStackList: techStackNames,
-    profileImage: profileImage.value
-  };
+    const userProfile = {
+      email: user.result.email,
+      nickname: nickname.value,
+      groupName: groupName.value,
+      location: location.value,
+      positionList: positionList.value,
+      techStackList: techStackNames,
+      profileImage: profileImage.value
+    };
 
-  if (profileImage.value) {
-    const file = selectedFile.value; // 실제 파일 객체 사용
-    if (file != null)
-      formData.append('profileImage', file, file.name); // 여기서 file.name으로 파일명 설정
-    else {
-      const imgSrc = document.getElementById('profileImg').src;
+    if (profileImage.value) {
+      const file = selectedFile.value; // 실제 파일 객체 사용
+      if (file != null)
+        formData.append('profileImage', file, file.name); // 여기서 file.name으로 파일명 설정
+      else {
+        const imgSrc = document.getElementById('profileImg').src;
 
-      await fetch(imgSrc)
-        .then((response) => response.blob())
-        .then((blob) => {
-          const file = new File([blob], 'profileImage.png', { type: blob.type });
-          formData.append('profileImage', file, 'aaa.png');
-        })
-        .catch((error) => console.error('Error fetching image:', error));
+        await fetch(imgSrc)
+          .then((response) => response.blob())
+          .then((blob) => {
+            const file = new File([blob], 'profileImage.png', { type: blob.type });
+            formData.append('profileImage', file, 'aaa.png');
+          })
+          .catch((error) => console.error('Error fetching image:', error));
+      }
     }
-  }
 
-  formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
-  console.log('폼데이터최종', JSON.stringify(userProfile));
+    formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
+    // console.log('폼데이터최종', JSON.stringify(userProfile));
 
-  try {
-    await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
-    const data = await loginUsers();
-    await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
+    try {
+      await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
+      const data = await loginUsers();
+      await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
 
-    alert('수정 되었습니다.');
-    router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
-  } catch (err) {
-    // 에러 처리
-    alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
+      if (isDuplicate.value) {
+        alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요.');
+      } else if (isValidNickname.value) {
+        alert('닉네임 형식을 확인해주세요.');
+      } else if (nickname.value === originalNickname.value) {
+        alert('수정 되었습니다.');
+        await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
+      } else {
+        alert('수정 되었습니다.');
+        await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
+      }
+    } catch (err) {
+      // 에러 처리
+      alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
+    }
   }
 };
 
@@ -321,46 +382,36 @@ const updateTechstacks = async () => {
   }
 };
 
-
+// 선택된 기술을 제외한 선택 가능한 기술목록을 반환하는 메서드
+const getAvailableTechOptions = () => {
+  return techOptions.value.filter((tech) => !selectedSkills.value.map((skill) => skill.techStackName).includes(tech.techStackName));
+};
 
 // 기술 선택
 const selectSkill = (tech) => {
   if (!selectedSkills.value.includes(tech) && selectedSkills.value.length < 10) {
-    selectedSkills.value.push(tech);
+    if (!selectedSkills.value.includes(tech)) {
+      selectedSkills.value.push(tech);
+      const indexToRemove = availableTechOptions.value.indexOf(tech); // "b"의 인덱스를 찾음
+      if (indexToRemove !== -1) {
+        availableTechOptions.value.splice(indexToRemove, 1); // 인덱스 위치에서 1개 요소 삭제
+      }
+    }
   }
-// 선택 후 남은 기술이 없으면 드롭다운 닫기
-if (availableTechOptions.value.length === 0) {
+
+  if (getAvailableTechOptions.value.length === 0) {
     isDropdownOpen.value = false;
   }
+  // console.log(selectedSkills.value);
 };
 
-// 선택된 기술을 제외한 선택 가능한 기술목록
-const getAvailableTechOptions = () => {
-  return techOptions.value.filter(
-    (tech) =>
-      !selectedSkills.value.map((skill) => skill.techStackName).includes(tech.techStackName)
-  );
-};
-
-// const removeSkill = (index) => {
-//   const removedSkill = selectedSkills.value[index]; // 삭제할 기술을 가져옵니다.
-//   selectedSkills.value.splice(index, 1); // 선택된 기술에서 해당 기술 삭제
-
-//   // 기술을 availableTechOptions에 다시 추가
-//   availableTechOptions.value.push(removedSkill);
-
-//   // 삭제 후 남은 기술이 없으면 드롭다운 닫기
-//   if (availableTechOptions.value.length === 0) {
-//     isDropdownOpen.value = false;
-//   }
-// };
-
-
-// 기술 삭제
 const removeSkill = (index) => {
-  selectedSkills.value.splice(index, 1);
-};
+  const removedSkill = selectedSkills.value[index]; // 삭제할 기술을 가져옵니다.
+  selectedSkills.value.splice(index, 1); // 선택된 기술에서 해당 기술 삭제
 
+  // 기술을 availableTechOptions에 다시 추가
+  availableTechOptions.value.push(removedSkill);
+};
 
 const handlePositionChange = (positionName) => {
   // 체크된 경우
