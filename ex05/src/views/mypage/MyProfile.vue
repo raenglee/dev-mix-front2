@@ -17,55 +17,60 @@
       <!-- flex 컨테이너로 2개 항목을 가로로 정렬 -->
       <div class="m-auto flex justify-center text-cente p-3 w-full rounded-xl gap-5">
         <!-- 첫 번째 카드: 소속 -->
-        <div class="border bg-gray-50 rounded-2xl p-4   w-1/2">
+        <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 소속 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="top-4 flex items-center justify-center">
-            <div class=" text-lg font-bold px-2 rounded-full mb- text-gray-800">소속</div>
+            <div class="text-lg font-bold px-2 rounded-full text-gray-800">소속</div>
           </div>
           <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            {{ useStore.groupName }}
+            <span v-if="useStore.groupName">{{ useStore.groupName }}</span>
+            <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
           </div>
         </div>
-        <div class="border bg-gray-50 rounded-2xl p-4   w-1/2">
+        <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 지역 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
-          <div class=" top-4 flex items-center justify-center">
-            <div class=" text-lg font-bold px-2 rounded-full mb-2  text-gray-800">지역</div>
+          <div class="top-4 flex items-center justify-center">
+            <div class="text-lg font-bold px-2 rounded-full text-gray-800">지역</div>
           </div>
 
           <!-- useStore.location 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            {{ useStore.location }}
+            <span v-if="useStore.location">{{ useStore.location }}</span>
+            <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
           </div>
         </div>
       </div>
 
       <div class="flex justify-center text-cente p-3 mb-2 w-full rounded-xl gap-5">
         <!-- 첫 번째 카드: 소속 -->
-        <div class="border bg-gray-50 rounded-2xl p-4   w-1/2">
+        <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 소속 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="top-4 flex items-center justify-center">
-            <div class=" px-2 text-lg font-bold rounded-full mb-2 text-gray-800">포지션</div>
+            <div class="px-2 text-lg font-bold rounded-full text-gray-800">포지션</div>
           </div>
           <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            <template v-if="userProfile != null">
-              <div>
+            <template v-if="useStore.userProfile != null">
                 <span class="px-2" v-for="position in userProfile.positions" :key="position">
                   {{ position.positionName }}
                 </span>
-              </div>
+              </template>
+              <template v-else>
+              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
             </template>
           </div>
         </div>
+
         <div class="border bg-gray-50 rounded-2xl p-4 item-center w-1/2">
           <!-- 소속 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="top-4 flex items-center justify-center">
-            <div class=" px-2 text-lg font-bold rounded-full mb-2 text-gray-800">기술 스택</div>
+            <div class="px-2 text-lg font-bold rounded-full text-gray-800">기술 스택</div>
           </div>
-
           <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
-          <template v-if="userProfile != null">
+          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
+
+          <template v-if="useStore.userProfile != null">
             <div class="flex space-x-5 justify-center">
               <div class="py-2" v-for="tech in userProfile.techStacks" :key="tech">
                 <img :src="tech.techStackImageUrl" class="w-10 h-10" />
@@ -73,13 +78,16 @@
               </div>
             </div>
           </template>
+          <template v-else>
+              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
+            </template>
+        </div>
         </div>
       </div>
     </div>
     <p class="text-xs text-gray-500 hover:text-gray-700 text-right pr-4">회원탈퇴</p>
   </div>
-  <div>
-  </div>
+  <div></div>
   <!--😀개인 정보 끝-->
 </template>
 
