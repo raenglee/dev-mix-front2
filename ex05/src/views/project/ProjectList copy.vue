@@ -509,16 +509,19 @@ const handleClickOutside = (event) => {
 // 선택된 지역/구분을 삭제하는 메소드
 const removeLocation = () => {
   selectedLocation.value = ''; // 선택된 지역/구분 초기화
+  searchfilter();
 };
 
 // 선택된 포지션을 삭제하는 메소드
 const removePosition = () => {
   selectedPosition.value = null; // 선택된 포지션 초기화
+  searchfilter();
 };
 
 // 선택된 기술 스택을 삭제하는 메소드
 const removeTechStack = (index) => {
   selectedTech.value.splice(index, 1); // 해당 인덱스의 기술 스택 제거
+  searchfilter();
 };
 
 // 북마크만 보기

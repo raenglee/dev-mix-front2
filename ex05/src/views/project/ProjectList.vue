@@ -268,50 +268,117 @@
 
 <script setup>
 import { ref, watchEffect } from 'vue';
-import { getLocation, getPositions, getTechstacks, listProject, scrapProject, searchquery, totalPage } from '@/api/projectApi';
+import { getLocation, getPositions, getTechstacks, scrapProject, searchquery, totalPage } from '@/api/projectApi';
 import router from '@/router';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
 
+const useStore = useUserStore();
 const onlyBookmarked = ref(false);
 const onlyNeeded = ref(false);
+const totalPages = ref(0);
 const arr = ref([]); // 게시물 배열
 const isModal = ref(false); // 로그인 모달 상태
-const useStore = useUserStore();
+
+// 포지션 드롭다운
+const positionOptions = ref([]);
+const selectedPosition = ref('');
+
+// 기술/언어 드롭다운
+const techOptions = ref([]);
+const selectedTech = ref([]);
+
+// 지역/구분 드롭다운
+const locationOptions = ref([]);
+const selectedLocation = ref('');
+
+// 총 페이지 수
+const getTotalPages = async () => {
+  try {
+    // const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
+    // const position = selectedPosition.value?.positionName || '';
+
+    const tech = selectedTech.value.map((item) => item.techStackName).join(', ');
+
+    const total = await totalPage({
+      location: selectedLocation.value, // 선택된 지역
+      // positions: position, // 선택된 포지션
+      positions: selectedPosition.value.positionName,
+      techStacks: tech, // 선택된 기술 스택
+      bookmarked: false, // 필요 시 필터링 추가
+      recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용
+    });
+
+    // 한 페이지당 16개의 글, 16개 이상일 때 나머지가 남으면 페이지 수를 추가, 안남으면 페이지수를 추가하지 않음
+    const modValue = total.result % 16 > 0 ? 1 : 0;
+    const value = parseInt(total.result / 16) + modValue;
+    totalPages.value = value;
+    console.log('총 페이지 수', totalPages.value);
+  } catch (error) {
+    console.error('페이지 수 가져오기 실패:', error);
+  }
+};
+
+//검색필터
+const searchfilter = async (pageNumber = 1) => {
+  try {
+    const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
+    // const recruitmentStatus: ref('');
+    const position = selectedPosition.value?.positionName || ''; // null-safe 처리
+
+    // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
+    const currentQuery = router.currentRoute.value.query;
+    const queryParams = {
+      pageNumber: pageNumber,
+      location: selectedLocation.value,
+      positions: position,
+      techStacks: tech,
+      bookmarked: onlyBookmarked.value
+    };
+
+    // 파라미터가 이전과 다를 때만 push
+    const isParamsChanged = Object.keys(queryParams).some((key) => currentQuery[key] !== queryParams[key]);
+    if (isParamsChanged) {
+      router.push({ query: queryParams });
+    }
+
+    const res = await searchquery(queryParams);
+
+    // console.log(onlyNeeded.value);
+
+    console.log('선택된 포지션', selectedPosition.value?.positionName || '', '선택된 기술', tech);
+
+    if (res.status === 200) {
+      if (Array.isArray(res.data.result)) {
+        // arr.value.length = 0; // 기존 데이터 비우기
+        // arr.value.push(...res.data.result); // 새로운 데이터 추가
+
+        arr.value = res.data.result.map((item) => {
+          const totalRequiredCount = item.positions.reduce((sum, position) => sum + position.requiredCount, 0);
+          const totalCurrentCount = item.positions.reduce((sum, position) => sum + position.currentCount, 0);
+
+          return {
+            ...item,
+            isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
+            totalRequiredCount, // 총 모집 인원 수
+            totalCurrentCount // 총 현재 인원 수
+          };
+        });
+      } else {
+        console.error('배열이아님:', res.data);
+      }
+    } else {
+      console.error('검색필터 오류', res);
+    }
+  } catch (error) {
+    const errorMessage = error.response ? error.response : error.message || '알 수 없는 오류';
+    console.error('검색필터 실패:', errorMessage);
+  }
+};
 
 // 모달 닫기 (배경 클릭 시)
 const closeModal = () => {
   isModal.value = false;
-};
-
-// 프로젝트 가져오기
-const getProjects = async (num = 1) => {
-  try {
-    const res = await listProject(num);
-    // console.log('북마크 API 응답 데이터:', res);
-    // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
-    arr.value = res.map((item) => {
-      const totalRequiredCount = item.positions.reduce((sum, position) => {
-        return sum + position.requiredCount;
-      }, 0);
-
-      const totalCurrentCount = item.positions.reduce((sum, position) => {
-        return sum + position.currentCount; // currentCount 합산
-      }, 0);
-
-      return {
-        ...item,
-        isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
-        totalRequiredCount, // 총 필요한 인원 수
-        totalCurrentCount // 총 현재 인원 수
-      };
-    });
-
-    // applySort();
-    // console.log('프로젝트 내용: ', arr.value);
-  } catch (error) {
-    console.error('프로젝트 가져오기 오류:', error);
-  }
 };
 
 // 각 게시글과 연결
@@ -341,7 +408,7 @@ const toggleBookmark = async (item) => {
   }
 
   const newBookmarkState = !item.isBookmarked;
-  // console.log('보드아이디:', item.boardId);
+  console.log('보드아이디:', item.boardId);
   // localStorage.setItem('bookmarkedItems', JSON.stringify(arr.value)); // 로컬 스토리지에 저장
   try {
     const res = await scrapProject(item.boardId, { isBookmarked: newBookmarkState });
@@ -355,10 +422,6 @@ const toggleBookmark = async (item) => {
     console.error('북마크 오류:', error);
   }
 };
-
-// 포지션 드롭다운
-const positionOptions = ref([]);
-const selectedPosition = ref(''); // 단일 선택
 
 // 포지션 데이터 가져오기
 const selectPositions = async () => {
@@ -379,10 +442,6 @@ const selectPosition = (option) => {
   selectedPosition.value = option;
   activeDropdown.value = ''; // 드롭다운 닫기
 };
-
-// 기술/언어 드롭다운
-const techOptions = ref([]);
-const selectedTech = ref([]); // 다중 선택
 
 // 기술/언어 데이터 가져오기
 const selelctTechstacks = async () => {
@@ -407,10 +466,6 @@ const selelctTechstacks = async () => {
 const resetSelection = () => {
   selectedTech.value = [];
 };
-
-// 지역/구분 드롭다운
-const locationOptions = ref([]);
-const selectedLocation = ref(''); // 단일 선택
 
 //지역 데이터 가져오기
 const selectLocations = async () => {
@@ -475,100 +530,6 @@ const removeTechStack = (index) => {
   searchfilter();
 };
 
-
-//토탈 페이지 수
-const totalPages = ref(0);
-
-const getTotalPages = async () => {
-  try {
-    
-    const tech = selectedTech.value?.length > 0 
-      ? selectedTech.value.map((item) => item.techStackName).join(', ') 
-      : '';
-
-    const position = selectedPosition.value?.positionName || '';
-
-
-    const total = await totalPage({
-      location: selectedLocation.value,  // 선택된 지역
-      positions: position,  // 선택된 포지션
-      techStacks: tech, // 선택된 기술 스택
-      bookmarked: false,  // 필요 시 필터링 추가
-      recruitmentStatus: "",  // 예시, 추가 필터링 필요시 사용
-    });
-
-    // 한 페이지당 16개의 글, 16개 이상일 때 나머지가 남으면 페이지 수를 추가, 안남으면 페이지수를 추가하지 않음
-    const modValue = total.result % 16 > 0 ? 1 : 0;
-    const value = parseInt(total.result / 16) + modValue;
-    totalPages.value = value;
-    console.log('총 페이지 수', totalPages.value);
-  } catch (error) {
-    console.error('페이지 수 가져오기 실패:', error);
-  }
-};
-
-//검색필터
-const searchfilter = async (pageNumber = 1) => {
-  try {
-    const tech = selectedTech.value?.length > 0 
-      ? selectedTech.value.map((item) => item.techStackName).join(', ') 
-      : '';
-    // const recruitmentStatus: ref('');
-    const position = selectedPosition.value?.positionName || ''; // null-safe 처리
-
-
-     // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
-     const currentQuery = router.currentRoute.value.query;
-    const queryParams = {
-      pageNumber: pageNumber,
-      location: selectedLocation.value,
-      positions: position,
-      techStacks: tech,
-      bookmarked: onlyBookmarked.value
-    };
-
-
-    // 파라미터가 이전과 다를 때만 push
-    const isParamsChanged = Object.keys(queryParams).some(key => currentQuery[key] !== queryParams[key]);
-    if (isParamsChanged) {
-      router.push({ query: queryParams });
-    }
-
-    const res = await searchquery(queryParams);
-
-    // console.log(onlyNeeded.value);
-
-    console.log('선택된 포지션', selectedPosition.value?.positionName || '', '선택된 기술', tech);
-
-    if (res.status === 200) {
-      if (Array.isArray(res.data.result)) {
-        // arr.value.length = 0; // 기존 데이터 비우기
-        // arr.value.push(...res.data.result); // 새로운 데이터 추가
-
-        arr.value = res.data.result.map((item) => {
-          const totalRequiredCount = item.positions.reduce((sum, position) => sum + position.requiredCount, 0);
-          const totalCurrentCount = item.positions.reduce((sum, position) => sum + position.currentCount, 0);
-
-          return {
-            ...item,
-            isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
-            totalRequiredCount, // 총 모집 인원 수
-            totalCurrentCount  // 총 현재 인원 수
-          };
-        });
-
-      } else {
-        console.error('배열이아님:', res.data);
-      }
-    } else {
-      console.error('검색필터 오류', res);
-    }
-  } catch (error) {
-    const errorMessage = error.response ? error.response : error.message || '알 수 없는 오류';
-    console.error('검색필터 실패:', errorMessage);
-  }
-};
-
 // try {
 //     const res = await scrapProject(item.boardId, { isBookmarked: newBookmarkState });
 //     if (res.status === 200) {
@@ -581,13 +542,12 @@ const searchfilter = async (pageNumber = 1) => {
 //     console.error('북마크 오류:', error);
 //   }
 
-
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
   selelctTechstacks();
   selectPositions();
   selectLocations();
   getTotalPages();
-  searchfilter;
+  searchfilter();
 });
 </script>

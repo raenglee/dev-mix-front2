@@ -1,5 +1,5 @@
 <template>
-  <div class="w-4/6 mx-auto my-10 overflow-auto">
+  <div class="w-4/6 mx-auto my-10">
     <section class="container mx-auto">
       <form @submit.prevent="handleSubmit" class="gap-y-5 px-20 py-10">
         <div class="justify-center items-center text-center space-y-3 pb-8">
@@ -21,15 +21,6 @@
             <hr class="border-t-4 border-[#d10000]" />
           </div>
         </div>
-
-        <div class="sticky top-16 bg-white shadow-md p-4">
-          <h2 class="font-bold text-xl">고정된 박스</h2>
-          <p>이 박스는 16px 아래에서 고정됩니다.</p>
-        </div>
-
-
-        
-
         <div class="flex flex-wrap px-16">
           <div class="flex-none flex-col space-y-10 min-w-[300px]">
             <div class="items-center">

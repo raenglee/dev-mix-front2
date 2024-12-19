@@ -3,7 +3,7 @@ import { GLOBAL_URL } from './util';
 
 // const url = 'http://192.168.0.61:8080';
 // const url = 'http://localhost:8080';
-const url = GLOBAL_URL
+const url = `${GLOBAL_URL}`
 
 export const loginUsers = async () => {
   try {
