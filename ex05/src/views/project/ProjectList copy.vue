@@ -273,6 +273,7 @@ import router from '@/router';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
 
+const searchText = ref('');
 const onlyBookmarked = ref(false);
 const onlyNeeded = ref(false);
 const arr = ref([]); // 게시물 배열
@@ -284,50 +285,57 @@ const closeModal = () => {
   isModal.value = false;
 };
 
-// 프로젝트 가져오기
-const getProjects = async (num = 1) => {
+//토탈 페이지 수
+const totalPages = ref(0);
+
+const getTotalPages = async () => {
   try {
-    const res = await listProject(num);
-    // console.log('북마크 API 응답 데이터:', res);
-    // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
-    arr.value = res.map((item) => {
-      const totalRequiredCount = item.positions.reduce((sum, position) => {
-        return sum + position.requiredCount;
-      }, 0);
+    const total = await totalPage();
 
-      const totalCurrentCount = item.positions.reduce((sum, position) => {
-        return sum + position.currentCount; // currentCount 합산
-      }, 0);
-
-      return {
-        ...item,
-        isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
-        totalRequiredCount, // 총 필요한 인원 수
-        totalCurrentCount // 총 현재 인원 수
-      };
-    });
-
-    // applySort();
-    // console.log('프로젝트 내용: ', arr.value);
+    // 한 페이지당 16개의 글, 16개 이상일 때 나머지가 남으면 페이지 수를 추가, 안남으면 페이지수를 추가하지 않음
+    const modValue = total.result % 16 > 0 ? 1 : 0;
+    const value = parseInt(total.result / 16) + modValue;
+    totalPages.value = value;
+    // console.log('총 페이지 수', totalPages.value);
   } catch (error) {
-    console.error('프로젝트 가져오기 오류:', error);
+    console.error('페이지 수 가져오기 실패:', error);
   }
 };
+
+// // 프로젝트 가져오기
+// const getProjects = async (num = 1) => {
+//   try {
+//     const res = await listProject(num);
+//     // console.log('북마크 API 응답 데이터:', res);
+//     // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
+//     arr.value = res.map((item) => {
+//       const totalRequiredCount = item.positions.reduce((sum, position) => {
+//         return sum + position.requiredCount;
+//       }, 0);
+
+//       const totalCurrentCount = item.positions.reduce((sum, position) => {
+//         return sum + position.currentCount; // currentCount 합산
+//       }, 0);
+
+//       return {
+//         ...item,
+//         isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
+//         totalRequiredCount, // 총 필요한 인원 수
+//         totalCurrentCount // 총 현재 인원 수
+//       };
+//     });
+
+//     // applySort();
+//     // console.log('프로젝트 내용: ', arr.value);
+//   } catch (error) {
+//     console.error('프로젝트 가져오기 오류:', error);
+//   }
+// };
 
 // 각 게시글과 연결
 const viewPage = (board_id) => {
   const data = { name: 'projectview', params: { board_id: board_id } };
   router.push(data);
-};
-
-// 북마크만 보기
-const clickBookmarkonly = () => {
-  onlyBookmarked.value = !onlyBookmarked.value;
-};
-
-// 모집중만 보기
-const clickneededonly = () => {
-  onlyNeeded.value = !onlyNeeded.value;
 };
 
 // 특정 게시물의 북마크 상태 변경
@@ -355,6 +363,47 @@ const toggleBookmark = async (item) => {
     console.error('북마크 오류:', error);
   }
 };
+
+// 정렬
+// const activeButton = ref('latest');
+
+// localStorage에서 상태읽기
+// watchEffect(() => {
+//   const savedButton = localStorage.getItem('activeButton');
+//   if (savedButton) {
+//     activeButton.value = savedButton;
+//   }
+// });
+
+// 클릭된 버튼을 localStorage에 저장
+// const setActive = (button) => {
+//   activeButton.value = button;
+//   localStorage.setItem('activeButton', button); // localStorage에 버튼 상태 저장
+// };
+
+// const latestSort = () => {
+//   // arr.value.sort((a, b) => b.boardId - a.boardId);
+//   setActive('latest');
+// };
+// const famousSort = () => {
+//   // arr.value.sort((a, b) => b.viewCount - a.viewCount);
+//   setActive('famous');
+// };
+// const registerSort = () => {
+//   // arr.value.sort((a, b) => a.boardId - b.boardId);
+//   setActive('register');
+// };
+
+// 선택된 정렬을 배열에 적용
+// const applySort = () => {
+//   if (activeButton.value === 'latest') {
+//     arr.value.sort((a, b) => b.boardId - a.boardId);
+//   } else if (activeButton.value === 'famous') {
+//     arr.value.sort((a, b) => b.viewCount - a.viewCount);
+//   } else if (activeButton.value === 'register') {
+//     arr.value.sort((a, b) => a.boardId - b.boardId);
+//   }
+// };
 
 // 포지션 드롭다운
 const positionOptions = ref([]);
@@ -460,105 +509,83 @@ const handleClickOutside = (event) => {
 // 선택된 지역/구분을 삭제하는 메소드
 const removeLocation = () => {
   selectedLocation.value = ''; // 선택된 지역/구분 초기화
-  searchfilter();
 };
 
 // 선택된 포지션을 삭제하는 메소드
 const removePosition = () => {
   selectedPosition.value = null; // 선택된 포지션 초기화
-  searchfilter();
 };
 
 // 선택된 기술 스택을 삭제하는 메소드
 const removeTechStack = (index) => {
   selectedTech.value.splice(index, 1); // 해당 인덱스의 기술 스택 제거
-  searchfilter();
 };
 
+// 북마크만 보기
+const clickBookmarkonly = () => {
+  onlyBookmarked.value = !onlyBookmarked.value;
+};
 
-//토탈 페이지 수
-const totalPages = ref(0);
-
-const getTotalPages = async () => {
-  try {
-    
-    const tech = selectedTech.value?.length > 0 
-      ? selectedTech.value.map((item) => item.techStackName).join(', ') 
-      : '';
-
-    const position = selectedPosition.value?.positionName || '';
-
-
-    const total = await totalPage({
-      location: selectedLocation.value,  // 선택된 지역
-      positions: position,  // 선택된 포지션
-      techStacks: tech, // 선택된 기술 스택
-      bookmarked: false,  // 필요 시 필터링 추가
-      recruitmentStatus: "",  // 예시, 추가 필터링 필요시 사용
-    });
-
-    // 한 페이지당 16개의 글, 16개 이상일 때 나머지가 남으면 페이지 수를 추가, 안남으면 페이지수를 추가하지 않음
-    const modValue = total.result % 16 > 0 ? 1 : 0;
-    const value = parseInt(total.result / 16) + modValue;
-    totalPages.value = value;
-    console.log('총 페이지 수', totalPages.value);
-  } catch (error) {
-    console.error('페이지 수 가져오기 실패:', error);
-  }
+// 모집중만 보기
+const clickneededonly = () => {
+  onlyNeeded.value = !onlyNeeded.value;
 };
 
 //검색필터
-const searchfilter = async (pageNumber = 1) => {
+const searchfilter = async () => {
   try {
-    const tech = selectedTech.value?.length > 0 
-      ? selectedTech.value.map((item) => item.techStackName).join(', ') 
-      : '';
+    const tech = selectedTech.value.map((item) => item.techStackName).join(', ');
     // const recruitmentStatus: ref('');
-    const position = selectedPosition.value?.positionName || ''; // null-safe 처리
+    // const position = selectedPosition.value ? selectedPosition.value.positionName : ''; // 기본값을 빈 문자열로 설정
 
-
-     // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
-     const currentQuery = router.currentRoute.value.query;
-    const queryParams = {
-      pageNumber: pageNumber,
+    router.push({
+      query: {
+        location: selectedLocation.value,
+        positions: selectedPosition.value.positionName,
+        // positions:position,
+        tech: tech
+        // bookmarked: item.isBookmarked,
+        // recruitmentStatus: onlyNeeded.value
+      }
+    });
+    const res = await searchquery({
+      // pageNumber:1,
+      // pageSize:16,
       location: selectedLocation.value,
-      positions: position,
-      techStacks: tech,
-      bookmarked: onlyBookmarked.value
-    };
+      positions: selectedPosition.value.positionName,
+      // positions:position,
+      tech: tech
 
-
-    // 파라미터가 이전과 다를 때만 push
-    const isParamsChanged = Object.keys(queryParams).some(key => currentQuery[key] !== queryParams[key]);
-    if (isParamsChanged) {
-      router.push({ query: queryParams });
-    }
-
-    const res = await searchquery(queryParams);
+      // bookmarked: item.isBookmarked
+      // recruitmentStatus: onlyNeeded.value
+    });
 
     // console.log(onlyNeeded.value);
 
-    console.log('선택된 포지션', selectedPosition.value?.positionName || '', '선택된 기술', tech);
+    console.log('선택된 포지션', selectedPosition.value.positionName, '선택된 기술', tech);
 
     if (res.status === 200) {
       if (Array.isArray(res.data.result)) {
-        // arr.value.length = 0; // 기존 데이터 비우기
+        arr.value.length = 0; // 기존 데이터 비우기
         // arr.value.push(...res.data.result); // 새로운 데이터 추가
 
         arr.value = res.data.result.map((item) => {
-          const totalRequiredCount = item.positions.reduce((sum, position) => sum + position.requiredCount, 0);
-          const totalCurrentCount = item.positions.reduce((sum, position) => sum + position.currentCount, 0);
+          const totalRequiredCount = item.positions.reduce((sum, position) => {
+            return sum + position.requiredCount;
+          }, 0);
+
+          const totalCurrentCount = item.positions.reduce((sum, position) => {
+            return sum + position.currentCount; // currentCount 합산
+          }, 0);
 
           return {
             ...item,
-            isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
-            totalRequiredCount, // 총 모집 인원 수
-            totalCurrentCount  // 총 현재 인원 수
+            totalRequiredCount, // 총 필요한 인원 수
+            totalCurrentCount // 총 현재 인원 수
           };
         });
-
       } else {
-        console.error('배열이아님:', res.data);
+        console.error('배열이아님:', res.data.result);
       }
     } else {
       console.error('검색필터 오류', res);
@@ -566,6 +593,16 @@ const searchfilter = async (pageNumber = 1) => {
   } catch (error) {
     const errorMessage = error.response ? error.response : error.message || '알 수 없는 오류';
     console.error('검색필터 실패:', errorMessage);
+  }
+};
+
+// 프로젝트 가져오기
+const getProjects = async () => {
+  try {
+    const res = await searchfilter();
+    console.log('프로젝트 가져오기:', res);
+  } catch (error) {
+    console.error('프로젝트 가져오기 오류:', error);
   }
 };
 
@@ -581,13 +618,36 @@ const searchfilter = async (pageNumber = 1) => {
 //     console.error('북마크 오류:', error);
 //   }
 
-
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
+  getProjects();
   selelctTechstacks();
   selectPositions();
   selectLocations();
   getTotalPages();
   searchfilter;
 });
+
+// onUnmounted(() => {
+//   window.removeEventListener('click', handleClickOutside);
+// });
+
+// page번호 선택했을때 호출하는 함수.
+// const selectPageNum = async(num)=>{
+//   const res = await listProject(num);
+//   // arr.value = res;
+//   // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
+//   arr.value = res.map((item) => {
+//       const totalRequiredCount = item.positions.reduce((sum, position) => {
+//         return sum + position.requiredCount;
+//       }, 0);
+
+//       return {
+//         ...item,
+//         isBookmarked: false, // 북마크 상태 초기화
+//         totalRequiredCount // 총 인원 수
+//       };
+//     });
+//   console.log(res);
+// }
 </script>
