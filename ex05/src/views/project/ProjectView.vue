@@ -29,7 +29,6 @@
 
 
         
-
         <div class="flex flex-wrap px-16">
           <div class="flex-none flex-col space-y-10 min-w-[300px]">
             <div class="items-center">
