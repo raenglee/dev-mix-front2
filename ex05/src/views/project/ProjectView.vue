@@ -55,15 +55,15 @@
                 <p class="w-1/3 text-left">{{ position.positionName }}</p>
                 <p class="w-1/3 text-center">{{ position.currentCount }}/{{ position.requiredCount }}</p>
                 <button
-                  v-if="!(nickname == loggedInUserNickname) && !isPending"
+                  v-if="!(nickname == loggedInUserNickname) && !isApplied"
                   @click="openModal(position.positionName)"
                   class="border border-gray-200 rounded-full whitespace-nowrap px-4 hover:bg-gray-200"
                 >
                   지원
                 </button>
 
-                <button v-if="isPending && nickname !== loggedInUserNickname" class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
-                  승인대기
+                <button v-if="isApplied && nickname !== loggedInUserNickname" class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
+                  이미 지원하였습니다.
                 </button>
 
                 <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp"
@@ -221,6 +221,8 @@ const techStacks = ref([]);
 const positions = ref([]);
 const recruitmentStatus = ref('');
 const files = ref([]);
+const isApplied = ref(false);
+
 
 watchEffect(async () => {
   const res = await getProjectView(route.params.board_id);
@@ -237,6 +239,8 @@ watchEffect(async () => {
     techStacks.value = res.data.result.techStackDtoList;
     positions.value = res.data.result.positionDtoList;
     recruitmentStatus.value = res.data.result.recruitmentStatus;
+    isApplied.value = res.data.result.applied;
+    console.log(isApplied.value);
     // console.log('기술스택확인', res.data.result.techStackDtoList);
     // console.log('포지션 배열 확인', res.data.result.positionDtoList);
     // console.log('이미지', res.data.result.imageUrl);

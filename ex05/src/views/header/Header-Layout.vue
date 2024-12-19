@@ -19,34 +19,28 @@
                   'text-white hover:bg-[#ffffff] hover:text-[#d10000]': !isAlarmDropdownOpen
                 }"
               /> -->
-              <p
-                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
-                @mouseenter="isAlarmHovered = true"
-                @mouseleave="isAlarmHovered = false"
-                :class="{
+              <p class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
+                @mouseenter="isAlarmHovered = true" @mouseleave="isAlarmHovered = false" :class="{
                   'text-[#d10000] bg-red-50': isAlarmHovered,
                   'text-white': !isAlarmHovered
-                }"
-              >
-              알람
+                }">
+                알람
               </p>
               <!-- 알람 드롭다운 메뉴 -->
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
-                <div
-                  v-if="isAlarmDropdownOpen"
-                  @mouseenter="isAlarmHovered = true"
-                  @mouseleave="isAlarmHovered = false"
-                  class="absolute right-0 top-10 w-max min-w-[250px] max-w-[500px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
-                >
+                <div v-if="isAlarmDropdownOpen" @mouseenter="isAlarmHovered = true" @mouseleave="isAlarmHovered = false"
+                  class="absolute right-0 top-10 w-max min-w-[250px] max-w-[500px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]">
                   <template v-if="notifications?.length > 0">
                     <div class="cursor-pointer">
                       <h1 class="text-2xl p-3 bg-white">💨 알림</h1>
                       <div class="p-3 bg-slate-100">
                         <ul class="text-sm mt-2">
-                          <li v-for="notification in notifications" :key="notification.id" class="p-2 border border-gray-400 m-2 bg-white">
+                          <li v-for="notification in notifications" :key="notification.id"
+                            class="p-2 border border-gray-400 m-2 bg-white">
                             {{ notification.content }}
                             <!-- 알림 내용을 표시 -->
-                            <button class="hover:bg-slate-300 p-2 m-2 border border-gray-300 outline-none" @click="markAsRead(notification.id)">읽음 처리</button>
+                            <button class="hover:bg-slate-300 p-2 m-2 border border-gray-300 outline-none"
+                              @click="markAsRead(notification.id)">읽음 처리</button>
                           </li>
                         </ul>
                       </div>
@@ -56,43 +50,38 @@
               </transition>
             </div>
 
-            <RouterLink
-              to="/projectcreate"
+            <RouterLink to="/projectcreate"
               class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer text-[1.3rem]"
-              :class="hovered ? 'text-[#d10000] bg-red-50' : 'text-white'"
-              @mouseenter="hovered = true"
-              @mouseleave="hovered = false"
-            >
+              :class="hovered ? 'text-[#d10000] bg-red-50' : 'text-white'" @mouseenter="hovered = true"
+              @mouseleave="hovered = false">
               팀원모집하기
             </RouterLink>
             <div class="relative" @mouseenter="openPeopleDropdown" @mouseleave="closePeopleDropdown">
-              <p
-                class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
-                @mouseenter="isPeopleHovered = true"
-                @mouseleave="isPeopleHovered = false"
-                :class="{ 'text-[#d10000] bg-red-50': isPeopleHovered, 'text-white': !isPeopleHovered }"
-              >
+              <p class="px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
+                @mouseenter="isPeopleHovered = true" @mouseleave="isPeopleHovered = false"
+                :class="{ 'text-[#d10000] bg-red-50': isPeopleHovered, 'text-white': !isPeopleHovered }">
                 내정보
               </p>
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
-                <div
-                  v-if="isPeopleDropdownOpen"
-                  @mouseenter="isPeopleHovered = true"
+                <div v-if="isPeopleDropdownOpen" @mouseenter="isPeopleHovered = true"
                   @mouseleave="isPeopleHovered = false"
-                  class="absolute right-0 top-10 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
-                >
+                  class="absolute right-0 top-10 w-max min-w-[150px] max-w-[400px] bg-red-50 rounded-tl-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]">
                   <ul class="text-sm">
                     <li>
                       <p class="px-4 py-2 font-bold text-lg">반갑습니다 {{ useStore.nickname }} 님</p>
                     </li>
                     <li>
-                      <RouterLink to="/mypage/myprofile" class="block px-4 py-2 text-gray-800 hover:bg-[#d1000020] hover:font-bold"> 마이 페이지 </RouterLink>
+                      <RouterLink to="/mypage/myprofile"
+                        class="block px-4 py-2 text-gray-800 hover:bg-[#d1000020] hover:font-bold">
+                        마이 페이지 </RouterLink>
                     </li>
                     <li>
-                      <RouterLink to="/projectapplicants" class="block px-4 py-2 text-gray-800 hover:bg-[#d1000020] hover:font-bold">지원자 확인</RouterLink>
+                      <RouterLink to="/projectapplicants"
+                        class="block px-4 py-2 text-gray-800 hover:bg-[#d1000020] hover:font-bold">지원자 확인</RouterLink>
                     </li>
                     <li>
-                      <button @click="logout" class="block w-full px-4 py-2 text-gray-800 hover:bg-[#d1000020] text-left hover:font-bold">로그아웃</button>
+                      <button @click="logout"
+                        class="block w-full px-4 py-2 text-gray-800 hover:bg-[#d1000020] text-left hover:font-bold">로그아웃</button>
                     </li>
                   </ul>
                 </div>
@@ -122,7 +111,7 @@
 
 <!--스크립트-->
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watchEffect, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { RouterLink } from 'vue-router';
 import { loginUsers } from '@/api/loginApi';
@@ -164,21 +153,29 @@ const saveNotificationsToStorage = () => {
   localStorage.setItem('notifications', JSON.stringify(notifications.value));
 };
 
+const token = ref(localStorage.getItem('token') || '');
+
 // SSE 초기화
 const initializeSSE = () => {
-  const token = localStorage.getItem('token'); // 사용자 인증 토큰
 
-  if (!token) {
+  if (eventSource.value) {
+    eventSource.value.close(); // 기존 SSE 연결 종료 새로운 토큰 발급 받았을시에.
+    eventSource.value = null;
+  }
+
+  if (!token.value) {
     console.error('토큰이 없습니다. SSE 연결을 중단합니다.');
     return;
   }
 
-  const sseUrl = `http://localhost:8080/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
+  const sseUrl = `http://localhost:8080/api/v1/notifications/connect?token=${encodeURIComponent(token.value)}`;
   eventSource.value = new EventSource(sseUrl);
 
+  console.log('test');
+
   // SSE 연결 성공
-  eventSource.value.onopen = () => {
-    console.log('SSE 연결이 성공적으로 열렸습니다.');
+  eventSource.value.onopen = (event) => {
+    console.log('SSE 연결이 성공적으로 열렸습니다.', event);
   };
 
   // SSE 데이터 수신
@@ -193,12 +190,25 @@ const initializeSSE = () => {
   // SSE 데이터 수신
   eventSource.value.addEventListener('sse', (event) => {
     try {
+
       const data = JSON.parse(event.data);
 
-      // 중복 알림 방지 (ID 기준)
-      if (!notifications.value.some((notification) => notification.id === data.id)) {
-        notifications.value.push(data);
-        saveNotificationsToStorage(); // 새로운 알림 저장
+      // 데이터가 배열인 경우 처리
+      if (Array.isArray(data)) {
+        data.forEach(notification => {
+          // 중복 알림 방지 (ID 기준)
+          if (!notifications.value.some((n) => n.id === notification.id)) {
+            notifications.value.push(notification);
+            saveNotificationsToStorage(); // 새로운 알림 저장
+          }
+        });
+      } else {
+        // 단일 객체일 경우 처리
+        const notification = data;
+        if (!notifications.value.some((n) => n.id === notification.id)) {
+          notifications.value.push(notification);
+          saveNotificationsToStorage(); // 새로운 알림 저장
+        }
       }
     } catch (error) {
       console.error('SSE 데이터 처리 중 오류:', error);
@@ -219,10 +229,32 @@ const initializeSSE = () => {
   };
 };
 
+
+// 토큰이 변경될 때마다 SSE를 재연결
+watch(token, (newToken) => {
+  if (newToken) {
+    initializeSSE();
+  }
+});
+
+// 로그인 또는 토큰 갱신 시
+const onTokenUpdate = (newToken) => {
+  console.log('test');
+  localStorage.setItem('token', newToken);
+  token.value = newToken; // 반응형 상태 갱신
+};
+
+// 최초 SSE 연결
+if (token.value) {
+  initializeSSE();
+}
+
 // 컴포넌트 마운트 시 처리
 onMounted(() => {
   loadNotificationsFromStorage(); // 로컬 스토리지에서 알림 복원
-  initializeSSE(); // SSE 연결 초기화
+  if (token.value) {
+    initializeSSE(); // SSE 연결 초기화
+  }
 });
 
 // 컴포넌트 언마운트 시 처리
@@ -252,8 +284,12 @@ const router = useRouter();
 const useStore = useUserStore();
 
 watchEffect(async () => {
+
+
   if (route.query.token) {
     localStorage.setItem('token', route.query.token);
+
+    token.value = route.query.token;
 
     try {
       const data = await loginUsers();
@@ -269,8 +305,12 @@ watchEffect(async () => {
 
         // 토큰을 로컬스토리지에 저장 (브라우저 새로 고침 시 토큰을 유지)
         localStorage.setItem('token', token);
+
         router.push('/'); // 메인 페이지로 이동
       }
+
+
+
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -307,8 +347,27 @@ const closeAlarmDropdown = () => {
 };
 
 // 로그아웃 함수
-const logout = () => {
+const logout = async () => {
+  
+
+  try{
+    const data = await loginUsers();
+    const response = axios.get(`http://localhost:8080/api/v1/notifications/${data.result.username}`);
+        if (response.status === 200) {
+          console.log('Disconnected successfully');
+        }
+
+  } catch(error) {
+    console.error(error);
+  }
+
+  if (eventSource.value) {
+    eventSource.value.close();
+  }
+
+
   localStorage.removeItem('token');
+
   useStore.logout();
   alert('로그아웃 성공');
   router.push('/');

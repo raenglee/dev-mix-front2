@@ -23,7 +23,12 @@ export const listProject = async (pageNumber = 1, pageSize = 16) => {
 export const getProjectView = async (board_id) => {
   // console.log('게시판 주소: ', `${url}/${board_id}`);
   try {
-    const res = await axios.get(`${url}/${board_id}`);
+    const res = await axios.get(`${url}/${board_id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
     return res;
   } catch (e) {
     console.log('프로젝트 상세페이지 가져오기 Api 에러 발생', e);
@@ -32,9 +37,9 @@ export const getProjectView = async (board_id) => {
 };
 
 // 프로젝트 총 페이지 수
-export const totalPage = async () => {
+export const totalPage = async (params) => {
   try {
-    const res = await axios.get(`${url}/total-boards`);
+    const res = await axios.get(`${url}/total-boards`, { params });
     return res.data;
   } catch (e) {
     console.log('토탈 페이지수 Api 에러 발생', e);
