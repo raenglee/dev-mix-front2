@@ -16,8 +16,7 @@
               <!-- 드롭다운 버튼 -->
               <div
                 @click="toggleDropdown('location')"
-                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray
-                       rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
               >
                 <span class="truncate w-full" v-if="selectedLocation">{{ selectedLocation }}</span>
                 <span class="truncate w-full text-gray-800" v-else>지역 / 구분</span>
@@ -50,7 +49,7 @@
             <!-- 드롭다운 버튼 -->
             <div
               @click="toggleDropdown('position')"
-              class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+              class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
             >
               <span class="truncate w-full" v-if="selectedPosition">{{ selectedPosition.positionName }}</span>
               <span class="truncate w-full text-gray-800" v-else>포지션</span>
@@ -78,8 +77,7 @@
 
           <!-- 기술/언어 드롭다운 -->
           <div class="relative">
-            <div @click="toggleDropdown('tech')" 
-            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
+            <div @click="toggleDropdown('tech')" class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
               <span class="text-gray-800">기술 / 언어</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
@@ -127,7 +125,7 @@
           </div>
           <!-- <div class="flex flex-wrap gap-3"> -->
           <button
-            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
+            class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
             :class="{
               'bg-[#d10000] text-white': onlyBookmarked,
               'bg-white text-black': !onlyBookmarked
@@ -138,24 +136,16 @@
           </button>
 
           <button
-            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
+            class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
             :class="{
               'bg-[#d10000] text-white': onlyNeeded,
               'bg-white text-black': !onlyNeeded
             }"
-            @click="
-              clickneededonly;
-              searchfilter();
-            "
+            @click="clickneededonly"
           >
             모집중만 보기
           </button>
           <!-- </div> -->
-        </div>
-        <!-- text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500 -->
-        <div class="text-[1.1rem] flex items-center border border-gray-300 rounded-full px-4 py-1 bg-gray-100">
-          <input type="text" placeholder="# 검색어를 입력하세요" class="flex-grow focus:outline-none bg-gray-100" v-model="searchText" />
-          <button><img src="/img/search.png" class="h-5 w-5" /></button>
         </div>
       </div>
       <!--서치 박스 끝-->
@@ -347,8 +337,6 @@ const viewPage = (board_id) => {
   const data = { name: 'projectview', params: { board_id: board_id } };
   router.push(data);
 };
-
-
 
 // 특정 게시물의 북마크 상태 변경
 const toggleBookmark = async (item) => {
@@ -555,7 +543,7 @@ const searchfilter = async () => {
         location: selectedLocation.value,
         positions: selectedPosition.value.positionName,
         // positions:position,
-        tech: tech,
+        tech: tech
         // bookmarked: item.isBookmarked,
         // recruitmentStatus: onlyNeeded.value
       }
@@ -566,8 +554,8 @@ const searchfilter = async () => {
       location: selectedLocation.value,
       positions: selectedPosition.value.positionName,
       // positions:position,
-      tech: tech,
- 
+      tech: tech
+
       // bookmarked: item.isBookmarked
       // recruitmentStatus: onlyNeeded.value
     });
@@ -582,21 +570,20 @@ const searchfilter = async () => {
         // arr.value.push(...res.data.result); // 새로운 데이터 추가
 
         arr.value = res.data.result.map((item) => {
-      const totalRequiredCount = item.positions.reduce((sum, position) => {
-        return sum + position.requiredCount;
-      }, 0);
+          const totalRequiredCount = item.positions.reduce((sum, position) => {
+            return sum + position.requiredCount;
+          }, 0);
 
-      const totalCurrentCount = item.positions.reduce((sum, position) => {
-        return sum + position.currentCount; // currentCount 합산
-      }, 0);
+          const totalCurrentCount = item.positions.reduce((sum, position) => {
+            return sum + position.currentCount; // currentCount 합산
+          }, 0);
 
-      return {
-        ...item,
-        totalRequiredCount, // 총 필요한 인원 수
-        totalCurrentCount // 총 현재 인원 수
-      };
-    });
-  
+          return {
+            ...item,
+            totalRequiredCount, // 총 필요한 인원 수
+            totalCurrentCount // 총 현재 인원 수
+          };
+        });
       } else {
         console.error('배열이아님:', res.data.result);
       }
@@ -614,7 +601,6 @@ const getProjects = async () => {
   try {
     const res = await searchfilter();
     console.log('프로젝트 가져오기:', res);
-
   } catch (error) {
     console.error('프로젝트 가져오기 오류:', error);
   }
