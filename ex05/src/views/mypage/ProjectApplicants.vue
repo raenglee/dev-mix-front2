@@ -18,7 +18,7 @@
         <table class="min-w-full border-separate border-spacing-0 rounded-lg overflow-hidden">
           <thead class="bg-gray-50">
             <tr>
-              <th class="border-b text-center p-3 text-gray-800 rounded-tl-lg">신청자</th>
+              <th class="border-b text-center p-3 text-gray-800 rounded-tl-lg">닉네임</th>
               <th class="border-b text-center p-3 text-gray-800">프로젝트명</th>
               <th class="border-b text-center p-3 text-gray-800">포지션</th>
               <th class="border-b text-center p-3 text-gray-800">내용</th>
@@ -36,14 +36,18 @@
             </tr>
           </tbody>
 
-          <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center">
+          <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100">
             <tr>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400">{{ applicant.userNickname }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400"
+                  @click.stop="openProfile(applicant.userId)">{{ applicant.userNickname }}</td>
               <RouterLink :to="`/projectview/${applicant.boardId}`">
                 <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer hover:text-gray-400" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
               </RouterLink>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap">{{ applicant.positionName }}</td>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400" @click="openModal(applicant)">
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer"
+                  @click="openModal(applicant)">{{ applicant.positionName }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate
+                        max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400"
+                  @click="openModal(applicant)">
                 {{ applicant.applyNote }}
               </td>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap">{{ applicant.applyDate }}</td>
@@ -62,9 +66,9 @@
           </div>
           <div class="flex flex-col mb-4 gap-2">
             <p class="font-bold">지원 직군</p>
-            <p class="text-sm bg-gray-100 rounded-lg p-4">{{ selectedApplicant?.positionName }}</p>
+            <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.positionName }}</p>
             <p class="font-bold">지원 사유 및 한마디</p>
-            <p class="text-sm bg-gray-100 rounded-lg p-4">{{ selectedApplicant?.applyNote }}</p>
+            <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.applyNote }}</p>
           </div>
           <div class="flex justify-center gap-3 mb-4">
             <button type="button" class="border border-gray-300 bg-gray-300 rounded-full py-1 px-3" @click="reject">거절</button>
@@ -74,6 +78,12 @@
           <p class="text-center text-sm text-gray-500 mb-3">승인을 누르시면, 해당 지원자는 정식으로 프로젝트 참가자가 됩니다.</p>
         </div>
       </div>
+
+      <!-- 프로필 모달-->
+      <UserProfile
+                :isModal="isModal"
+                :user_id="user_id"
+                @update:isModal="closeProfileModal" />
 
       <!-- 승인대기 모달
       <div v-if="isConfirmModal" class="modal-container" @click.self="closeConfirmModal">
@@ -91,21 +101,37 @@
 import { admitApplicants, getApplicants } from '@/api/applyApi';
 import { useUserStore } from '@/store/userStore';
 import { ref, watchEffect } from 'vue';
+import UserProfile from '@/views/Component/UserProfile.vue';
 
 // user_id 가져오기
 const useStore = useUserStore();
 const applicantsarr = ref([]);
 
+// //유저프로필 모달
+const isModal = ref(false);  // 모달의 가시성 상태
+const user_id = ref(null);  // 클릭된 유저의 ID
+
+// // 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+const openProfile = (userId) => {
+  user_id.value = userId;
+  isModal.value = true;  // 모달을 열기
+  console.log(user_id.value);
+  console.log(isModal.value);
+};
+
+// 회원정보 모달을 닫는 함수
+const closeProfileModal = () => {
+  isModal.value = false;
+};
+
 // 지원자 정보 Api
 const applicants = async () => {
   try {
     const res = await getApplicants(useStore.userId);
-    // console.log(useStore.userId);
-    // console.log('지원자리스트 확인: ', res.data);
-
     // 데이터 구조 확인 후, applicantsarr에 할당
     if (Array.isArray(res.data.result)) {
       applicantsarr.value = res.data.result;
+      console.log(res.data.result);
     } else {
       console.error('지원자 res, data, result 확인해보기: ', res);
     }
@@ -120,6 +146,7 @@ const selectedApplicant = ref({
   boardId: 0,
   userNickname: '',
   positionName: '',
+  applyNote: '',
   participationStatus: ''
 });
 
@@ -135,11 +162,11 @@ const isConfirmModal = ref(false);
 
 //지원자 거절 Api
 const reject = async () => {
-  console.log('거절 시 지원정보', selectedApplicant.value);
+  //console.log('거절 시 지원정보', selectedApplicant.value);
 
   if (selectedApplicant.value) {
     const { boardId, userNickname, positionName, participationStatus } = selectedApplicant.value;
-    console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
+    // console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
 
     const data = {
       boardId,
@@ -151,7 +178,7 @@ const reject = async () => {
     try {
       const res = await admitApplicants(data); // API 호출
       if (res.status === 200) {
-        alert('거절되었습니다.');
+        alert('신청을 거절하였습니다.');
         isConfirmModal.value = true;
         closeModal(); // 모달 닫기
         applicants(); // 지원자 목록 업데이트
@@ -166,11 +193,11 @@ const reject = async () => {
 
 //지원자 승인 Api
 const admit = async () => {
-  console.log('승인 시 지원정보', selectedApplicant.value);
+  //console.log('승인 시 지원정보', selectedApplicant.value);
 
   if (selectedApplicant.value) {
     const { boardId, userNickname, positionName, participationStatus } = selectedApplicant.value;
-    console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
+    // console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
 
     const data = {
       boardId,
@@ -183,7 +210,7 @@ const admit = async () => {
       const res = await admitApplicants(data);
       if (res.status === 200) {
         isConfirmModal.value = true;
-        alert('승인하였습니다.');
+        alert('신청을 승인하였습니다.');
         closeModal(); // 모달 닫기
         applicants();
       } else {
@@ -195,7 +222,7 @@ const admit = async () => {
   }
 };
 
-// 모달을 닫기 위한 함수
+// 지원정보 모달을 닫기 위한 함수
 const closeModal = () => {
   showModal.value = false;
 };

@@ -150,6 +150,7 @@ const isDuplicate = ref(false); //닉넴중복
 const isValidNickname = ref(false); //형식틀림
 const isDuplicateChecked = ref(false); // 중복확인 여부
 
+const originalNickname = ref(useStore.nickname); // 예시: 기존 닉네임을 불러온 데이터로 대체
 const nickname = ref(useStore.nickname);
 const groupName = ref(useStore.groupName);
 const positionList = ref([]);
@@ -165,7 +166,7 @@ const techOptions = ref([]); // 서버에서 전달 받은 기술 저장
 const checkNicknameAvailability = async () => {
   const res = await checkNickname(nickname.value); // API 호출
   try {
-    if (res.code === 'SUCCESS') {
+    if (res.code === 'SUCCESS' || nickname.value === originalNickname.value) {
       isDuplicate.value = false; //중복닉
       isValidNickname.value = false; // 형식오류
       isDuplicateChecked.value = true;
@@ -338,7 +339,7 @@ const handleSubmit = async () => {
         alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요.');
       } else if (isValidNickname.value) {
         alert('닉네임 형식을 확인해주세요.');
-      } else if (nickname.value) {
+      } else if (nickname.value === originalNickname.value) {
         alert('수정 되었습니다.');
         await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
       } else {

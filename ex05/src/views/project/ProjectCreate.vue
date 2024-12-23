@@ -117,7 +117,7 @@
                   @click="selectSkill(tech)"
                   class="cursor-pointer text-sm flex flex-col items-center gap-2 hover:bg-gray-100 p-2 rounded-lg transition"
                 >
-                  <img :src="tech.imageUrl" class="w-12 h-12 object-cover hover:scale-110 transition" />
+                  <img :src="tech.imageUrl" class="w-10 h-10 object-cover hover:scale-110 transition" />
                   <p class="text-center text-gray-700">{{ tech.techStackName }}</p>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="w-4/6 mx-auto my-10">
     <section class="container mx-auto">
-      <form @submit.prevent="handleSubmit" class="gap-y-5 py-10">
+      <form @submit.prevent="handleSubmit" class="gap-y-5 px-20 py-10">
         <div class="justify-center items-center text-center space-y-3 pb-8">
           <p class="border border-[#d10000] rounded-full px-4 text-center m-auto inline-block">
             {{ recruitmentStatus }}
@@ -21,35 +21,31 @@
             <hr class="border-t-4 border-[#d10000]" />
           </div>
         </div>
+        <div class="flex flex-wrap px-16">
+          <div class="flex-none flex-col space-y-10 min-w-[300px]">
+            <div class="items-center">
+              <p for="region" class="font-bold text-lg pr-2">지역 / 구분</p>
+              <p class="py-2 pl-2">{{ location }}</p>
+              <!-- 지역 정보 표시 -->
+            </div>
+            <div class="items-center">
+              <p class="font-bold pr-2 text-lg">진행 기간</p>
+              <p class="py-2 pl-2">{{ projectPeriod }}</p>
+            </div>
 
-        <div class="flex">
-          <!--상세정보 스크롤 따라 내려오도록-->
-          <div class="sticky top-8 py-4 my-10 bg-white text-gray-700 rounded border shadow-md w-1/3">
-            <div class="flex flex-wrap px-16">
-              <div class="flex-none flex-col space-y-10 min-w-[300px]">
-                <div class="items-center">
-                  <p for="region" class="font-bold text-lg pr-2">지역 / 구분</p>
-                  <p class="py-2 pl-2">{{ location }}</p>
-                  <!-- 지역 정보 표시 -->
-                </div>
-                <div class="items-center">
-                  <p class="font-bold pr-2 text-lg">진행 기간</p>
-                  <p class="py-2 pl-2">{{ projectPeriod }}</p>
-                </div>
-
-                <div class="flex flex-col col-span-3 items-center">
-                  <p class="font-bold text-lg w-full">기술 / 언어</p>
-                  <div class="flex items-center w-full justify-start space-x-4">
-                    <div class="flex flex-col items-center space-y-2 py-2" v-for="tech in techStacks" :key="tech.techStackName">
-                      <!-- 이미지의 크기 맞추기 -->
-                      <div class="w-10 h-10 overflow-hidden">
-                        <img :src="tech.imageUrl" class="w-full h-full object-cover" />
-                      </div>
-                      <span class="text-sm text-center">{{ tech.techStackName }}</span>
-                    </div>
+            <div class="flex flex-col col-span-3 items-center">
+              <p class="font-bold text-lg w-full">기술 / 언어</p>
+              <div class="flex items-center w-full justify-start space-x-4">
+                <div class="flex flex-col items-center space-y-2 py-2" v-for="tech in techStacks" :key="tech.techStackName">
+                  <!-- 이미지의 크기 맞추기 -->
+                  <div class="w-10 h-10 overflow-hidden">
+                    <img :src="tech.imageUrl" class="w-full h-full object-cover" />
                   </div>
+                  <span class="text-sm text-center">{{ tech.techStackName }}</span>
                 </div>
               </div>
+            </div>
+          </div>
 
           <div class="min-w-[270px]">
             <p class="font-bold text-lg pr-2">모집 마감일</p>
@@ -63,19 +59,18 @@
                 <p class="w-1/3 text-left">{{ position.positionName }}</p>
                 <p class="w-1/3 text-center">{{ position.currentCount }}/{{ position.requiredCount }}</p>
                 <button
-                  v-if="!(nickname == loggedInUserNickname) && !isApplied"
+                  v-if="!(nickname == loggedInUserNickname) && !isPending"
                   @click="openModal(position.positionName)"
                   class="border border-gray-200 rounded-full whitespace-nowrap px-4 hover:bg-gray-200"
                 >
                   지원
                 </button>
 
-                <button v-if="isApplied && nickname !== loggedInUserNickname" class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
-                  이미 지원하였습니다.
+                <button v-if="isPending && nickname !== loggedInUserNickname" class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
+                  승인대기
                 </button>
 
-                <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp"
-                 class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
+                <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp" class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
                   지원자 확인
                 </button>
 
@@ -87,7 +82,7 @@
 
         <h1 class="py-8 pl-10 font-bold text-xl">프로젝트 소개</h1>
         <hr class="border-t-2 border-gray-200 px-5" />
-        <p class="px-10 py-6" v-html="content" style="white-space: pre-wrap;"></p>
+        <p class="px-10 py-6">{{ content }}</p>
         <!--사진-->
         <div v-for="image in files" :key="image" class="mb-10">
           <img :src="image.imageUrl" />
@@ -236,8 +231,6 @@ const positions = ref([]);
 const recruitmentStatus = ref('');
 const user_id = ref('');
 const files = ref([]);
-const isApplied = ref(false);
-
 
 //게시글 가져오기
 watchEffect(async () => {
@@ -255,8 +248,6 @@ watchEffect(async () => {
     techStacks.value = res.data.result.techStackDtoList;
     positions.value = res.data.result.positionDtoList;
     recruitmentStatus.value = res.data.result.recruitmentStatus;
-    isApplied.value = res.data.result.applied;
-    console.log(isApplied.value);
     // console.log('기술스택확인', res.data.result.techStackDtoList);
     // console.log('포지션 배열 확인', res.data.result.positionDtoList);
     // console.log('이미지', res.data.result.imageUrl);
@@ -482,27 +473,6 @@ const closeConfirmModal = () => {
 </script>
 
 <style lang="scss" scoped>
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
 input,
 textarea {
   width: 100%;
@@ -516,9 +486,5 @@ textarea {
   height: 120px;
   resize: none;
   overflow-y: auto;
-}
-
-.isVisible {
-  display: none;
 }
 </style>
