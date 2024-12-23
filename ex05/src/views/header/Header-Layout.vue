@@ -118,6 +118,7 @@ import { loginUsers } from '@/api/loginApi';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
 import axios from 'axios';
+import { GLOBAL_URL } from '@/api/util';
 
 const notifications = ref([]); // 알림 목록
 const eventSource = ref(null); // SSE 이벤트 소스
@@ -126,7 +127,7 @@ const eventSource = ref(null); // SSE 이벤트 소스
 const markAsRead = async (notification_id) => {
   console.log('읽음 처리할 알림 ID:', notification_id);
   try {
-    await axios.patch(`http://192.168.0.6:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
+    await axios.patch(`${GLOBAL_URL}/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -168,7 +169,7 @@ const initializeSSE = () => {
     return;
   }
 
-  const sseUrl = `http://192.168.0.6:8080/api/v1/notifications/connect?token=${encodeURIComponent(token.value)}`;
+  const sseUrl = `${GLOBAL_URL}/api/v1/notifications/connect?token=${encodeURIComponent(token.value)}`;
   eventSource.value = new EventSource(sseUrl);
 
   console.log('test');
