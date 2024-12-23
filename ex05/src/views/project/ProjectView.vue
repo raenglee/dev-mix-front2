@@ -20,7 +20,7 @@
           </div>
         </div>
 
-        <!-- <div class="flex min-h-screen"> -->
+        <!-- <div class="flex mb-10"> -->
         <!--상세정보 스크롤 따라 내려오도록-->
         <div class="sticky top-8 p-8 bg-white text-gray-700 rounded border shadow-md w-1/3">
           <div class="flex flex-col flex-wrap gap-y-4">
@@ -96,7 +96,9 @@
           </div>
         </div>
         <!-- </div> -->
+
         <!--글 박스 끝-->
+
         <div>
           <hr class="border-t-4 border-[#d10000]" />
         </div>
