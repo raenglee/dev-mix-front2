@@ -80,6 +80,7 @@
           <div class="relative">
             <!-- 날짜 입력 필드 -->
             <input
+              id="cal_date"
               v-model="recruit_end_date"
               type="date"
               :min="minDate"

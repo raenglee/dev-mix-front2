@@ -15,16 +15,8 @@
         <template v-if="useStore.loginCheck">
           <div class="flex flex-wrap space-x-1">
             <div class="relative" @mouseenter="openAlarmDropdown" @mouseleave="closeAlarmDropdown">
-              <!-- <font-awesome-icon
-                icon="bell"
-                class="h-6 w-5 cursor-pointer p-2"
-                :class="{
-                  'text-[#d10000] bg-white': isAlarmDropdownOpen,
-                  'text-white hover:bg-[#ffffff] hover:text-[#d10000]': !isAlarmDropdownOpen
-                }"
-              /> -->
               <p
-                class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer"
+                class="mt-1 px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
                 @mouseenter="isAlarmHovered = true"
                 @mouseleave="isAlarmHovered = false"
                 :class="{
@@ -32,7 +24,7 @@
                   'text-white': !isAlarmHovered
                 }"
               >
-                알람
+                알림
               </p>
               <!-- 알람 드롭다운 메뉴 -->
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
@@ -42,18 +34,21 @@
                   @mouseleave="isAlarmHovered = false"
                   class="absolute right-0 top-10 w-max min-w-[250px] max-w-[500px] bg-red-50 rounded-tl-md rounded-b-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
-                  <div v-if="notifications.length === 0" class="text-center text-gray-800 py-4">알림이 없습니다.</div>
+                  <div v-if="!notifications || notifications.length==0" class="text-center text-gray-800 py-4">알림이 없습니다.</div>
 
                   <template v-if="notifications?.length > 0">
                     <div class="cursor-pointer">
                       <!-- <h1 class=" font-bold text-lg pt-2 px-3 bg-red-50 rounded-tl-md">알림</h1> -->
                       <div class="bg-red-50">
                         <ul class="text-sm">
-                          <li v-for="notification in notifications" :key="notification.id" class="p-2 rounded-lg m-2 bg-white">
-                            🔔 {{ notification.content }}
-                            <!-- 알림 내용을 표시 -->
-                            <button class="hover:bg-[#d10000] hover:text-white px-2 m-2 rounded-full border border-[#d10000]" @click="markAsRead(notification.id)">확인</button>
-                          </li>
+                          <template v-if="notifications.length>0">
+                            <li v-for="notification in notifications" :key="notification" class="p-2 rounded-lg m-2 bg-white">
+                              🔔 {{ notification.content }}
+                              <!-- 알림 내용을 표시 -->
+                              <button class="hover:bg-[#d10000] hover:text-white px-2 m-2 rounded-full border border-[#d10000]"
+                                      @click="markAsRead(notification.id)">확인</button>
+                            </li>
+                          </template>
                         </ul>
                       </div>
                     </div>
@@ -135,6 +130,7 @@ import { loginUsers } from '@/api/loginApi';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
 import axios from 'axios';
+import { GLOBAL_URL } from '@/api/util.js';
 
 const notifications = ref([]); // 알림 목록
 const eventSource = ref(null); // SSE 이벤트 소스
@@ -144,7 +140,7 @@ const markAsRead = async (notification_id) => {
   console.log('읽음 처리할 알림 ID:', notification_id);
   try {
     // await axios.patch(`http://localhost:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
-      await axios.patch(`http://192.168.0.6:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
+      await axios.patch(`${GLOBAL_URL}/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -152,24 +148,24 @@ const markAsRead = async (notification_id) => {
     });
 
     notifications.value = notifications.value.filter((notification) => notification.id !== notification_id);
-    saveNotificationsToStorage();
+    // saveNotificationsToStorage();
   } catch (e) {
     console.log(e);
   }
 };
 
 // 로컬 스토리지에서 알림 복원
-const loadNotificationsFromStorage = () => {
-  const savedNotifications = localStorage.getItem('notifications');
-  if (savedNotifications) {
-    notifications.value = JSON.parse(savedNotifications);
-  }
-};
+// const loadNotificationsFromStorage = () => {
+//   const savedNotifications = localStorage.getItem('notifications');
+//   if (savedNotifications) {
+//     notifications.value = JSON.parse(savedNotifications);
+//   }
+// };
 
 // 알림 목록을 로컬 스토리지에 저장
-const saveNotificationsToStorage = () => {
-  localStorage.setItem('notifications', JSON.stringify(notifications.value));
-};
+// const saveNotificationsToStorage = () => {
+//   localStorage.setItem('notifications', JSON.stringify(notifications.value));
+// };
 
 // SSE 초기화
 const initializeSSE = () => {
@@ -181,7 +177,7 @@ const initializeSSE = () => {
   }
 
   // const sseUrl = `http://localhost:8080/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
-  const sseUrl = `http://192.168.0.6:8080/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
+  const sseUrl = `${GLOBAL_URL}/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
   eventSource.value = new EventSource(sseUrl);
 
   // SSE 연결 성공
@@ -190,24 +186,37 @@ const initializeSSE = () => {
   };
 
   // SSE 데이터 수신
-  eventSource.value.addEventListener('connect', (event) => {
-    try {
-      console.log(`SSE ${event}`);
-    } catch (error) {
-      console.error('SSE 데이터 처리 중 오류:', error);
-    }
-  });
+  // eventSource.value.addEventListener('connect', (event) => {
+  //   try {
+  //     console.log(`SSE ${event}`);
+  //   } catch (error) {
+  //     console.error('SSE 데이터 처리 중 오류:', error);
+  //   }
+  // });
 
   // SSE 데이터 수신
   eventSource.value.addEventListener('sse', (event) => {
     try {
       const data = JSON.parse(event.data);
+      console.log("-------------")
+      console.log(`SSE ${JSON.stringify(data)}`);
+      console.log("-------------")
+      console.log(`SSE ${JSON.stringify(notifications.value)}`);
 
-      // 중복 알림 방지 (ID 기준)
-      if (!notifications.value.some((notification) => notification.id === data.id)) {
+      if( notifications.value == null || notifications.value.length == 0 ){
+        notifications.value = data;
+      }else{
         notifications.value.push(data);
-        saveNotificationsToStorage(); // 새로운 알림 저장
       }
+      // else{
+      //   notifications.value.forEach ( notification=>{
+      //     //console.log("data[0].id"+data[0].id);
+      //     //console.log("notification.id"+notification.id);
+      //     if(data.id !== notification.id)
+      //       notifications.value.push(data[0]);
+      //   });
+      //
+      // }
     } catch (error) {
       console.error('SSE 데이터 처리 중 오류:', error);
     }
@@ -223,17 +232,17 @@ const initializeSSE = () => {
 
 // 컴포넌트 마운트 시 처리
 onMounted(() => {
-  loadNotificationsFromStorage(); // 로컬 스토리지에서 알림 복원
+  //loadNotificationsFromStorage(); // 로컬 스토리지에서 알림 복원
   initializeSSE(); // SSE 연결 초기화
 });
 
 // 컴포넌트 언마운트 시 처리
 onBeforeUnmount(() => {
+  // sse연결종료
   if (eventSource.value) {
-    eventSource.value.close(); // SSE 연결 종료
+    eventSource.value.close();
     eventSource.value = null;
   }
-  saveNotificationsToStorage(); // 알림 목록 저장
 });
 
 // 클릭 이벤트를 부모 컴포넌트(App.vue)로 전달
@@ -259,7 +268,6 @@ const closeModal = () => {
 };
 
 //로그인
-const route = useRoute();
 const router = useRouter();
 const useStore = useUserStore();
 
