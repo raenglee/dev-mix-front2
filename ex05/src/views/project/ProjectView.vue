@@ -1,5 +1,5 @@
 <template>
-  <div class="w-4/6 mx-auto my-10">
+  <div class="w-4/6 mx-auto my-10 overflow-auto">
     <section class="container mx-auto">
       <form @submit.prevent="handleSubmit" class="gap-y-5 px-20 py-10">
         <div class="justify-center items-center text-center space-y-3 pb-8">
@@ -7,16 +7,28 @@
             {{ recruitmentStatus }}
           </p>
           <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
-          <div class="flex space-x-2 items-center justify-center">
-            <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full" />
-            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
+
+          <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(user_id)">
+            <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover" />
+            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
             <p>{{ nickname }}</p>
           </div>
+          <!--게시글 작성자 프로필-->
+          <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" />
+
           <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
           <div class="my-3 mb-20">
             <hr class="border-t-4 border-[#d10000]" />
           </div>
         </div>
+
+        <div class="sticky top-16 bg-white shadow-md p-4">
+          <h2 class="font-bold text-xl">고정된 박스</h2>
+          <p>이 박스는 16px 아래에서 고정됩니다.</p>
+        </div>
+
+
+        
         <div class="flex flex-wrap px-16">
           <div class="flex-none flex-col space-y-10 min-w-[300px]">
             <div class="items-center">
@@ -103,8 +115,8 @@
         <div class="ml-30 justify-center items-center w-full">
           <div class="flex items-center pt-3">
             <div class="flex items-center w-8 h-8">
-              <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-8 w-8 rounded-full" />
-              <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
+              <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-8 w-8 rounded-full object-cover" />
+              <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
             </div>
             <p class="ml-3">{{ useStore.nickname }}</p>
           </div>
@@ -121,11 +133,15 @@
           <div class="my-6 mx-7 justify-center flex flex-col gap-5" style="width: 90%">
             <div v-for="comment in comments" :key="comment.id">
               <!-- 댓글 방식 확인 {{ comment }} -->
-              <div class="flex items-center mx-2 mb-4">
-                <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full" />
-                <img v-else src="/img/people.png" class="h-8 w-8 rounded-full" />
+              <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
+                <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
+                <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
                 <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
               </div>
+
+              <!--댓글 작성자 프로필-->
+              <UserProfile :isModal="isCommentModal" :user_id="commentUserId" @update:isModal="closeCommentProfileModal" />
+
               <!--댓글 수정 시-->
               <div v-if="comment.isEditing" class="flex">
                 <textarea v-model="comment.newContent" class="w-full ml-4 p-3 h-10 border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
@@ -201,6 +217,7 @@ import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { applyProject } from '@/api/projectApi'; // API 임포트
 import { useUserStore } from '@/store/userStore';
+import UserProfile from '../Component/UserProfile.vue';
 
 const useStore = useUserStore();
 const route = useRoute();
@@ -208,6 +225,7 @@ const route = useRoute();
 // 로그인된 사용자 정보 (예: useStore 또는 localStorage에서 가져오는 값)
 const loggedInUserNickname = ref(useStore.nickname);
 
+//게시글 정보
 const title = ref('');
 const location = ref('');
 const endDate = ref('');
@@ -219,8 +237,10 @@ const profileImage = ref('');
 const techStacks = ref([]);
 const positions = ref([]);
 const recruitmentStatus = ref('');
+const user_id = ref('');
 const files = ref([]);
 
+//게시글 가져오기
 watchEffect(async () => {
   const res = await getProjectView(route.params.board_id);
   if (res.status == 200) {
@@ -239,14 +259,16 @@ watchEffect(async () => {
     // console.log('기술스택확인', res.data.result.techStackDtoList);
     // console.log('포지션 배열 확인', res.data.result.positionDtoList);
     // console.log('이미지', res.data.result.imageUrl);
+    user_id.value = res.data.result.userId;
     files.value = [{ imageUrl: res.data.result.imageUrl }];
   } else {
     alert('데이터연결안됨', res.response.data.message);
   }
 });
 
+//프로젝트지원으로 이동
 const goToProjectApp = () => {
-  router.push({ name: 'projectapplication' }); // 'projectapplication' 경로로 이동
+  router.push({ name: 'projectapplicants' });
 };
 
 // 게시글 수정
@@ -283,7 +305,7 @@ watchEffect(async () => {
   if (res.status === 200 && res.data.result) {
     comments.value = res.data.result; // 댓글 데이터 배열을 할당
   }
-  // console.log(comments.value);
+  // console.log('댓글값 comments.value:', comments.value);
 });
 
 // 댓글 작성
@@ -318,7 +340,7 @@ const startEditing = (comment) => {
 // 댓글 수정
 const commentupdate = async (commentId) => {
   const comment = comments.value.find((c) => c.commentId === commentId);
-  console.log('댓글', comments.value);
+  // console.log('댓글', comments.value);
   // console.log('댓글id',commentId)
   const data = {
     id: commentId,
@@ -369,7 +391,38 @@ const commentDelete = async (id) => {
   }
 };
 
-//모달
+// 게시판의 유저프로필 모달
+const isModal = ref(false); // 모달의 가시성 (flase-안보임)
+
+// 게시판의 유저프로필 모달
+const isCommentModal = ref(false);
+const commentUserId = ref(null);
+
+// 게시글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+const openProfile = (userId) => {
+  user_id.value = userId;
+  isModal.value = true; // 모달 열기
+  // console.log('유저ID', user_id.value);
+};
+
+// 댓글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+const openCommentProfile = (userId) => {
+  commentUserId.value = userId;
+  isCommentModal.value = true;
+  // console.log('유저ID', commentUserId.value);
+};
+
+// 게시판 모달 닫기
+const closeProfileModal = () => {
+  isModal.value = false;
+};
+
+// 댓글 모달 닫기
+const closeCommentProfileModal = () => {
+  isCommentModal.value = false;
+};
+
+//지원 모달
 
 // 지원 직군을 저장하는 변수
 const positionName = ref('');
@@ -401,12 +454,12 @@ const confirmSubmit = async () => {
       positionName: positionName.value,
       note: note.value
     };
-    console.log('isPending:', isPending.value);
+    // console.log('isPending:', isPending.value);
 
     const res = await applyProject(route.params.board_id, data);
     // console.log('보드아이디,내용', route.params.board_id, data);
     // console.log('지원하기 모달', res);
-    
+
     if (res.status === 200) {
       isPending.value = true;
       console.log('isPending:', isPending.value);
@@ -428,27 +481,6 @@ const closeConfirmModal = () => {
 </script>
 
 <style lang="scss" scoped>
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
 input,
 textarea {
   width: 100%;
@@ -462,9 +494,5 @@ textarea {
   height: 120px;
   resize: none;
   overflow-y: auto;
-}
-
-.isVisible {
-  display: none;
 }
 </style>

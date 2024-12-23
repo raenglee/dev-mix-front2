@@ -16,7 +16,7 @@
               <!-- 드롭다운 버튼 -->
               <div
                 @click="toggleDropdown('location')"
-                class="min-w-36 max-w-36 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
               >
                 <span class="truncate w-full" v-if="selectedLocation">{{ selectedLocation }}</span>
                 <span class="truncate w-full text-gray-800" v-else>지역 / 구분</span>
@@ -49,7 +49,7 @@
             <!-- 드롭다운 버튼 -->
             <div
               @click="toggleDropdown('position')"
-              class="min-w-36 max-w-36 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+              class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
             >
               <span class="truncate w-full" v-if="selectedPosition">{{ selectedPosition.positionName }}</span>
               <span class="truncate w-full text-gray-800" v-else>포지션</span>
@@ -77,7 +77,7 @@
 
           <!-- 기술/언어 드롭다운 -->
           <div class="relative">
-            <div @click="toggleDropdown('tech')" class="min-w-36 max-w-36 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
+            <div @click="toggleDropdown('tech')" class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
               <span class="text-gray-800">기술 / 언어</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
@@ -125,7 +125,7 @@
           </div>
           <!-- <div class="flex flex-wrap gap-3"> -->
           <button
-            class="min-w-36 max-h-8 px-4 py-1 my-5 border border-gray rounded-full outline-none text-gray-800 hover:border-[#d10000]"
+            class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
             :class="{
               'bg-[#d10000] text-white': onlyBookmarked,
               'bg-white text-black': !onlyBookmarked
@@ -136,24 +136,16 @@
           </button>
 
           <button
-            class="min-w-36 max-h-8 px-4 py-1 my-5 border border-gray rounded-full outline-none text-gray-800 hover:border-[#d10000]"
+            class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
             :class="{
               'bg-[#d10000] text-white': onlyNeeded,
               'bg-white text-black': !onlyNeeded
             }"
-            @click="
-              clickneededonly;
-              searchfilter();
-            "
+            @click="clickneededonly"
           >
             모집중만 보기
           </button>
           <!-- </div> -->
-        </div>
-
-        <div class="flex items-center border border-gray-300 rounded-full px-4 py-1">
-          <input type="text" placeholder="# 검색어를 입력하세요" class="flex-grow focus:outline-none" v-model="searchText" />
-          <button><img src="/img/search.png" class="h-5 w-5" /></button>
         </div>
       </div>
       <!--서치 박스 끝-->
@@ -212,6 +204,7 @@
                 <div v-for="(tech, index) in item.techStacks.slice(0, 4)" :key="tech.techStackId" class="inline-flex items-center space-x-2">
                   <img :src="tech.techStackImageUrl" class="w-10 h-10" />
                 </div>
+
                 <!-- 기술 너무많으면 말줄임표 사용 -->
                 <div v-if="item.techStacks.length > 5" class="inline-flex items-center space-x-2">
                   <span class="text-gray-600 font-bold">...</span>
@@ -275,68 +268,117 @@
 
 <script setup>
 import { ref, watchEffect } from 'vue';
-import { getLocation, getPositions, getTechstacks, listProject, scrapProject, searchquery, totalPage } from '@/api/projectApi';
+import { getLocation, getPositions, getTechstacks, scrapProject, searchquery, totalPage } from '@/api/projectApi';
 import router from '@/router';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
 
-const searchText = ref('');
+const useStore = useUserStore();
 const onlyBookmarked = ref(false);
 const onlyNeeded = ref(false);
+const totalPages = ref(0);
 const arr = ref([]); // 게시물 배열
 const isModal = ref(false); // 로그인 모달 상태
-const useStore = useUserStore();
 
-// 모달 닫기 (배경 클릭 시)
-const closeModal = () => {
-  isModal.value = false;
-};
+// 포지션 드롭다운
+const positionOptions = ref([]);
+const selectedPosition = ref('');
 
-//토탈 페이지 수
-const totalPages = ref(0);
+// 기술/언어 드롭다운
+const techOptions = ref([]);
+const selectedTech = ref([]);
 
+// 지역/구분 드롭다운
+const locationOptions = ref([]);
+const selectedLocation = ref('');
+
+// 총 페이지 수
 const getTotalPages = async () => {
   try {
-    const total = await totalPage();
+    // const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
+    // const position = selectedPosition.value?.positionName || '';
+
+    const tech = selectedTech.value.map((item) => item.techStackName).join(', ');
+
+    const total = await totalPage({
+      location: selectedLocation.value, // 선택된 지역
+      // positions: position, // 선택된 포지션
+      positions: selectedPosition.value.positionName,
+      techStacks: tech, // 선택된 기술 스택
+      bookmarked: false, // 필요 시 필터링 추가
+      recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용
+    });
 
     // 한 페이지당 16개의 글, 16개 이상일 때 나머지가 남으면 페이지 수를 추가, 안남으면 페이지수를 추가하지 않음
     const modValue = total.result % 16 > 0 ? 1 : 0;
     const value = parseInt(total.result / 16) + modValue;
     totalPages.value = value;
-    // console.log('총 페이지 수', totalPages.value);
+    console.log('총 페이지 수', totalPages.value);
   } catch (error) {
     console.error('페이지 수 가져오기 실패:', error);
   }
 };
 
-// 프로젝트 가져오기
-const getProjects = async (num = 1) => {
+//검색필터
+const searchfilter = async (pageNumber = 1) => {
   try {
-    const res = await listProject(num);
-    // console.log('북마크 API 응답 데이터:', res);
-    // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
-    arr.value = res.map((item) => {
-      const totalRequiredCount = item.positions.reduce((sum, position) => {
-        return sum + position.requiredCount;
-      }, 0);
+    const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
+    // const recruitmentStatus: ref('');
+    const position = selectedPosition.value?.positionName || ''; // null-safe 처리
 
-      const totalCurrentCount = item.positions.reduce((sum, position) => {
-        return sum + position.currentCount; // currentCount 합산
-      }, 0);
+    // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
+    const currentQuery = router.currentRoute.value.query;
+    const queryParams = {
+      pageNumber: pageNumber,
+      location: selectedLocation.value,
+      positions: position,
+      techStacks: tech,
+      bookmarked: onlyBookmarked.value
+    };
 
-      return {
-        ...item,
-        isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
-        totalRequiredCount, // 총 필요한 인원 수
-        totalCurrentCount // 총 현재 인원 수
-      };
-    });
+    // 파라미터가 이전과 다를 때만 push
+    const isParamsChanged = Object.keys(queryParams).some((key) => currentQuery[key] !== queryParams[key]);
+    if (isParamsChanged) {
+      router.push({ query: queryParams });
+    }
 
-    // applySort();
-    // console.log('프로젝트 내용: ', arr.value);
+    const res = await searchquery(queryParams);
+
+    // console.log(onlyNeeded.value);
+
+    console.log('선택된 포지션', selectedPosition.value?.positionName || '', '선택된 기술', tech);
+
+    if (res.status === 200) {
+      if (Array.isArray(res.data.result)) {
+        // arr.value.length = 0; // 기존 데이터 비우기
+        // arr.value.push(...res.data.result); // 새로운 데이터 추가
+
+        arr.value = res.data.result.map((item) => {
+          const totalRequiredCount = item.positions.reduce((sum, position) => sum + position.requiredCount, 0);
+          const totalCurrentCount = item.positions.reduce((sum, position) => sum + position.currentCount, 0);
+
+          return {
+            ...item,
+            isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
+            totalRequiredCount, // 총 모집 인원 수
+            totalCurrentCount // 총 현재 인원 수
+          };
+        });
+      } else {
+        console.error('배열이아님:', res.data);
+      }
+    } else {
+      console.error('검색필터 오류', res);
+    }
   } catch (error) {
-    console.error('프로젝트 가져오기 오류:', error);
+    const errorMessage = error.response ? error.response : error.message || '알 수 없는 오류';
+    console.error('검색필터 실패:', errorMessage);
   }
+};
+
+// 모달 닫기 (배경 클릭 시)
+const closeModal = () => {
+  isModal.value = false;
 };
 
 // 각 게시글과 연결
@@ -366,7 +408,7 @@ const toggleBookmark = async (item) => {
   }
 
   const newBookmarkState = !item.isBookmarked;
-  // console.log('보드아이디:', item.boardId);
+  console.log('보드아이디:', item.boardId);
   // localStorage.setItem('bookmarkedItems', JSON.stringify(arr.value)); // 로컬 스토리지에 저장
   try {
     const res = await scrapProject(item.boardId, { isBookmarked: newBookmarkState });
@@ -380,51 +422,6 @@ const toggleBookmark = async (item) => {
     console.error('북마크 오류:', error);
   }
 };
-
-// 정렬
-// const activeButton = ref('latest');
-
-// localStorage에서 상태읽기
-// watchEffect(() => {
-//   const savedButton = localStorage.getItem('activeButton');
-//   if (savedButton) {
-//     activeButton.value = savedButton;
-//   }
-// });
-
-// 클릭된 버튼을 localStorage에 저장
-// const setActive = (button) => {
-//   activeButton.value = button;
-//   localStorage.setItem('activeButton', button); // localStorage에 버튼 상태 저장
-// };
-
-// const latestSort = () => {
-//   // arr.value.sort((a, b) => b.boardId - a.boardId);
-//   setActive('latest');
-// };
-// const famousSort = () => {
-//   // arr.value.sort((a, b) => b.viewCount - a.viewCount);
-//   setActive('famous');
-// };
-// const registerSort = () => {
-//   // arr.value.sort((a, b) => a.boardId - b.boardId);
-//   setActive('register');
-// };
-
-// 선택된 정렬을 배열에 적용
-// const applySort = () => {
-//   if (activeButton.value === 'latest') {
-//     arr.value.sort((a, b) => b.boardId - a.boardId);
-//   } else if (activeButton.value === 'famous') {
-//     arr.value.sort((a, b) => b.viewCount - a.viewCount);
-//   } else if (activeButton.value === 'register') {
-//     arr.value.sort((a, b) => a.boardId - b.boardId);
-//   }
-// };
-
-// 포지션 드롭다운
-const positionOptions = ref([]);
-const selectedPosition = ref(''); // 단일 선택
 
 // 포지션 데이터 가져오기
 const selectPositions = async () => {
@@ -445,10 +442,6 @@ const selectPosition = (option) => {
   selectedPosition.value = option;
   activeDropdown.value = ''; // 드롭다운 닫기
 };
-
-// 기술/언어 드롭다운
-const techOptions = ref([]);
-const selectedTech = ref([]); // 다중 선택
 
 // 기술/언어 데이터 가져오기
 const selelctTechstacks = async () => {
@@ -473,10 +466,6 @@ const selelctTechstacks = async () => {
 const resetSelection = () => {
   selectedTech.value = [];
 };
-
-// 지역/구분 드롭다운
-const locationOptions = ref([]);
-const selectedLocation = ref(''); // 단일 선택
 
 //지역 데이터 가져오기
 const selectLocations = async () => {
@@ -526,65 +515,19 @@ const handleClickOutside = (event) => {
 // 선택된 지역/구분을 삭제하는 메소드
 const removeLocation = () => {
   selectedLocation.value = ''; // 선택된 지역/구분 초기화
+  searchfilter();
 };
 
 // 선택된 포지션을 삭제하는 메소드
 const removePosition = () => {
   selectedPosition.value = null; // 선택된 포지션 초기화
+  searchfilter();
 };
 
 // 선택된 기술 스택을 삭제하는 메소드
 const removeTechStack = (index) => {
   selectedTech.value.splice(index, 1); // 해당 인덱스의 기술 스택 제거
-};
-
-//검색필터
-const searchfilter = async () => {
-  try {
-    const tech = selectedTech.value.map((item) => item.techStackName).join(', ');
-    // const recruitmentStatus: ref('');
-    // const position = selectedPosition.value ? selectedPosition.value.positionName : ''; // 기본값을 빈 문자열로 설정
-
-    router.push({
-      query: {
-        location: selectedLocation.value,
-        positions: selectedPosition.value.positionName,
-        // positions:position,
-        tech: tech,
-        // bookmarked: item.isBookmarked,
-        // recruitmentStatus: onlyNeeded.value
-      }
-    });
-    const res = await searchquery({
-      // pageNumber:1,
-      // pageSize:16,
-      location: selectedLocation.value,
-      positions: selectedPosition.value.positionName,
-      // positions:position,
-      tech: tech,
-
-      // bookmarked: item.isBookmarked
-      // recruitmentStatus: onlyNeeded.value
-    });
-
-    // console.log(onlyNeeded.value);
-
-    console.log('선택된 포지션', selectedPosition.value.positionName, '선택된 기술', tech);
-
-    if (res.status === 200) {
-      if (Array.isArray(res.data.result)) {
-        arr.value.length = 0; // 기존 데이터 비우기
-        arr.value.push(...res.data.result); // 새로운 데이터 추가
-      } else {
-        console.error('배열이아님:', res.data);
-      }
-    } else {
-      console.error('검색필터 오류', res);
-    }
-  } catch (error) {
-    const errorMessage = error.response ? error.response : error.message || '알 수 없는 오류';
-    console.error('검색필터 실패:', errorMessage);
-  }
+  searchfilter();
 };
 
 // try {
@@ -601,34 +544,10 @@ const searchfilter = async () => {
 
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
-  getProjects();
   selelctTechstacks();
   selectPositions();
   selectLocations();
   getTotalPages();
-  searchfilter;
+  searchfilter();
 });
-
-// onUnmounted(() => {
-//   window.removeEventListener('click', handleClickOutside);
-// });
-
-// page번호 선택했을때 호출하는 함수.
-// const selectPageNum = async(num)=>{
-//   const res = await listProject(num);
-//   // arr.value = res;
-//   // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
-//   arr.value = res.map((item) => {
-//       const totalRequiredCount = item.positions.reduce((sum, position) => {
-//         return sum + position.requiredCount;
-//       }, 0);
-
-//       return {
-//         ...item,
-//         isBookmarked: false, // 북마크 상태 초기화
-//         totalRequiredCount // 총 인원 수
-//       };
-//     });
-//   console.log(res);
-// }
 </script>
