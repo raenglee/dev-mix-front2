@@ -43,9 +43,9 @@
               <div class="flex flex-wrap gap-x-2">
                 <div class="pt-4" v-for="tech in techStacks" :key="tech.techStackName">
                   <!-- <div class="w-8 h-8 object-cover flex"> -->
-                  <div class="flex items-center px-2 py-1 border rounded-full">
+                  <div class="flex items-center px-2 py-1 bg-sky-100 rounded-full">
                     <img :src="tech.imageUrl" class="w-8 h-8 object-cover bg-white rounded-full" />
-                    <span class="text-sm text-gray-700 font-bold pl-1">{{ tech.techStackName }}</span>
+                    <span class="text-sm text-gray-700 pl-1">{{ tech.techStackName }}</span>
                     <!-- <p class="text-sm text-center">{{ tech.techStackName }}</p> -->
                   </div>
                 </div>
@@ -56,33 +56,26 @@
               <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">모집 현황</p>
 
               <div class="flex flex-col w-full flex-wrap">
-                <div v-for="(position, index) in positions" :key="index">
+                <div v-for="(position, index) in positions" :key="index" class="">
                   <div class="flex justify-between pt-4 px-5">
                     <p class="">{{ position.positionName }}</p>
                     <p class="">{{ position.currentCount }}/{{ position.requiredCount }}</p>
                   </div>
+
+                  <button v-if="!(nickname == loggedInUserNickname) && !isPending" @click="openModal(position.positionName)" class="border border-gray-200 whitespace-nowrap px-4 hover:bg-gray-200 rounded-lg">
+                    지원
+                  </button>
+
+                  <button v-if="isPending && nickname !== loggedInUserNickname" class="border border-gray-200 whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed rounded-lg">
+                    승인대기
+                  </button>
+
+                  <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp" class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200 rounded-lg">
+                    지원자 확인
+                  </button>
+
+                  <!-- <button v-if="isPending" class="border border-gray-300 bg-gray-300 text-gray-500 rounded-full py-1 px-3 w-20" disabled>지원되었습니다</button> -->
                 </div>
-                <button
-                  v-if="!(nickname == loggedInUserNickname) && !isPending"
-                  @click="openModal"
-                  class="border whitespace-nowrap mt-4 p-2 rounded-lg font-bold border-[#d10000] bg-[#d10000] text-white hover:border-gray-200 hover:bg-white hover:text-gray-700"
-                >
-                  지원
-                </button>
-
-                <button v-if="isPending && nickname !== loggedInUserNickname" class="border font-bold border-gray-200 whitespace-nowrap mt-4 p-2 bg-gray-200 item-center cursor-not-allowed rounded-lg">
-                  승인 대기
-                </button>
-
-                <button
-                  v-if="nickname == loggedInUserNickname"
-                  @click="goToProjectApp"
-                  class="border font-bold text-sm text-white bg-[#7371fc] border-[#7371fc] whitespace-nowrap mt-4 p-2 hover:border-gray-200 hover:bg-white hover:text-gray-700 rounded-lg"
-                >
-                  지원자 확인하기
-                </button>
-
-                <!-- <button v-if="isPending" class="border border-gray-300 bg-gray-300 text-gray-500 rounded-full py-1 px-3 w-20" disabled>지원되었습니다</button> -->
               </div>
             </div>
           </div>
@@ -175,17 +168,8 @@
         <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
       </div>
       <div class="flex flex-col mb-4 gap-2">
-        <!-- <label for="position" class="font-bold">지원 직군</label>
-        <p class="text-sm bg-gray-100 rounded-lg p-4 font-bold">{{ positionName }}</p> -->
-        <!-- 지원 직군 부분 -->
         <label for="position" class="font-bold">지원 직군</label>
-        <select v-model="positionName" class="text-sm bg-gray-100 rounded-lg p-4 font-bold">
-          <option disabled value="">지원할 포지션을 선택하세요</option>
-          <option v-for="(position, index) in positions" :key="index" :value="position.positionName">
-            {{ position.positionName }}
-          </option>
-        </select>
-
+        <p class="text-sm bg-gray-100 rounded-lg p-4 font-bold">{{ positionName }}</p>
         <label for="note" class="font-bold">지원 사유 및 한마디</label>
         <textarea id="note" v-model="note" placeholder="지원 사유 및 한마디"></textarea>
       </div>
@@ -465,11 +449,11 @@ const confirmSubmit = async () => {
       positionName: positionName.value,
       note: note.value
     };
-    console.log('isPending:', isPending.value);
+    // console.log('isPending:', isPending.value);
 
     const res = await applyProject(route.params.board_id, data);
-    console.log('보드아이디,내용', route.params.board_id, data);
-    console.log('지원하기 모달', res);
+    // console.log('보드아이디,내용', route.params.board_id, data);
+    // console.log('지원하기 모달', res);
 
     if (res.status === 200) {
       isPending.value = true;
