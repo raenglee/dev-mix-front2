@@ -4,7 +4,7 @@
     <div class="p-3 bg-[#d10000]">
       <nav class="flex space-x-5 justify-between items-center m-auto w-4/6">
         <div>
-          <RouterLink to="/" class="text-3xl text-white font-bold">DEVMIX</RouterLink>
+          <RouterLink to="/" class="text-3xl text-white font-bold" @click="headerClick">DEVMIX</RouterLink>
         </div>
 
         <!--🌐로그인 한 후 아이콘-->
@@ -120,6 +120,16 @@ import { RouterLink } from 'vue-router';
 import { loginUsers } from '@/api/loginApi';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
+
+// 클릭 이벤트를 부모 컴포넌트(App.vue)로 전달
+const emit = defineEmits(['headerClick']); 
+
+// 클릭 시 부모 컴포넌트로 이벤트 전달
+const headerClick = (event) => {
+  // RouterLink의 기본 동작을 방지하고 부모로 이벤트 전달
+  event.preventDefault();
+  emit('headerClick');
+};
 
 //모달
 const isModal = ref(false);
