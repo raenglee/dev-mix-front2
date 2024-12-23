@@ -28,7 +28,7 @@
                 </div>
               </div>
               <!-- 삭제 아이콘 -->
-              <img :src="imageSrc" @click.stop="removeFile" @mouseover="hoverImage" @mouseleave="resetImage" class=" w-[20px] h-[20px] text-gray-500 text-lg" />
+              <img :src="imageSrc" @click.stop="removeFile" @mouseover="hoverImage" @mouseleave="resetImage" class="w-[20px] h-[20px] text-gray-500 text-lg" />
             </div>
           </div>
 
@@ -36,9 +36,13 @@
           <div class="grid grid-cols-5 items-center gap-x-4">
             <label class="col-start-2 text-gray-700 text-lg font-semibold">닉네임 <span class="text-red-500">*</span></label>
             <div class="col-span-2 items-center">
-              <input type="text" v-model="nickname" class="flex-1 w-2/3 border p-2 px-4 rounded-full" required />
-              <button type="button" @click="checkNickname" class="ml-2 border p-2 rounded-full text-gray-600">중복확인</button>
-              <p class="col-start-2 col-span-2 text-xs text-gray-500 mt-1">한글 영어 숫자, 1~8글자 이하 (공백, 특수문자 X)</p>
+              <input type="text" v-model="nickname" @input="validateNickname" class="flex-1 w-2/3 border p-2 px-4 rounded-full" required />
+              <button type="button" @click="checkNicknameAvailability" class="ml-2 border p-2 rounded-full text-gray-600">중복확인</button>
+              <p class="col-start-2 col-span-2 text-xs mt-1 text-gray-500">한글 영어 숫자, 2~8글자 이하 (공백 및 특수문자 X)</p>
+              <!-- <p v-if="checkNickMessage" :class="watchNickname ? 'text-green-500' : 'text-red-500'" class="col-start-2 col-span-2 text-xs mt-1"> -->
+              <p  class="text-red-500 col-start-2 col-span-2 text-xs mt-1">
+                {{ checkNickMessage }}
+              </p>
             </div>
           </div>
 
@@ -72,7 +76,7 @@
             <h1 class="col-start-2 font-bold text-lg pb-2">포지션</h1>
             <div class="relative min-w-[567px] m-auto flex">
               <div class="bg-white border border-gray-200 rounded-lg min-w-[570px] z-10">
-                <div class="p-3 ">
+                <div class="p-3">
                   <div v-for="positionName in roleOptions" :key="positionName" class="flex wrap gap-2">
                     <input
                       type="checkbox"
@@ -89,7 +93,7 @@
           </div>
 
           <!--✅기술/언어 선택 -> 다중선택, 선택삭제 가능하도록-->
-          <div class="grid grid-cols-5 gap-x-4"  ref="dropdownContainer">
+          <div class="grid grid-cols-5 gap-x-4" ref="dropdownContainer">
             <h1 class="col-start-2 font-bold text-lg pb-2">기술 / 언어<br /><span class="text-sm mx-1">(최대 10개)</span></h1>
             <div class="relative w-full m-auto flex">
               <div @click="toggleDropdown" class="min-w-72 h-10 p-2 border border-gray-200 rounded-full cursor-pointer flex items-center justify-between">
@@ -115,10 +119,10 @@
             </div>
           </div>
 
-               <!-- 버튼 -->
-               <div class="flex justify-center gap-4 mt-20 mb-40">
+          <!-- 버튼 -->
+          <div class="flex justify-center gap-4 mt-20 mb-40">
             <button type="button" @click="handleCancel" class="px-6 py-2 border border-gray-300 rounded-md">취소</button>
-            <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-md">완료</button>
+            <button type="submit" @click="submitButton" class="px-6 py-2 bg-red-600 text-white rounded-md">완료</button>
           </div>
         </form>
       </div>
@@ -127,15 +131,20 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onBeforeUnmount, computed } from 'vue';
+import { ref, watchEffect, onBeforeUnmount, computed, watch } from 'vue';
 import { useUserStore } from '@/store/userStore';
-import { loginUsers, uploadprofile, deleteUser } from '@/api/loginApi'; // registerUser 추가
+import { loginUsers, uploadprofile, checkNickname, deleteUser } from '@/api/loginApi'; // registerUser 추가
 import { useRouter } from 'vue-router';
 import { getPositions, getTechstacks, getLocation } from '@/api/projectApi';
 
 const useStore = useUserStore();
 const router = useRouter();
 // const route = useRoute();
+
+const checkNickMessage = ref(''); // 닉네임 유효성 메시지
+const isDuplicate = ref(false); //닉넴중복
+const isValidNickname = ref(false); //형식틀림
+const isDuplicateChecked = ref(false); // 중복확인 여부
 
 // 포지션 데이터 가져오기
 const isDropdownOpen = ref(false); // 드롭다운 닫힌(false) 상태
@@ -158,7 +167,51 @@ const positionList = ref([]);
 
 const roleOptions = ref([]); // 서버에서 전달 받은 포지션 저장
 
-// 포지션 리스트 불러오기
+const checkNicknameAvailability = async () => {
+  try {
+    const res = await checkNickname(nickname.value); // API 호출
+    if (res.code === 'SUCCESS') {
+      isDuplicate.value = false; //중복닉
+      isValidNickname.value = false; // 형식오류
+      isDuplicateChecked.value = true;
+      alert('사용 가능한 닉네임입니다.');
+    } else if (res.code === 'DUPLICATED_NICKNAME') {
+      isDuplicate.value = true; //중복닉
+      isValidNickname.value = false; // 형식오류
+      isDuplicateChecked.value = true;
+      alert('중복된 닉네임입니다.');
+    } else if (res.code === 'VALIDATION_FAILED') {
+      isDuplicate.value = false; //중복닉
+      isValidNickname.value = true; // 형식오류
+      isDuplicateChecked.value = true;
+      alert('닉네임 형식 오류입니다.');
+    }
+    // else if (res.code === 'AUTHORIZATION_FAILED') {
+    //   isDuplicate.value = false; //중복닉
+    //   isValidNickname.value = true; // 형식오류
+    //   isDuplicateChecked.value = true;
+    // }
+  } catch (err) {
+    console.error('닉네임 확인 중 오류 발생:', err);
+    isDuplicateChecked.value = false;
+  }
+};
+
+watch(nickname, (newVal) => {
+  const nicknameValue = newVal.trim();
+
+  if (nicknameValue === '') {
+    checkNickMessage.value = '닉네임을 입력해주세요.';
+  } else if (nicknameValue.length < 2 || nicknameValue.length > 8) {
+    checkNickMessage.value = '닉네임은 2~8글자여야 합니다.';
+  } else if (!/^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(nicknameValue)) {
+    checkNickMessage.value = '공백 및 특수문자는 사용할 수 없습니다.';
+  } else {
+    checkNickMessage.value = '';
+
+  }
+});
+
 const selectPositions = async () => {
   try {
     const res = await getPositions();
@@ -302,7 +355,6 @@ const onFileChange = (event) => {
   }
 };
 
-
 // 이미지 소스를 ref로 관리
 const imageSrc = ref('/img/trash.png');
 
@@ -329,6 +381,9 @@ const selectFile = () => {
 
 // 사용자가 입력한 데이터 저장
 const handleSubmit = async () => {
+  // if (!isDuplicateChecked.value) {
+  //   alert('닉네임 중복확인을 해주세요.');
+  // }else{
   const formData = new FormData();
   const user = await loginUsers(); // 로그인된 사용자 정보 가져오기
 
@@ -353,19 +408,26 @@ const handleSubmit = async () => {
     formData.append('profileImage', file, file.name); // 여기서 file.name으로 파일명 설정
   }
   formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
-  console.log('폼데이터최종', JSON.stringify(userProfile));
+  // console.log('폼데이터최종', JSON.stringify(userProfile));
 
   try {
     await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
     const data = await loginUsers();
     await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
 
-    alert('회원가입이 완료되었습니다.');
-    router.push('/'); // 성공 시 프로필 페이지로 이동
+    if (isDuplicate.value) {
+      alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요.');
+    } else if (isValidNickname.value) {
+      alert('닉네임 형식을 확인해주세요.');
+    } else if(isDuplicateChecked.value) {
+      alert('회원가입이 완료되었습니다.');
+      router.push('/'); // 성공 시 프로필 페이지로 이동
+    }
   } catch (err) {
     // 에러 처리
     alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
   }
+
 };
 
 //회원가입 취소
@@ -375,9 +437,10 @@ const handleCancel = async () => {
   router.push('/');
 };
 
-// 사용자 데이터 삭제
+// 사용자 데이터 삭제(헤더로고 혹은 취소 버튼 눌러서 페이지 벗어날 때)
 const removeUserData = async () => {
   if (!isSubmitted.value) {
+    localStorage.removeItem('token');
     try {
       await deleteUser(); // 사용자 정보 삭제 요청
       useStore.logout(); // Pinia 스토어에서 로그아웃 처리

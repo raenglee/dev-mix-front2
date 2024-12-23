@@ -1,10 +1,10 @@
 <template>
   <!--🔴헤더-->
   <header>
-    <div class="p-3 bg-[#bc2b2b]">
+    <div class="p-3 bg-[#d10000]">
       <nav class="flex space-x-5 justify-between items-center m-auto w-4/6">
         <div>
-          <RouterLink to="/" class="text-4xl text-white font-bold">DEVMIX</RouterLink>
+          <RouterLink to="/" class="text-3xl text-white font-bold" @click="headerClick">DEVMIX</RouterLink>
         </div>
 
         <!--🌐로그인 한 후 아이콘-->
@@ -20,7 +20,7 @@
                 }"
               /> -->
               <p
-                class="mt-1 px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
+                class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer"
                 @mouseenter="isAlarmHovered = true"
                 @mouseleave="isAlarmHovered = false"
                 :class="{
@@ -28,7 +28,7 @@
                   'text-white': !isAlarmHovered
                 }"
               >
-                알림
+                알람
               </p>
               <!-- 알람 드롭다운 메뉴 -->
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
@@ -231,6 +231,16 @@ onBeforeUnmount(() => {
   }
   saveNotificationsToStorage(); // 알림 목록 저장
 });
+
+// 클릭 이벤트를 부모 컴포넌트(App.vue)로 전달
+const emit = defineEmits(['headerClick']);
+
+// 클릭 시 부모 컴포넌트로 이벤트 전달
+const headerClick = (event) => {
+  // RouterLink의 기본 동작을 방지하고 부모로 이벤트 전달
+  event.preventDefault();
+  emit('headerClick');
+};
 
 //모달
 const isModal = ref(false);

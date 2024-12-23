@@ -3,11 +3,11 @@ import { GLOBAL_URL } from './util';
 
 // const url = 'http://192.168.0.61:8080';
 // const url = 'http://localhost:8080';
-const url = `${GLOBAL_URL}`
+const url = `${GLOBAL_URL}/api/v1/users`
 
 export const loginUsers = async () => {
   try {
-    const res = await axios.get(`${url}/api/v1/users`, {
+    const res = await axios.get(`${url}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -27,7 +27,7 @@ export const loginUsers = async () => {
 
 export const uploadprofile = async (formData) => {
   try {
-    const res = await axios.put(`${url}/api/v1/users/profile`, formData , {
+    const res = await axios.put(`${url}/profile`, formData , {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -44,11 +44,16 @@ export const uploadprofile = async (formData) => {
 
 export const checkNickname = async (nickname) => {
   try {
-    const res = await axios.post(`${url}/api/v1/users/nickname-check` ,nickname, {
-      headers: {
-        'Content-Type': 'application/json',
+    const res = await axios.post(
+      `${url}/nickname-check`,
+      { nickname: nickname },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       }
-    });
+    );
     console.log(res.data);
     return res.data;
   } catch (err) {
@@ -59,28 +64,10 @@ export const checkNickname = async (nickname) => {
 
 
 
-// // 닉네임 중복 확인
-// export const checkNickname = async (nickname) => {
-//   try {
-//     const res = await axios.get(`${url}/api/v1/users/nickname-check`, {
-//       params: { nickname }, // 쿼리 파라미터로 닉네임 전달
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${localStorage.getItem('token')}`
-//       }
-//     });
-//     console.log('닉네임 중복 확인 결과:', res.data);
-//     return res.data; // 사용 가능 여부를 반환
-//   } catch (err) {
-//     console.error('닉네임 중복 확인 실패:', err);
-//     throw err; // 에러를 다시 던져서 호출자에게 전달
-//   }
-// };
-
-// 사용자 정보 삭제
+// 사용자 정보 삭제 -> 없음
 export const deleteUser = async () => {
   try {
-    const res = await axios.delete(`${url}/api/v1/users/profile`, {
+    const res = await axios.delete(`${url}/profile`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}` // 인증 토큰 추가
       }
