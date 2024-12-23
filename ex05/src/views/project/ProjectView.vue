@@ -1,7 +1,7 @@
 <template>
-  <div class="w-4/6 mx-auto my-10 overflow-auto">
+  <div class="w-4/6 mx-auto my-10">
     <section class="container mx-auto">
-      <form @submit.prevent="handleSubmit" class="gap-y-5 px-20 py-10">
+      <form @submit.prevent="handleSubmit" class="gap-y-5 py-10">
         <div class="justify-center items-center text-center space-y-3 pb-8">
           <p class="border border-[#d10000] rounded-full px-4 text-center m-auto inline-block">
             {{ recruitmentStatus }}
@@ -22,80 +22,77 @@
           </div>
         </div>
 
-        <div class="sticky top-16 bg-white shadow-md p-4">
-          <h2 class="font-bold text-xl">고정된 박스</h2>
-          <p>이 박스는 16px 아래에서 고정됩니다.</p>
-        </div>
+        <div class="flex">
+          <!--상세정보 스크롤 따라 내려오도록-->
+          <div class="sticky top-8 py-4 my-10 bg-white text-gray-700 rounded border shadow-md w-1/3">
+            <div class="flex flex-wrap px-16">
+              <div class="flex-none flex-col space-y-10 min-w-[300px]">
+                <div class="items-center">
+                  <p for="region" class="font-bold text-lg pr-2">지역 / 구분</p>
+                  <p class="py-2 pl-2">{{ location }}</p>
+                  <!-- 지역 정보 표시 -->
+                </div>
+                <div class="items-center">
+                  <p class="font-bold pr-2 text-lg">진행 기간</p>
+                  <p class="py-2 pl-2">{{ projectPeriod }}</p>
+                </div>
 
-
-        
-        <div class="flex flex-wrap px-16">
-          <div class="flex-none flex-col space-y-10 min-w-[300px]">
-            <div class="items-center">
-              <p for="region" class="font-bold text-lg pr-2">지역 / 구분</p>
-              <p class="py-2 pl-2">{{ location }}</p>
-              <!-- 지역 정보 표시 -->
-            </div>
-            <div class="items-center">
-              <p class="font-bold pr-2 text-lg">진행 기간</p>
-              <p class="py-2 pl-2">{{ projectPeriod }}</p>
-            </div>
-
-            <div class="flex flex-col col-span-3 items-center">
-              <p class="font-bold text-lg w-full">기술 / 언어</p>
-              <div class="flex items-center w-full justify-start space-x-4">
-                <div class="flex flex-col items-center space-y-2 py-2" v-for="tech in techStacks" :key="tech.techStackName">
-                  <!-- 이미지의 크기 맞추기 -->
-                  <div class="w-10 h-10 overflow-hidden">
-                    <img :src="tech.imageUrl" class="w-full h-full object-cover" />
+                <div class="flex flex-col col-span-3 items-center">
+                  <p class="font-bold text-lg w-full">기술 / 언어</p>
+                  <div class="flex items-center w-full justify-start space-x-4">
+                    <div class="flex flex-col items-center space-y-2 py-2" v-for="tech in techStacks" :key="tech.techStackName">
+                      <!-- 이미지의 크기 맞추기 -->
+                      <div class="w-10 h-10 overflow-hidden">
+                        <img :src="tech.imageUrl" class="w-full h-full object-cover" />
+                      </div>
+                      <span class="text-sm text-center">{{ tech.techStackName }}</span>
+                    </div>
                   </div>
-                  <span class="text-sm text-center">{{ tech.techStackName }}</span>
+                </div>
+              </div>
+
+              <div class="min-w-[270px]">
+                <p class="font-bold text-lg pr-2">모집 마감일</p>
+                <p class="py-2 pl-2">{{ endDate }}</p>
+              </div>
+              <div class="space-y-4 min-w-[410px] pl-15 flex flex-col">
+                <p class="font-bold pr-2 text-lg">모집 현황</p>
+                <!-- flex-col로 세로 방향으로 배치 -->
+                <div class="flex flex-col w-full space-y-4">
+                  <div v-for="(position, index) in positions" :key="index" class="flex items-center justify-between">
+                    <p class="w-1/3 text-left">{{ position.positionName }}</p>
+                    <p class="w-1/3 text-center">{{ position.currentCount }}/{{ position.requiredCount }}</p>
+                    <button
+                      v-if="!(nickname == loggedInUserNickname) && !isPending"
+                      @click="openModal(position.positionName)"
+                      class="border border-gray-200 rounded-full whitespace-nowrap px-4 hover:bg-gray-200"
+                    >
+                      지원
+                    </button>
+
+                    <button v-if="isPending && nickname !== loggedInUserNickname" class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
+                      승인대기
+                    </button>
+
+                    <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp" class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
+                      지원자 확인
+                    </button>
+
+                    <!-- <button v-if="isPending" class="border border-gray-300 bg-gray-300 text-gray-500 rounded-full py-1 px-3 w-20" disabled>지원되었습니다</button> -->
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="min-w-[270px]">
-            <p class="font-bold text-lg pr-2">모집 마감일</p>
-            <p class="py-2 pl-2">{{ endDate }}</p>
-          </div>
-          <div class="space-y-4 min-w-[410px] pl-15 flex flex-col">
-            <p class="font-bold pr-2 text-lg">모집 현황</p>
-            <!-- flex-col로 세로 방향으로 배치 -->
-            <div class="flex flex-col w-full space-y-4">
-              <div v-for="(position, index) in positions" :key="index" class="flex items-center justify-between">
-                <p class="w-1/3 text-left">{{ position.positionName }}</p>
-                <p class="w-1/3 text-center">{{ position.currentCount }}/{{ position.requiredCount }}</p>
-                <button
-                  v-if="!(nickname == loggedInUserNickname) && !isPending"
-                  @click="openModal(position.positionName)"
-                  class="border border-gray-200 rounded-full whitespace-nowrap px-4 hover:bg-gray-200"
-                >
-                  지원
-                </button>
-
-                <button v-if="isPending && nickname !== loggedInUserNickname" class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
-                  승인대기
-                </button>
-
-                <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp" class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
-                  지원자 확인
-                </button>
-
-                <!-- <button v-if="isPending" class="border border-gray-300 bg-gray-300 text-gray-500 rounded-full py-1 px-3 w-20" disabled>지원되었습니다</button> -->
-              </div>
+          <!-- 프로젝트 소개 부분 (왼쪽) -->
+          <div class="flex-1 px-10 w-3/4 ml-10">
+            <h1 class="py-8 font-bold text-xl">프로젝트 소개</h1>
+            <p class="px-10 py-6">{{ content }}</p>
+            <div v-for="image in files" :key="image" class="mb-10">
+              <img :src="image.imageUrl" class="w-full h-auto" />
             </div>
           </div>
         </div>
-
-        <h1 class="py-8 pl-10 font-bold text-xl">프로젝트 소개</h1>
-        <hr class="border-t-2 border-gray-200 px-5" />
-        <p class="px-10 py-6">{{ content }}</p>
-        <!--사진-->
-        <div v-for="image in files" :key="image" class="mb-10">
-          <img :src="image.imageUrl" />
-        </div>
-
         <!--글 박스 끝-->
         <div>
           <hr class="border-t-4 border-[#d10000]" />

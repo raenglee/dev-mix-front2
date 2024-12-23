@@ -1,5 +1,8 @@
+//특정 유저 정보 관련 api
+
 import axios from 'axios';
 import { GLOBAL_URL } from './util';
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 // const url = 'http://192.168.0.61:8080';
@@ -11,6 +14,11 @@ const url = `${GLOBAL_URL}/api/v1/boards`;
 
 const url = `${GLOBAL_URL}/api/v1/users`;
 >>>>>>> jh
+=======
+// const url = 'http://192.168.0.61:8080';
+
+const url = `${GLOBAL_URL}/api/v1/users`;
+>>>>>>> mypmh
 
 //특정 유저 프로필 
 export const getUserInfo = async (user_id) => {

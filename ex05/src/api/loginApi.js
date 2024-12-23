@@ -64,7 +64,7 @@ export const checkNickname = async (nickname) => {
 
 
 
-// 사용자 정보 삭제 -> 없음 
+// 사용자 정보 삭제 -> 없음
 export const deleteUser = async () => {
   try {
     const res = await axios.delete(`${url}/profile`, {
