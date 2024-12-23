@@ -4,11 +4,7 @@
     <div class="p-3 bg-[#d10000]">
       <nav class="flex space-x-5 justify-between items-center m-auto w-4/6">
         <div>
-<<<<<<< HEAD
           <RouterLink to="/" class="text-4xl text-white font-bold" @click="headerClick">DEVMIX</RouterLink>
-=======
-          <RouterLink to="/" class="text-3xl text-white font-bold" @click="headerClick">DEVMIX</RouterLink>
->>>>>>> mypmh
         </div>
 
         <!--🌐로그인 한 후 아이콘-->

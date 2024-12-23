@@ -4,10 +4,7 @@ import { GLOBAL_URL } from './util';
 // const url = 'http://192.168.0.61:8080/api/v1/boards';
 // const url = 'http://localhost:8080/api/v1/boards';
 const url = `${GLOBAL_URL}/api/v1/boards`;
-<<<<<<< HEAD
-=======
 // const url = 'http://192.168.0.110:8080/api/v1/boards';
->>>>>>> mypmh
 
 
 // 프로젝트 전체 리스트
