@@ -126,7 +126,7 @@ const eventSource = ref(null); // SSE 이벤트 소스
 const markAsRead = async (notification_id) => {
   console.log('읽음 처리할 알림 ID:', notification_id);
   try {
-    await axios.patch(`http://localhost:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
+    await axios.patch(`http://192.168.0.6:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -168,7 +168,7 @@ const initializeSSE = () => {
     return;
   }
 
-  const sseUrl = `http://localhost:8080/api/v1/notifications/connect?token=${encodeURIComponent(token.value)}`;
+  const sseUrl = `http://192.168.0.6:8080/api/v1/notifications/connect?token=${encodeURIComponent(token.value)}`;
   eventSource.value = new EventSource(sseUrl);
 
   console.log('test');
@@ -284,36 +284,38 @@ const router = useRouter();
 const useStore = useUserStore();
 
 watchEffect(async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
 
-
-  if (route.query.token) {
-    localStorage.setItem('token', route.query.token);
-
-    token.value = route.query.token;
-
+  if (token) {
     try {
-      const data = await loginUsers();
-      // 닉네임이 없을 경우 /profile로 이동
-      if (!data.result.nickname) {
-        router.push('/profile');
-      } else {
-        const userData = data.result; // 예: 서버에서 반환한 사용자 정보 (username, email 등)
-        const token = route.query.token; // 예: 서버에서 반환한 토큰
+      // 토큰 저장
+      localStorage.setItem('token', token);
+      console.log('Token saved to localStorage:', token);
 
-        // 사용자 정보와 토큰을 store에 저장
+      // URL에서 토큰 제거
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState(null, '', cleanUrl);
+
+      // 사용자 정보 요청
+      const data = await loginUsers();
+
+      if (!data.result.nickname) {
+        router.push('/profile'); // 닉네임 없으면 프로필 설정 페이지로 이동
+      } else {
+        const userData = data.result;
+
+        // 사용자 정보 저장
         useStore.profile(userData);
 
-        // 토큰을 로컬스토리지에 저장 (브라우저 새로 고침 시 토큰을 유지)
-        localStorage.setItem('token', token);
-
-        router.push('/'); // 메인 페이지로 이동
+        // 메인 페이지로 이동
+        router.push('/');
       }
-
-
-
     } catch (error) {
       console.error('Login failed:', error);
     }
+  } else {
+    console.error('No token found in URL');
   }
 });
 
@@ -352,7 +354,7 @@ const logout = async () => {
 
   try{
     const data = await loginUsers();
-    const response = axios.get(`http://localhost:8080/api/v1/notifications/${data.result.username}`);
+    const response = axios.get(`http://192.168.0.6:8080/api/v1/notifications/${data.result.username}`);
         if (response.status === 200) {
           console.log('Disconnected successfully');
         }

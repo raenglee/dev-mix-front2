@@ -14,11 +14,9 @@
             <!-- 지역/구분 드롭다운 -->
             <div class="relative">
               <!-- 드롭다운 버튼 -->
-              <div
-                @click="toggleDropdown('location')"
+              <div @click="toggleDropdown('location')"
                 class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray
-                       rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
-              >
+                       rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500">
                 <span class="truncate w-full" v-if="selectedLocation">{{ selectedLocation }}</span>
                 <span class="truncate w-full text-gray-800" v-else>지역 / 구분</span>
                 <!-- 화살표 아이콘: 박스 오른쪽에 고정 -->
@@ -26,17 +24,15 @@
               </div>
 
               <!-- 드롭다운 내용 -->
-              <div v-if="activeDropdown === 'location'" class="absolute bg-white border border-gray rounded-md shadow-lg z-10 w-64 p-4">
+              <div v-if="activeDropdown === 'location'"
+                class="absolute bg-white border border-gray rounded-md shadow-lg z-10 w-64 p-4">
                 <div class="flex flex-col">
-                  <div v-for="(option, index) in locationOptions" :key="index" class="flex items-center p-1 hover:bg-gray-200">
-                    <label
-                      :class="{ 'text-gray-400': selectedLocation === option }"
-                      @click="
-                        selectLocation(option);
-                        searchfilter();
-                      "
-                      class="cursor-pointer truncate w-full"
-                    >
+                  <div v-for="(option, index) in locationOptions" :key="index"
+                    class="flex items-center p-1 hover:bg-gray-200">
+                    <label :class="{ 'text-gray-400': selectedLocation === option }" @click="
+                      selectLocation(option);
+                    searchfilter();
+                    " class="cursor-pointer truncate w-full">
                       {{ option }}
                     </label>
                   </div>
@@ -48,27 +44,23 @@
           <!-- 포지션 드롭다운 -->
           <div class="relative">
             <!-- 드롭다운 버튼 -->
-            <div
-              @click="toggleDropdown('position')"
-              class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
-            >
+            <div @click="toggleDropdown('position')"
+              class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500">
               <span class="truncate w-full" v-if="selectedPosition">{{ selectedPosition.positionName }}</span>
               <span class="truncate w-full text-gray-800" v-else>포지션</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
 
             <!-- 드롭다운 내용 -->
-            <div v-if="activeDropdown === 'position'" class="absolute bg-white border border-gray rounded-md shadow-lg z-10 w-64 p-4">
+            <div v-if="activeDropdown === 'position'"
+              class="absolute bg-white border border-gray rounded-md shadow-lg z-10 w-64 p-4">
               <div class="flex flex-col">
-                <div v-for="(option, index) in positionOptions" :key="index" class="flex items-center p-1 hover:bg-gray-200">
-                  <label
-                    :class="{ 'text-gray-400': selectedPosition === option }"
-                    @click="
-                      selectPosition(option);
-                      searchfilter();
-                    "
-                    class="cursor-pointer truncate w-full"
-                  >
+                <div v-for="(option, index) in positionOptions" :key="index"
+                  class="flex items-center p-1 hover:bg-gray-200">
+                  <label :class="{ 'text-gray-400': selectedPosition === option }" @click="
+                    selectPosition(option);
+                  searchfilter();
+                  " class="cursor-pointer truncate w-full">
                     {{ option.positionName }}
                   </label>
                 </div>
@@ -78,34 +70,39 @@
 
           <!-- 기술/언어 드롭다운 -->
           <div class="relative">
-            <div @click="toggleDropdown('tech')" 
-            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
+            <div @click="toggleDropdown('tech')"
+              class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
               <span class="text-gray-800">기술 / 언어</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
-            <div v-if="activeDropdown === 'tech'" class="absolute bg-white border border-gray rounded-md z-20 p-4 shadow" style="width: 600px">
+            <div v-if="activeDropdown === 'tech'"
+              class="absolute bg-white border border-gray rounded-md z-20 p-4 shadow" style="width: 600px">
               <!--드롭다운 내부-->
               <div class="flex gap-2">
-                <button type="button" class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500 active:bg-gray-300">전체</button>
-                <button type="button" class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500">백 엔드</button>
-                <button type="button" class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500">프론트 엔드</button>
+                <button type="button"
+                  class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500 active:bg-gray-300">전체</button>
+                <button type="button"
+                  class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500">백
+                  엔드</button>
+                <button type="button"
+                  class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500">프론트
+                  엔드</button>
               </div>
 
               <div class="grid grid-cols-10 gap-x-3 gap-y-3 mt-3">
                 <div v-for="(option, index) in techOptions" :key="index" class="flex items-center m-auto">
-                  <label
-                    :class="{ 'text-gray-300 opacity-20': selectedTech.includes(option) }"
-                    @click="
-                      toggleTechSelection(option);
-                      searchfilter();
-                    "
-                    class="cursor-pointer"
-                  >
+                  <label :class="{ 'text-gray-300 opacity-20': selectedTech.includes(option) }" @click="
+                    toggleTechSelection(option);
+                  searchfilter();
+                  " class="cursor-pointer">
                     <!--마우스 오버 이름표시-->
                     <div class="relative group">
-                      <img :src="option.imageUrl" class="w-10 h-12 object-contain transition-all duration-300 group-hover:w-12" />
-                      <div class="absolute z-10 inset-0 flex justify-center items-center left-12 bottom-14 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-sm font-bold bg-gray-400 text-white rounded-lg p-1">{{ option.techStackName }}</p>
+                      <img :src="option.imageUrl"
+                        class="w-10 h-12 object-contain transition-all duration-300 group-hover:w-12" />
+                      <div
+                        class="absolute z-10 inset-0 flex justify-center items-center left-12 bottom-14 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p class="text-sm font-bold bg-gray-400 text-white rounded-lg p-1">{{ option.techStackName }}
+                        </p>
                       </div>
                     </div>
                   </label>
@@ -115,10 +112,12 @@
               <div class="mt-5">
                 <div class="flex items-center gap-2">
                   <span class="text-sm font-semibold mb-1">선택 항목</span>
-                  <button @click="resetSelection" type="button" class="text-sm text-gray-400 px-1 mb-1 cursor-pointer hover:text-gray-300">초기화</button>
+                  <button @click="resetSelection" type="button"
+                    class="text-sm text-gray-400 px-1 mb-1 cursor-pointer hover:text-gray-300">초기화</button>
                 </div>
                 <div class="flex flex-wrap">
-                  <span v-for="(item, index) in selectedTech" :key="index" class="mr-3 border border-gray-200 text-sm rounded-full px-2 py-1 mt-1">
+                  <span v-for="(item, index) in selectedTech" :key="index"
+                    class="mr-3 border border-gray-200 text-sm rounded-full px-2 py-1 mt-1">
                     <p class="cursor-pointer z-20" @click.stop="removeTechStack(index)">{{ item.techStackName }}</p>
                   </span>
                 </div>
@@ -131,12 +130,10 @@
             :class="{
               'bg-[#d10000] text-white': onlyBookmarked,
               'bg-white text-black': !onlyBookmarked
-            }"
-            @click="
-            clickBookmarkonly();
+            }" @click="
+              clickBookmarkonly();
             searchfilter();
-            "
-          >
+            ">
             북마크만 보기
           </button>
 
@@ -145,19 +142,18 @@
             :class="{
               'bg-[#d10000] text-white': onlyNeeded,
               'bg-white text-black': !onlyNeeded
-            }"
-            @click="
+            }" @click="
               clickneededonly;
-              searchfilter();
-            "
-          >
+            searchfilter();
+            ">
             모집중만 보기
           </button>
           <!-- </div> -->
         </div>
         <!-- text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500 -->
         <div class="text-[1.1rem] flex items-center border border-gray-300 rounded-full px-4 py-1 bg-gray-100">
-          <input type="text" placeholder="# 검색어를 입력하세요" class="flex-grow focus:outline-none bg-gray-100" v-model="searchText" />
+          <input type="text" placeholder="# 검색어를 입력하세요" class="flex-grow focus:outline-none bg-gray-100"
+            v-model="searchText" />
           <button><img src="/img/search.png" class="h-5 w-5" /></button>
         </div>
       </div>
@@ -166,15 +162,23 @@
       <!--선택한 필터 밖에 보이도록-->
       <div class="flex flex-wrap mb-4">
         <!-- 선택된 값 출력 예시 -->
-        <div v-if="selectedLocation" class="cursor-pointer border border-orange-300 bg-orange-300 text-sm mr-3 rounded-full px-2 py-1 mt-1 text-gray-700 hover:font-bold mb-2" @click="removeLocation">
+        <div v-if="selectedLocation"
+          class="cursor-pointer border border-orange-300 bg-orange-300 text-sm mr-3 rounded-full px-2 py-1 mt-1 text-gray-700 hover:font-bold mb-2"
+          @click="removeLocation">
           {{ selectedLocation }}<span class="text-white font-bold ml-1 text-center m-auto">X</span>
         </div>
-        <div v-if="selectedPosition" class="cursor-pointer border border-blue-200 bg-blue-200 text-sm mr-3 rounded-full px-2 py-1 mt-1 text-gray-700 hover:font-bold mb-2" @click="removePosition">
-          {{ selectedPosition ? selectedPosition.positionName : '' }}<span class="text-white font-bold ml-1 text-center m-auto">X</span>
+        <div v-if="selectedPosition"
+          class="cursor-pointer border border-blue-200 bg-blue-200 text-sm mr-3 rounded-full px-2 py-1 mt-1 text-gray-700 hover:font-bold mb-2"
+          @click="removePosition">
+          {{ selectedPosition ? selectedPosition.positionName : '' }}<span
+            class="text-white font-bold ml-1 text-center m-auto">X</span>
         </div>
-        <div v-for="(item, index) in selectedTech" :key="index" class="cursor-pointer item-center justify-center text-center">
+        <div v-for="(item, index) in selectedTech" :key="index"
+          class="cursor-pointer item-center justify-center text-center">
           <!-- <img :src="item.imageUrl" class="w-10 h-12 object-contain transition-all duration-300 group-hover:w-12" /> -->
-          <div class="cursor-pointer border border-lime-300 bg-lime-300 text-sm mr-3 rounded-full px-2 py-1 mt-1 text-gray-700 hover:font-bold mb-2" @click="removeTechStack(index)">
+          <div
+            class="cursor-pointer border border-lime-300 bg-lime-300 text-sm mr-3 rounded-full px-2 py-1 mt-1 text-gray-700 hover:font-bold mb-2"
+            @click="removeTechStack(index)">
             {{ item.techStackName }}<span class="text-white font-bold ml-1 text-center m-auto">X</span>
           </div>
         </div>
@@ -192,17 +196,15 @@
       <!--📝프로젝트 글 박스-->
       <template v-if="arr && arr.length > 0">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10">
-          <div v-for="item in arr" :key="item.id" class="cursor-pointer border rounded-2xl p-4 relative project-card" @click="viewPage(item.boardId)">
+          <div v-for="item in arr" :key="item.id" class="cursor-pointer border rounded-2xl p-4 relative project-card"
+            @click="viewPage(item.boardId)">
             <!-- {{ console.log(item) }} -->
             <div class="top-4 flex items-center justify-between">
               <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800">{{ item.location }}</div>
               <!--북마크-->
-              <font-awesome-icon
-                :icon="item.isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
+              <font-awesome-icon :icon="item.isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
                 :class="[item.isBookmarked ? 'text-[#7371fc]' : 'text-gray-400', 'cursor-pointer', 'hover:scale-125']"
-                style="font-size: 22px"
-                @click.stop="toggleBookmark(item)"
-              />
+                style="font-size: 22px" @click.stop="toggleBookmark(item)" />
             </div>
             <div class="text-sm mb-2 text-gray-800">모집 마감일 | {{ item.recruitEndDate }}</div>
             <div class="text-xl font-bold mb-2 text-gray-800">{{ item.title }}</div>
@@ -214,7 +216,8 @@
               </div> -->
               <!--최대 기술 4개까지만 보이도록-->
               <div class="py-2 gap-3 flex flex-wrap">
-                <div v-for="(tech, index) in item.techStacks.slice(0, 4)" :key="tech.techStackId" class="inline-flex items-center space-x-2">
+                <div v-for="(tech, index) in item.techStacks.slice(0, 4)" :key="tech.techStackId"
+                  class="inline-flex items-center space-x-2">
                   <img :src="tech.techStackImageUrl" class="w-10 h-10" />
                 </div>
 
@@ -234,15 +237,16 @@
                 <!-- 인원 정보 (0 / 총 인원) -->
                 <div class="relative group">
                   <!-- 인원 0 / 총 인원 표시 -->
-                  <div class="text-sm cursor-pointer text-gray-800 group-hover:font-bold" @mouseenter="isHovered = true" @mouseleave="isHovered = false">
+                  <div class="text-sm cursor-pointer text-gray-800 group-hover:font-bold" @mouseenter="isHovered = true"
+                    @mouseleave="isHovered = false">
                     인원 {{ item.totalCurrentCount }} / {{ item.totalRequiredCount }}
                   </div>
                   <!-- 개별 인원 수 출력, 마우스를 올리면 나타나도록 -->
                   <div
-                    class="absolute z-10 bg-white left-14 bottom-2 p-2 shadow-lg rounded-xl mt-2 w-auto whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:block transition-opacity duration-300"
-                  >
+                    class="absolute z-10 bg-white left-14 bottom-2 p-2 shadow-lg rounded-xl mt-2 w-auto whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:block transition-opacity duration-300">
                     <div v-for="count in item.positions" :key="count.positionName" class="text-sm my-1 m-auto">
-                      <span class="font-bold rounded-md px-1 text-gray-800">{{ count.positionName }} -</span>{{ count.requiredCount }}명
+                      <span class="font-bold rounded-md px-1 text-gray-800">{{ count.positionName }} -</span>{{
+                      count.requiredCount }}명
                     </div>
                   </div>
                 </div>
@@ -270,7 +274,8 @@
       <!--페이지 수-->
       <div class="flex justify-center mt-5">
         <ul class="flex space-x-2">
-          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" @click="searchfilter(num)">
+          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num"
+            @click="searchfilter(num)">
             {{ num }}
           </li>
         </ul>
@@ -280,7 +285,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue';
+import { ref, watchEffect, onMounted } from 'vue';
 import { getLocation, getPositions, getTechstacks, listProject, scrapProject, searchquery, totalPage } from '@/api/projectApi';
 import router from '@/router';
 import { useUserStore } from '@/store/userStore';
@@ -433,7 +438,7 @@ const selectPositions = async () => {
 const selectPosition = (option) => {
   selectedPosition.value = option;
   activeDropdown.value = ''; // 드롭다운 닫기
-  searchfilter();
+  // searchfilter();
 };
 
 // 기술/언어 드롭다운
@@ -462,6 +467,7 @@ const selelctTechstacks = async () => {
 //기술 선택 초기화 버튼
 const resetSelection = () => {
   selectedTech.value = [];
+  searchfilter();
 };
 
 // 지역/구분 드롭다운
@@ -493,7 +499,7 @@ const toggleDropdown = (dropdown) => {
 const selectLocation = (option) => {
   selectedLocation.value = option;
   activeDropdown.value = ''; // 드롭다운 닫기
-  searchfilter();
+  // searchfilter();
 };
 
 //기술선택 토글
@@ -518,7 +524,7 @@ const handleClickOutside = (event) => {
 const removeLocation = () => {
   selectedLocation.value = ''; // 선택된 지역/구분 초기화
   searchfilter();
-  
+
 };
 
 // 선택된 포지션을 삭제하는 메소드
@@ -539,9 +545,9 @@ const totalPages = ref(0);
 
 const getTotalPages = async () => {
   try {
-    
-    const tech = selectedTech.value?.length > 0 
-      ? selectedTech.value.map((item) => item.techStackName).join(', ') 
+
+    const tech = selectedTech.value?.length > 0
+      ? selectedTech.value.map((item) => item.techStackName).join(', ')
       : '';
 
     const position = selectedPosition.value?.positionName || '';
@@ -571,15 +577,15 @@ const getTotalPages = async () => {
 //검색필터
 const searchfilter = async (pageNumber = 1) => {
   try {
-    const tech = selectedTech.value?.length > 0 
-      ? selectedTech.value.map((item) => item.techStackName).join(', ') 
+    const tech = selectedTech.value?.length > 0
+      ? selectedTech.value.map((item) => item.techStackName).join(', ')
       : '';
     // const recruitmentStatus: ref('');
     const position = selectedPosition.value?.positionName || ''; // null-safe 처리
 
 
-     // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
-     const currentQuery = router.currentRoute.value.query;
+    // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
+    const currentQuery = router.currentRoute.value.query;
     const queryParams = {
       pageNumber: pageNumber,
       location: selectedLocation.value,
@@ -630,6 +636,10 @@ const searchfilter = async (pageNumber = 1) => {
   }
 };
 
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+console.log(token);
+
 // try {
 //     const res = await scrapProject(item.boardId, { isBookmarked: newBookmarkState });
 //     if (res.status === 200) {
@@ -642,14 +652,31 @@ const searchfilter = async (pageNumber = 1) => {
 //     console.error('북마크 오류:', error);
 //   }
 
+const previousPageNumber = ref(0);
+
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
   // getProjects();
+  // selelctTechstacks();
+  // selectPositions();
+  // selectLocations();
+  getTotalPages();
+  // 페이지 상태(예: pageNumber)만 변경될 때 호출하도록 조건 추가
+  const currentPageNumber = router.currentRoute.value.query.pageNumber || 1;
+
+  // 페이지 번호가 바뀌면 searchfilter 호출
+  if (currentPageNumber !== previousPageNumber.value) {
+    searchfilter(currentPageNumber);
+    previousPageNumber.value = currentPageNumber;
+  }
+});
+
+// 컴포넌트가 마운트될 때만 호출
+onMounted(() => {
   selelctTechstacks();
   selectPositions();
   selectLocations();
-  getTotalPages();
-  searchfilter();
+  // getTotalPages();
 });
 
 // onUnmounted(() => {

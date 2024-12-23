@@ -440,10 +440,33 @@ const location = ref('');
 const project_period = ref('');
 const recruit_end_date = ref('');
 
+
+const formatContent = (content) => {
+  // 여러 줄바꿈을 처리하고, 공백은 그대로 두기
+  const formattedContent = content
+    .split('\n')  // 줄바꿈을 기준으로 나누기
+    .map(paragraph => {
+      // 연속된 공백을 &nbsp;로 변환
+      return paragraph.replace(/ /g, '&nbsp;');  // 공백을 &nbsp;로 바꿈
+    })
+    .map(paragraph => {
+      // 빈 줄을 유지하도록 처리
+      if (paragraph === '') {
+        return '<p>&nbsp;</p>'; // 빈 줄은 &nbsp;로 대체하여 표시
+      }
+      return `<p>${paragraph}</p>`; // 각 문단을 <p>로 감쌈
+    })
+    .join(''); // 문단들을 합침
+  return formattedContent;
+};
+
 const save = async () => {
+
+  const formattedContent = formatContent(content.value); // content에 대한 변환
+
   const data = {
     title: title.value,
-    content: content.value,
+    content: formattedContent,
     projectPeriod: project_period.value,
     location: location.value,
     startDate: start_date.value,

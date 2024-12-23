@@ -79,7 +79,7 @@
 
         <h1 class="py-8 pl-10 font-bold text-xl">프로젝트 소개</h1>
         <hr class="border-t-2 border-gray-200 px-5" />
-        <p class="px-10 py-6">{{ content }}</p>
+        <p class="px-10 py-6" v-html="content" style="white-space: pre-wrap;"></p>
         <!--사진-->
         <div v-for="image in files" :key="image" class="mb-10">
           <img :src="image.imageUrl" />
