@@ -13,33 +13,31 @@
       </div>
 
       <div class="flex flex-col items-center mb-4 gap-2">
-        <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
-        <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
-        <div class="flex">
-          <p class="font-bold whitespace-nowrap px-2">닉네임</p>
-          <p class="text-xl">{{ nickname }}</p>
-        </div>
+        <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover mb-4" />
+        <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover mb-4" />
+        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">닉네임</p>
+        <p class="text-xl">{{ nickname }}</p>
       </div>
       <div class="flex flex-col items-center gap-1">
-        <p class="font-bold whitespace-nowrap">소속</p>
-        <div v-if="groupName.length === 0" class="text-gray-200 font-bold text-lg mb-1">DEVMIX</div>
-        <p class="whitespace-nowrap mb-1">{{ groupName }}</p>
-        <p class="font-bold whitespace-nowrap">거주 지역</p>
-        <div v-if="location.length === 0" class="text-gray-200 font-bold text-lg mb-1">DEVMIX</div>
-        <p class="whitespace-nowrap mb-1">{{ location }}</p>
-        <p class="font-bold whitespace-nowrap mb-1">포지션</p>
-        <div v-if="positions.length === 0" class="text-gray-200 font-bold text-lg mb-1">DEVMIX</div>
+        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">소속</p>
+        <div v-if="groupName.length === 0" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
+        <p class="whitespace-nowrap mb-1 text-xl">{{ groupName }}</p>
+        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">거주 지역</p>
+        <div v-if="location.length === 0" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
+        <p class="whitespace-nowrap mb-1 text-xl">{{ location }}</p>
+        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">포지션</p>
+        <div v-if="positions.length === 0" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
         <ul class="item-center mb-1">
-          <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap">
+          <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap text-center text-xl">
             {{ position }}
           </p>
         </ul>
-        <p class="font-bold whitespace-nowrap mb-1">기술 스택</p>
-        <div class="flex gap-4 items-center mb-4">
+        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">기술 스택</p>
+        <div class="flex gap-4 items-center mb-4 flex-wrap">
           <div class="py-2" v-for="tech in techStacks" :key="tech">
-            <img :src="tech.imageUrl" class="w-10 h-10" />
+            <img :src="tech.imageUrl" class="w-8 h-8" />
             <span class="text-sm py-4">{{ tech.techStackName }}</span>
-            <div v-if="tech.techStackName === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+            <div v-if="tech === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
           </div>
         </div>
       </div>

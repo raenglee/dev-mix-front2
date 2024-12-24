@@ -1,36 +1,38 @@
 <template>
-  <div class="w-4/6 mx-auto my-10">
-    <section class="container mx-auto">
-      <form @submit.prevent="handleSubmit" class="gap-y-5 py-10">
-        <div class="justify-center items-center text-center space-y-3 pb-8">
-          <p class="border border-[#d10000] rounded-full px-4 text-center m-auto inline-block">
-            {{ recruitmentStatus }}
-          </p>
-          <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
+  <!-- <div class="w-4/6 mx-auto my-10"> -->
+  <section class="container mx-auto w-4/6">
+    <form @submit.prevent="handleSubmit" class="gap-y-5 py-10">
+      <div class="justify-center items-center text-center space-y-3 pb-8">
+        <p class="border border-[#d10000] rounded-full px-4 text-center m-auto inline-block">
+          {{ recruitmentStatus }}
+        </p>
+        <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
 
-          <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(user_id)">
-            <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover" />
-            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
-            <p>{{ nickname }}</p>
-          </div>
-
-          <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
-          <div class="my-3 mb-20">
-            <hr class="border-t-4 border-[#d10000]" />
-          </div>
+        <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(user_id)">
+          <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover" />
+          <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
+          <p>{{ nickname }}</p>
         </div>
 
-        <div class="flex mb-10">
-          <!-- 프로젝트 소개 부분 (왼쪽) -->
-          <div class="px-10 w-2/3 ml-10">
-            <h1 class="font-bold text-xl">프로젝트 소개</h1>
-            <p class="py-2 pre-wrap">{{ content }}</p>
-            <div v-for="image in files" :key="image" class="mb-10">
-              <img :src="image.imageUrl" class="w-full h-auto" />
-            </div>
+        <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
+        <div class="my-3 mb-20">
+          <hr class="border-t-4 border-[#d10000]" />
+        </div>
+      </div>
+
+      <!--글 상세 박스-->
+      <div class="flex mb-10 wrap w-full">
+        <!-- 프로젝트 소개 부분 (왼쪽) -->
+        <div class="px-10 w-2/3">
+          <h1 class="font-bold text-xl">프로젝트 소개</h1>
+          <p class="py-2 pre-wrap">{{ content }}</p>
+          <div v-for="image in files" :key="image" class="mb-10">
+            <img :src="image.imageUrl" class="w-full h-auto" />
           </div>
-          <!--상세정보 스크롤 따라 내려오도록-->
-          <div class="fixed bottom- right-80 p-8 bg-white text-gray-700 rounded border shadow-md w-96">
+        </div>
+        <!--글 상세정보 스크롤 따라 내려오도록(오른쪽)-->
+        <div class="absolute top-[310px] right-[calc(50%-600px)] w-[340px] h-[calc(100%-100px)]">
+          <div class="sticky p-8 bg-white text-gray-700 rounded-md border w-full">
             <div class="flex flex-col flex-wrap gap-y-4">
               <div class="flex flex-wrap">
                 <p for="region" class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">지역 / 구분</p>
@@ -99,78 +101,79 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!--글 박스 끝-->
+      <!--글 박스 끝-->
 
-        <div>
-          <hr class="border-t-4 border-[#d10000]" />
+      <div>
+        <hr class="border-t-4 border-[#d10000]" />
+      </div>
+      <div class="flex justify-between my-5 mx-7">
+        <RouterLink to="/"><button class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-gray-200" @click="goToList">목록</button></RouterLink>
+        <div class="space-x-3">
+          <button v-if="nickname == loggedInUserNickname" class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]" @click="doUpdate">
+            수정
+          </button>
+          <button v-if="nickname == loggedInUserNickname" class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]" @click="doDelete">
+            삭제
+          </button>
         </div>
-        <div class="flex justify-between my-5 mx-7">
-          <RouterLink to="/"><button class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-gray-200" @click="goToList">목록</button></RouterLink>
-          <div class="space-x-3">
-            <button v-if="nickname == loggedInUserNickname" class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]" @click="doUpdate">
-              수정
-            </button>
-            <button v-if="nickname == loggedInUserNickname" class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]" @click="doDelete">
-              삭제
-            </button>
+      </div>
+      <!-- 댓글 작성 -->
+      <div class="ml-30 justify-center items-center w-full">
+        <div class="flex items-center pt-3">
+          <div class="flex items-center w-8 h-8">
+            <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-8 w-8 rounded-full object-cover" />
+            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
+          </div>
+          <p class="ml-3">{{ useStore.nickname }}</p>
+        </div>
+        <!--댓글 입력창-->
+        <div class="flex items-center w-full">
+          <div class="my-6 mx-7 justify-center" style="width: 90%">
+            <textarea v-model="commentContent" class="w-full p-3 h-20 border border-gray-200 rounded-md focus:outline-none ring-gray-200 resize-none bg-gray-100" placeholder="250자 제한"></textarea>
+          </div>
+          <div>
+            <button class="border border-gray-200 rounded-md h-20 w-20 px-2 text-base hover:bg-gray-100" @click="commentsave">등록</button>
           </div>
         </div>
-        <!-- 댓글 작성 -->
-        <div class="ml-30 justify-center items-center w-full">
-          <div class="flex items-center pt-3">
-            <div class="flex items-center w-8 h-8">
-              <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-8 w-8 rounded-full object-cover" />
+        <!--댓글목록-->
+        <div class="my-6 mx-7 justify-center flex flex-col gap-5" style="width: 90%">
+          <div v-for="comment in comments" :key="comment.id">
+            <!-- 댓글 방식 확인 {{ comment }} -->
+            <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
+              <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
               <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
+              <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
             </div>
-            <p class="ml-3">{{ useStore.nickname }}</p>
-          </div>
-          <!--댓글 입력창-->
-          <div class="flex items-center w-full">
-            <div class="my-6 mx-7 justify-center" style="width: 90%">
-              <textarea v-model="commentContent" class="w-full p-3 h-20 border border-gray-200 rounded-md focus:outline-none ring-gray-200 resize-none bg-gray-100" placeholder="250자 제한"></textarea>
-            </div>
-            <div>
-              <button class="border border-gray-200 rounded-md h-20 w-20 px-2 text-base hover:bg-gray-100" @click="commentsave">등록</button>
-            </div>
-          </div>
-          <!--댓글목록-->
-          <div class="my-6 mx-7 justify-center flex flex-col gap-5" style="width: 90%">
-            <div v-for="comment in comments" :key="comment.id">
-              <!-- 댓글 방식 확인 {{ comment }} -->
-              <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
-                <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
-                <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
-                <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
-              </div>
 
-              <!--댓글 수정 시-->
-              <div v-if="comment.isEditing" class="flex">
-                <textarea v-model="comment.newContent" class="w-full ml-4 p-3 h-10 border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
-                <div class="">
-                  <button @click="commentupdate(comment.commentId)" class="ml-4 border border-gray-200 rounded-md h-10 w-20 px-2 text-base hover:bg-gray-100">수정</button>
-                  <button @click="updatecancle" class="ml-4 text-sm hover:underline text-gray-500">취소</button>
-                </div>
+            <!--댓글 수정 시-->
+            <div v-if="comment.isEditing" class="flex">
+              <textarea v-model="comment.newContent" class="w-full ml-4 p-3 h-10 border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
+              <div class="">
+                <button @click="commentupdate(comment.commentId)" class="ml-4 border border-gray-200 rounded-md h-10 w-20 px-2 text-base hover:bg-gray-100">수정</button>
+                <button @click="updatecancle" class="ml-4 text-sm hover:underline text-gray-500">취소</button>
               </div>
-              <div v-else class="flex justify-between">
-                <!-- 댓글 내용 -->
-                <p class="text-gray-800 ml-4">{{ comment.content }}</p>
-                <div>
-                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="startEditing(comment)">수정</button>
-                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="commentDelete(comment.commentId)">삭제</button>
-                </div>
-              </div>
-              <!-- <p v-if="comment.lastModifiedAt" class="text-xs mt-3 mb-4 mx-2 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
-              <p class="text-xs mt-3 mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p>
+            </div>
+            <div v-else class="flex justify-between">
+              <!-- 댓글 내용 -->
+              <p class="text-gray-800 ml-4">{{ comment.content }}</p>
               <div>
-                <hr class="border-t border-gray-200" />
+                <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="startEditing(comment)">수정</button>
+                <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="commentDelete(comment.commentId)">삭제</button>
               </div>
+            </div>
+            <!-- <p v-if="comment.lastModifiedAt" class="text-xs mt-3 mb-4 mx-2 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
+            <p class="text-xs mt-3 mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p>
+            <div>
+              <hr class="border-t border-gray-200" />
             </div>
           </div>
         </div>
-      </form>
-    </section>
-  </div>
+      </div>
+    </form>
+  </section>
+  <!-- </div> -->
 
   <!--지원모달-->
   <div v-if="showModal" class="modal-container" @click.self="closeModal">
