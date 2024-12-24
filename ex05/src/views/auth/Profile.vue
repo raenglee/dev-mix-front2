@@ -189,11 +189,7 @@ const checkNicknameAvailability = async () => {
     } else {
       alert('에러입니다 서버관리자에게 문의 하세요');
     }
-    // else if (res.code === 'AUTHORIZATION_FAILED') {
-    //   isDuplicate.value = false; //중복닉
-    //   isValidNickname.value = true; // 형식오류
-    //   isDuplicateChecked.value = true;
-    // }
+
   } catch (err) {
     console.error('닉네임 확인 중 오류 발생:', err);
     isDuplicateChecked.value = false;
