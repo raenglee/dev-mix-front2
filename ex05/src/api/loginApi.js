@@ -44,6 +44,7 @@ export const uploadprofile = async (formData) => {
 
 export const checkNickname = async (nickname) => {
   try {
+    // 200...
     const res = await axios.post(
       `${url}/nickname-check`,
       { nickname: nickname },
@@ -54,11 +55,9 @@ export const checkNickname = async (nickname) => {
         }
       }
     );
-    console.log(res.data);
-    return res.data;
+    return res.data;// res.code
   } catch (err) {
-    console.error(err);
-    return err;
+    return err.response.data;
   }
 };
 
