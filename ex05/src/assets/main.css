@@ -52,3 +52,9 @@
 .isVisible {
   display: none;
 }
+
+/*줄바꿈*/
+.pre-wrap {
+  white-space: pre-wrap;  /* 줄 바꿈을 그대로 반영 */
+  word-wrap: break-word;  /* 긴 단어는 자동으로 줄 바꿈 */
+}

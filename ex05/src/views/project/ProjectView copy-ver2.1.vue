@@ -13,8 +13,6 @@
             <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
             <p>{{ nickname }}</p>
           </div>
-<!--          &lt;!&ndash;게시글 작성자 프로필&ndash;&gt;-->
-<!--          <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" />-->
 
           <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
           <div class="my-3 mb-20">
@@ -22,7 +20,7 @@
           </div>
         </div>
 
-        <!-- <div class="flex mb-10"> -->
+        <!-- <div class="flex min-h-screen"> -->
         <!--상세정보 스크롤 따라 내려오도록-->
         <div class="sticky top-8 p-8 bg-white text-gray-700 rounded border shadow-md w-1/3">
           <div class="flex flex-col flex-wrap gap-y-4">
@@ -40,80 +38,68 @@
               <p class="py-1 pl-4 text-lg">{{ endDate }}</p>
             </div>
 
-                <div class="flex flex-col col-span-3 items-center">
-                  <p class="font-bold text-lg w-full">기술 / 언어</p>
-                  <div class="flex items-center w-full justify-start space-x-4">
-                    <div class="flex flex-col items-center space-y-2 py-2" v-for="tech in techStacks"
-                      :key="tech.techStackName">
-                      <!-- 이미지의 크기 맞추기 -->
-                      <div class="w-10 h-10 overflow-hidden">
-                        <img :src="tech.imageUrl" class="w-full h-full object-cover" />
-                      </div>
-                      <span class="text-sm text-center">{{ tech.techStackName }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="min-w-[270px]">
-                <p class="font-bold text-lg pr-2">모집 마감일</p>
-                <p class="py-2 pl-2">{{ endDate }}</p>
-              </div>
-              <div class="space-y-4 min-w-[410px] pl-15 flex flex-col">
-                <p class="font-bold pr-2 text-lg">모집 현황</p>
-                <!-- flex-col로 세로 방향으로 배치 -->
-                <div class="flex flex-col w-full space-y-4">
-                  <div v-for="(position, index) in positions" :key="index" class="flex items-center justify-between">
-                    <p class="w-1/3 text-left">{{ position.positionName }}</p>
-                    <p class="w-1/3 text-center">{{ position.currentCount }}/{{ position.requiredCount }}</p>
-                    <button v-if="!(nickname == loggedInUserNickname) && !isApplied"
-                      @click="openModal(position.positionName)"
-                      class="border border-gray-200 rounded-full whitespace-nowrap px-4 hover:bg-gray-200">
-                      지원
-                    </button>
-
-                    <button v-if="isApplied && nickname !== loggedInUserNickname"
-                      class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
-                      이미 지원하였습니다.
-                    </button>
-
-                    <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp"
-                      class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200">
-                      지원자 확인
-                    </button>
-
-                    <!-- <button v-if="isPending" class="border border-gray-300 bg-gray-300 text-gray-500 rounded-full py-1 px-3 w-20" disabled>지원되었습니다</button> -->
+            <div class="flex flex-col flex-wrap">
+              <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">기술 / 언어</p>
+              <div class="flex flex-wrap gap-x-2">
+                <div class="pt-4" v-for="tech in techStacks" :key="tech.techStackName">
+                  <!-- <div class="w-8 h-8 object-cover flex"> -->
+                  <div class="flex items-center px-2 py-1 bg-sky-100 rounded-full">
+                    <img :src="tech.imageUrl" class="w-8 h-8 object-cover bg-white rounded-full" />
+                    <span class="text-sm text-gray-700 pl-1">{{ tech.techStackName }}</span>
+                    <!-- <p class="text-sm text-center">{{ tech.techStackName }}</p> -->
                   </div>
                 </div>
               </div>
             </div>
 
-          <!-- 프로젝트 소개 부분 (왼쪽) -->
-          <div class="flex-1 px-10 w-3/4 ml-10">
-            <h1 class="py-8 font-bold text-xl">프로젝트 소개</h1>
-            <hr class="border-t-2 border-gray-200 px-5" />
-            <p class="px-10 py-6" v-html="content" style="white-space: pre-wrap;"></p>
-            <div v-for="image in files" :key="image" class="mb-10">
-              <img :src="image.imageUrl" class="w-full h-auto" />
+            <div class="flex flex-col flex-wrap">
+              <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">모집 현황</p>
+
+              <div class="flex flex-col w-full flex-wrap">
+                <div v-for="(position, index) in positions" :key="index" class="">
+                  <div class="flex justify-between pt-4 px-5">
+                    <p class="">{{ position.positionName }}</p>
+                    <p class="">{{ position.currentCount }}/{{ position.requiredCount }}</p>
+                  </div>
+
+                  <button v-if="!(nickname == loggedInUserNickname) && !isPending" @click="openModal(position.positionName)" class="border border-gray-200 whitespace-nowrap px-4 hover:bg-gray-200 rounded-lg">
+                    지원
+                  </button>
+
+                  <button v-if="isPending && nickname !== loggedInUserNickname" class="border border-gray-200 whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed rounded-lg">
+                    승인대기
+                  </button>
+
+                  <button v-if="nickname == loggedInUserNickname" @click="goToProjectApp" class="border text-sm border-gray-200 rounded-full whitespace-nowrap px-4 py-1 hover:bg-gray-200 rounded-lg">
+                    지원자 확인
+                  </button>
+
+                  <!-- <button v-if="isPending" class="border border-gray-300 bg-gray-300 text-gray-500 rounded-full py-1 px-3 w-20" disabled>지원되었습니다</button> -->
+                </div>
+              </div>
             </div>
           </div>
-
+        </div>
+        <!-- 프로젝트 소개 부분 (왼쪽) -->
+        <div class="flex-1 px-10 w-3/4 ml-10">
+          <h1 class="font-bold text-xl">프로젝트 소개</h1>
+          <p class="py-2 pre-wrap">{{ content }}</p>
+          <div v-for="image in files" :key="image" class="mb-10">
+            <img :src="image.imageUrl" class="w-full h-auto" />
+          </div>
+        </div>
+        <!-- </div> -->
         <!--글 박스 끝-->
         <div>
           <hr class="border-t-4 border-[#d10000]" />
         </div>
         <div class="flex justify-between my-5 mx-7">
-          <RouterLink to="/"><button class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-gray-200"
-              @click="goToList">목록</button></RouterLink>
+          <RouterLink to="/"><button class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-gray-200" @click="goToList">목록</button></RouterLink>
           <div class="space-x-3">
-            <button v-if="nickname == loggedInUserNickname"
-              class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]"
-              @click="doUpdate">
+            <button v-if="nickname == loggedInUserNickname" class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]" @click="doUpdate">
               수정
             </button>
-            <button v-if="nickname == loggedInUserNickname"
-              class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]"
-              @click="doDelete">
+            <button v-if="nickname == loggedInUserNickname" class="border border-gray-200 rounded-full px-4 py-1 text-sm hover:bg-[#d10000] hover:text-white hover:border-[#d10000]" @click="doDelete">
               삭제
             </button>
           </div>
@@ -122,8 +108,7 @@
         <div class="ml-30 justify-center items-center w-full">
           <div class="flex items-center pt-3">
             <div class="flex items-center w-8 h-8">
-              <img v-if="useStore.profileImage" :src="useStore.profileImage"
-                class="h-8 w-8 rounded-full object-cover" />
+              <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-8 w-8 rounded-full object-cover" />
               <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
             </div>
             <p class="ml-3">{{ useStore.nickname }}</p>
@@ -131,34 +116,27 @@
           <!--댓글 입력창-->
           <div class="flex items-center w-full">
             <div class="my-6 mx-7 justify-center" style="width: 90%">
-              <textarea v-model="commentContent"
-                class="w-full p-3 h-20 border border-gray-200 rounded-md focus:outline-none ring-gray-200 resize-none bg-gray-100"
-                placeholder="250자 제한"></textarea>
+              <textarea v-model="commentContent" class="w-full p-3 h-20 border border-gray-200 rounded-md focus:outline-none ring-gray-200 resize-none bg-gray-100" placeholder="250자 제한"></textarea>
             </div>
             <div>
-              <button class="border border-gray-200 rounded-md h-20 w-20 px-2 text-base hover:bg-gray-100"
-                @click="commentsave">등록</button>
+              <button class="border border-gray-200 rounded-md h-20 w-20 px-2 text-base hover:bg-gray-100" @click="commentsave">등록</button>
             </div>
           </div>
           <!--댓글목록-->
           <div class="my-6 mx-7 justify-center flex flex-col gap-5" style="width: 90%">
             <div v-for="comment in comments" :key="comment.id">
               <!-- 댓글 방식 확인 {{ comment }} -->
-              <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200"
-                @click.stop="openCommentProfile(comment.userId)">
-                <img v-if="comment.profileImage" :src="comment.profileImage"
-                  class="h-8 w-8 rounded-full object-cover" />
+              <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
+                <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
                 <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
                 <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
               </div>
 
               <!--댓글 수정 시-->
               <div v-if="comment.isEditing" class="flex">
-                <textarea v-model="comment.newContent"
-                  class="w-full ml-4 p-3 h-10 border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
+                <textarea v-model="comment.newContent" class="w-full ml-4 p-3 h-10 border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
                 <div class="">
-                  <button @click="commentupdate(comment.commentId)"
-                    class="ml-4 border border-gray-200 rounded-md h-10 w-20 px-2 text-base hover:bg-gray-100">수정</button>
+                  <button @click="commentupdate(comment.commentId)" class="ml-4 border border-gray-200 rounded-md h-10 w-20 px-2 text-base hover:bg-gray-100">수정</button>
                   <button @click="updatecancle" class="ml-4 text-sm hover:underline text-gray-500">취소</button>
                 </div>
               </div>
@@ -166,10 +144,8 @@
                 <!-- 댓글 내용 -->
                 <p class="text-gray-800 ml-4">{{ comment.content }}</p>
                 <div>
-                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2"
-                    @click="startEditing(comment)">수정</button>
-                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2"
-                    @click="commentDelete(comment.commentId)">삭제</button>
+                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="startEditing(comment)">수정</button>
+                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="commentDelete(comment.commentId)">삭제</button>
                 </div>
               </div>
               <!-- <p v-if="comment.lastModifiedAt" class="text-xs mt-3 mb-4 mx-2 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
@@ -193,21 +169,13 @@
       </div>
       <div class="flex flex-col mb-4 gap-2">
         <label for="position" class="font-bold">지원 직군</label>
-        <select v-model="positionName" class="text-sm bg-gray-100 rounded-lg p-4 font-bold">
-          <option disabled value="">지원할 포지션을 선택하세요</option>
-          <option v-for="(position, index) in positions" :key="index" :value="position.positionName">
-            {{ position.positionName }}
-          </option>
-        </select>
-
+        <p class="text-sm bg-gray-100 rounded-lg p-4 font-bold">{{ positionName }}</p>
         <label for="note" class="font-bold">지원 사유 및 한마디</label>
         <textarea id="note" v-model="note" placeholder="지원 사유 및 한마디"></textarea>
       </div>
       <div class="flex justify-center gap-3 mb-4">
-        <button type="button" class="border border-gray-300 bg-gray-300 rounded-full py-1 px-3 w-20"
-          @click="closeModal">아니오</button>
-        <button class="border border-[#d10000] bg-[#d10000] text-white rounded-full py-1 px-3 w-20"
-          @click="confirmSubmit">예</button>
+        <button type="button" class="border border-gray-300 bg-gray-300 rounded-full py-1 px-3 w-20" @click="closeModal">아니오</button>
+        <button class="border border-[#d10000] bg-[#d10000] text-white rounded-full py-1 px-3 w-20" @click="confirmSubmit">예</button>
       </div>
       <p class="text-center text-xs text-gray-500 mb-3">예를 누르시면, 정보제공 / 유의사항에 동의 한 것으로 간주합니다.</p>
       <h3 class="text-sm text-gray-700 font-bold mb-2">유의사항</h3>
@@ -231,8 +199,7 @@
       <h2 class="font-bold text-xl flex justify-center text-center mb-4">지원이 완료되었습니다!</h2>
       <p class="text-gray-800 text-sm mb-4">작성자가 승인하면 프로젝트에 참가하게 됩니다.</p>
       <div class="flex justify-center">
-        <button @click="closeConfirmModal"
-          class="font-bold text-center border bg-white rounded-md py-1 px-3 hover:bg-gray-200">확인</button>
+        <button @click="closeConfirmModal" class="font-bold text-center border bg-white rounded-md py-1 px-3 hover:bg-gray-200">확인</button>
       </div>
     </div>
   </div>
@@ -267,8 +234,6 @@ const positions = ref([]);
 const recruitmentStatus = ref('');
 const user_id = ref('');
 const files = ref([]);
-const isApplied = ref(false);
-
 
 //게시글 가져오기
 watchEffect(async () => {
@@ -286,8 +251,6 @@ watchEffect(async () => {
     techStacks.value = res.data.result.techStackDtoList;
     positions.value = res.data.result.positionDtoList;
     recruitmentStatus.value = res.data.result.recruitmentStatus;
-    isApplied.value = res.data.result.applied;
-    console.log(isApplied.value);
     // console.log('기술스택확인', res.data.result.techStackDtoList);
     // console.log('포지션 배열 확인', res.data.result.positionDtoList);
     // console.log('이미지', res.data.result.imageUrl);
