@@ -5,6 +5,7 @@
   <!-- <div v-for="(board, index) in usersInfoarr" :key="index"> -->
 
   <!--프로필모달-->
+  <transition name="modal" @before-enter="beforeEnter" @enter="enter" @leave="leave">
   <div v-if="props.isModal" class="modal-container" @click.self="closeModal">
     <div class="modal-content">
       <div class="flex items-center justify-between mb-4">
@@ -14,7 +15,7 @@
 
       <div class="flex flex-col items-center mb-4 gap-2">
         <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover mb-4" />
-        <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover mb-4" />
+        <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover mb-4" />
         <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">닉네임</p>
         <p class="text-xl">{{ nickname }}</p>
       </div>
@@ -45,6 +46,7 @@
   </div>
   <!--😀개인 정보 끝-->
   <!-- </div> -->
+   </transition>
 </template>
 
 <script setup>
@@ -106,3 +108,22 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style lang="scss" scoped>
+
+/* 모달이 화면에 등장할 때 */
+.modal-enter-active, .modal-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modal-enter, .modal-leave-to /* .modal-leave-active in <2.1.8 */ {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+/* 모달이 닫힐 때 애니메이션 */
+.modal-leave-to {
+  opacity: 0;
+  transform: translateY(50px);
+}
+</style>

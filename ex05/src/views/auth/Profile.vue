@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center mx-auto my-10">
+  <div class="flex justify-center items-center mx-auto my-10 mt-20">
     <div class="justify-center items-center">
       <div class="my-3">
         <div class="grid grid-cols-6">
@@ -75,7 +75,7 @@
           <div class="grid grid-cols-5 items-center gap-x-4" ref="dropdownContainer">
             <h1 class="col-start-2 font-bold text-lg pb-2">포지션</h1>
             <div class="relative min-w-[567px] m-auto flex">
-              <div class="bg-white border border-gray-200 rounded-lg min-w-[570px] z-10">
+              <div class="bg-white border border-gray-200 rounded-lg min-w-[570px]">
                 <div class="p-3">
                   <div v-for="positionName in roleOptions" :key="positionName" class="flex wrap gap-2">
                     <input

@@ -1,6 +1,6 @@
 <template>
   <!--🔴헤더-->
-  <header>
+  <header class="fixed top-0 left-0 right-0 z-10">
     <div class="p-3 bg-[#d10000]">
       <nav class="flex space-x-5 justify-between items-center m-auto w-4/6">
         <div>

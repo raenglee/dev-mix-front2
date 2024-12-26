@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white">
+  <div class="bg-white mt-20">
     <!--🟥메인 박스-->
     <section class="container mx-auto py-8 w-4/6">
       <img src="/img/devmix.png" class="rounded-xl" />

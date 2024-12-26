@@ -1,10 +1,5 @@
 <template>
-  <!-- <div class="bg-[#d10000] w-full text-white text-center bottom-0 left-0">DEVMIX
-    <br>푸터<br> 내용<br>
-  </div> -->
-
-  <div class="bg-[#d10000] w-full text-white p-4 px-72 mt-20 text-center">
-    <!-- <div class="bg-[#7371fc] w-full text-white p-4 px-72 mt-20 text-center"> -->
+  <div class="bg-[#d10000] w-full text-white p-4 px-72 text-center">
     <p class="font-bold">DEVMIX</p>
     <div class="text-sm py-2">
       <p class="mb-1">주소: 대구광역시 중구 중앙대로 394 제일빌딩 505호</p>

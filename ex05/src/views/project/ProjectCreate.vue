@@ -1,5 +1,5 @@
 <template>
-  <div class="w-3/6 mx-auto">
+  <div class="w-3/6 mx-auto mt-20">
     <div class="flex pt-10">
       <font-awesome-icon icon="pen" class="h-6 w-5 p-1 mr-1 text-gray-300" />
       <h1 class="font-bold text-2xl text-gray-800">프로젝트 생성</h1>

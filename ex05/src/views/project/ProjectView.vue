@@ -1,9 +1,8 @@
 <template>
-  <!-- <div class="w-4/6 mx-auto my-10"> -->
-  <section class="container mx-auto w-4/6">
+  <section class="container mx-auto w-4/6 mt-20">
     <form @submit.prevent="handleSubmit" class="gap-y-5 py-10">
       <div class="justify-center items-center text-center space-y-3 pb-8">
-        <p class="border border-[#d10000] rounded-full px-4 text-center m-auto inline-block">
+        <p class="border-2 text-gray-700 border-[#d10000] rounded-full text-lg px-4 text-center m-auto inline-block">
           {{ recruitmentStatus }}
         </p>
         <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
@@ -24,14 +23,14 @@
       <!-- 프로젝트 소개 부분 (왼쪽) -->
       <div class="flex w-full">
         <div class="w-2/3 mr-10">
-          <h1 class="font-bold text-xl">프로젝트 소개</h1>
-          <p class="py-2">{{ content }}</p>
+          <h1 class="font-bold text-xl border rounded-full px-3 py-1 mb-4 bg-gray-100 border-gray-100">프로젝트 소개</h1>
+          <p class="py-2 px-1">{{ content }}</p>
           <div v-for="image in files" :key="image" class="mb-10">
             <img :src="image.imageUrl" class="w-full h-auto" />
           </div>
         </div>
         <!--상세정보 스크롤 따라 내려오도록-->
-        <div class="sticky top-[50px] p-8 mb-10 bg-white text-gray-700 rounded border shadow-md w-96 h-[calc(100%-100px)] right-0">
+        <div class="sticky top-[100px] p-8 mb-10 bg-white text-gray-700 rounded border shadow-md w-96 h-[calc(100%-100px)] right-0">
           <div class="flex flex-col flex-wrap gap-y-4">
             <div class="flex flex-wrap">
               <p for="region" class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">지역 / 구분</p>
