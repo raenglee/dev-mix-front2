@@ -31,7 +31,7 @@
           </div>
         </div>
         <!--상세정보 스크롤 따라 내려오도록-->
-        <div class="sticky top-[100px] p-8 mb-10 bg-white text-gray-700 rounded border shadow-md w-96 h-[calc(100%-100px)] right-0">
+        <div class="sticky top-[50px] p-8 mb-10 bg-white text-gray-700 rounded border shadow-md w-96 h-[calc(100%-100px)] right-0">
           <div class="flex flex-col flex-wrap gap-y-4">
             <div class="flex flex-wrap">
               <p for="region" class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">지역 / 구분</p>
