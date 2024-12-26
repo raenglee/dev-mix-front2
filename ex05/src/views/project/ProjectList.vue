@@ -309,10 +309,12 @@ const getTotalPages = async () => {
       recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용
     });
 
+    console.log(total);
     // 한 페이지당 16개의 글, 16개 이상일 때 나머지가 남으면 페이지 수를 추가, 안남으면 페이지수를 추가하지 않음
     // const modValue = total.result % 16 > 0 ? 1 : 0;
     // + modValue;
-    const value = Math.ceil(total.result / 16)
+    const value = Math.ceil(total.result / 16);
+    console.log(value);
     totalPages.value = value;
     console.log('총 페이지 수', totalPages.value);
   } catch (error) {
