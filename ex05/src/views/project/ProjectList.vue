@@ -538,8 +538,6 @@ const removeTechStack = (index) => {
 };
 
 
-//토탈 페이지 수
-const totalPages = ref(0);
 
 const getTotalPages = async () => {
   try {

@@ -20,7 +20,7 @@
                 }"
               /> -->
               <p
-                class="px-3 py-1 whitespace-nowrap rounded-md font-bold cursor-pointer"
+                class="mt-1 px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
                 @mouseenter="isAlarmHovered = true"
                 @mouseleave="isAlarmHovered = false"
                 :class="{
@@ -28,7 +28,7 @@
                   'text-white': !isAlarmHovered
                 }"
               >
-                알람
+                알림
               </p>
               <!-- 알람 드롭다운 메뉴 -->
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
@@ -142,8 +142,7 @@ const eventSource = ref(null); // SSE 이벤트 소스
 const markAsRead = async (notification_id) => {
   console.log('읽음 처리할 알림 ID:', notification_id);
   try {
-    // await axios.patch(`http://localhost:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
-      await axios.patch(`http://192.168.0.6:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
+    
     await axios.patch(`${GLOBAL_URL}/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
       headers: {
         'Content-Type': 'application/json',
@@ -182,14 +181,13 @@ const initializeSSE = () => {
     eventSource.value = null;
   }
 
-  if (!token.value) {
+  if (!token) {
     console.error('토큰이 없습니다. SSE 연결을 중단합니다.');
     return;
   }
 
-  // const sseUrl = `http://localhost:8080/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
-  const sseUrl = `http://192.168.0.6:8080/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
-  const sseUrl = `${GLOBAL_URL}/api/v1/notifications/connect?token=${encodeURIComponent(token.value)}`;
+
+  const sseUrl = `${GLOBAL_URL}/api/v1/notifications/connect?token=${encodeURIComponent(token)}`;
   eventSource.value = new EventSource(sseUrl);
 
   console.log('test');
@@ -340,6 +338,7 @@ watchEffect(async () => {
 
         // 메인 페이지로 이동
         router.push('/');
+        initializeSSE();
       }
     } catch (error) {
       console.error('Login failed:', error);
