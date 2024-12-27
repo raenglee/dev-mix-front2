@@ -145,6 +145,7 @@ import { getPositions, getTechstacks } from '@/api/projectApi';
 const useStore = useUserStore();
 const router = useRouter();
 
+const newNickname = ref('');
 const checkNickMessage = ref(''); // 닉네임 유효성 메시지
 const isDuplicate = ref(false); //닉넴중복
 const isValidNickname = ref(false); //형식틀림
@@ -164,8 +165,10 @@ const techOptions = ref([]); // 서버에서 전달 받은 기술 저장
 
 const checkNicknameAvailability = async () => {
   const res = await checkNickname(nickname.value); // API 호출
+  newNickname.value = nickname.value
+
   try {
-    if (res.code === 'SUCCESS') {
+    if (res.code === 'SUCCESS' || nickname.value === useStore.nickname){
       isDuplicate.value = false; //중복닉
       isValidNickname.value = false; // 형식오류
       isDuplicateChecked.value = true;
@@ -325,23 +328,25 @@ const handleSubmit = async () => {
 
   try {
     const res = await checkNickname(nickname.value); // API 호출
-    if (nickname.value !== useStore.nickname && isDuplicateChecked.value == false) {
-      isDuplicateChecked.value = false;
+    if (res.code === 'DUPLICATED_NICKNAME' || nickname.value !== newNickname.value) {
       alert('닉네임 중복 확인 하세요');
+      isDuplicateChecked.value = false;
       return;
+    }else{
+      isDuplicateChecked.value = true;
+
     }
-    if (nickname.value !== useStore.nickname && res.code !== 'SUCCESS') {
-      alert('닉네임 형식 혹은 중복을 확인 하세요');
+    if (nickname.value !== newNickname.value && res.code === 'VALIDATION_FAILED') {
+      alert('닉네임 형식을 확인 하세요');
       isDuplicateChecked.value = false;
       return;
     } else {
       isDuplicateChecked.value = true;
     }
-
     await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
     const data = await loginUsers();
     await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
-    if (isDuplicateChecked.value == true) {
+    if (isDuplicateChecked.value == true && nickname.value == useStore.nickname) {
       alert('수정 되었습니다.');
       await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
     }
