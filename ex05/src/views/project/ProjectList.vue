@@ -192,7 +192,7 @@
               />
             </div>
             <div class="text-sm mb-2 text-gray-800">모집 마감일 | {{ item.recruitEndDate }}</div>
-            <div class="text-xl font-bold mb-2 text-gray-800">{{ item.title }}</div>
+            <div class="text-xl font-bold mb-2 text-gray-800 break-words ">{{ item.title }}</div>
             <!--기술 아이콘-->
             <div class="flex pt-2 gap-3 mb-1">
               <!--선택한 기술 다 보이도록-->
@@ -254,10 +254,10 @@
         <span class="font-semibold text-3xl text-gray-800"> 현재 DEVMIX에서 모집 중인 프로젝트 <span class="text-[#D10000]">N</span>건</span>
       </div> -->
 
-      <!--페이지 수-->
+      <!--페이지네이션 수-->
       <div class="flex justify-center mt-5">
         <ul class="flex space-x-2">
-          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" @click="getProjects(num)">
+          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" @click="searchfilter(num)">
             {{ num }}
           </li>
         </ul>
@@ -323,7 +323,7 @@ const getTotalPages = async () => {
 };
 
 //검색필터
-const searchfilter = async (pageNumber = 1) => {
+const searchfilter = async (num) => {
   try {
     const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
     // const recruitmentStatus: ref('');
@@ -332,7 +332,7 @@ const searchfilter = async (pageNumber = 1) => {
     // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
     const currentQuery = router.currentRoute.value.query;
     const queryParams = {
-      pageNumber: pageNumber,
+      pageNumber: num,
       location: selectedLocation.value,
       positions: position,
       techStacks: tech,

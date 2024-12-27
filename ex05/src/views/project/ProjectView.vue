@@ -70,7 +70,7 @@
                 </div>
                 <button
                   v-if="!(nickname == loggedInUserNickname) && !isPending"
-                  @click="openModal"
+                  @click="openApplicant"
                   class="border whitespace-nowrap mt-4 p-2 rounded-lg font-bold border-[#d10000] bg-[#d10000] text-white hover:border-gray-200 hover:bg-white hover:text-gray-700"
                 >
                   지원
@@ -167,23 +167,30 @@
   <!-- </div> -->
 
   <!--지원모달-->
-  <div v-if="showModal" class="modal-container" @click.self="closeModal">
+  <div v-if="applicationModal" class="modal-container" @click.self="closeApplicant">
     <div class="modal-content">
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-bold text-xl text-center">지원 하시겠습니까?</h2>
-        <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
+        <button class="h-4 w-4" @click="closeApplicant"><img src="/img/x.png" /></button>
       </div>
       <div class="flex flex-col mb-4 gap-2">
-        <!-- <label for="position" class="font-bold">지원 직군</label>
-        <p class="text-sm bg-gray-100 rounded-lg p-4 font-bold">{{ positionName }}</p> -->
-        <!-- 지원 직군 부분 -->
         <label for="position" class="font-bold">지원 직군</label>
-        <select v-model="positionName" class="text-sm bg-gray-100 rounded-lg p-4 font-bold">
-          <option disabled value="">지원할 포지션을 선택하세요</option>
-          <option v-for="(position, index) in positions" :key="index" :value="position.positionName">
-            {{ position.positionName }}
-          </option>
-        </select>
+        <div class="relative">
+          <select
+            v-model="positionName"
+            class="w-full h-12 px-4 pr-10 border border-gray-300 rounded-full bg-white text-gray-700 shadow-sm cursor-pointer focus:outline-none focus:ring-2 appearance-none transition"
+          >
+            <option disabled value="">지원할 포지션을 선택하세요</option>
+            <option v-for="(position, index) in positions" :key="index" :value="position.positionName">
+              {{ position.positionName }}
+            </option>
+          </select>
+          <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </div>
 
         <label for="note" class="font-bold">지원 사유 및 한마디</label>
         <textarea id="note" v-model="note" placeholder="지원 사유 및 한마디"></textarea>
@@ -204,9 +211,9 @@
   </div>
 
   <!--게시글 작성자 프로필-->
-  <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" />
+  <UserProfile :isModal="UserProfileModal" :user_id="user_id" @update:isModal="closeProfileModal" />
   <!--댓글 작성자 프로필-->
-  <UserProfile :isModal="isCommentModal" :user_id="commentUserId" @update:isModal="closeCommentProfileModal" />
+  <UserProfile :isModal="CommentModal" :user_id="commentUserId" @update:isModal="closeCommentProfileModal" />
 
   <!-- 승인대기 모달 -->
   <div v-if="isConfirmModal" class="modal-container" @click.self="closeConfirmModal">
@@ -401,57 +408,12 @@ const commentDelete = async (id) => {
   }
 };
 
-// 게시판의 유저프로필 모달
-const isModal = ref(false); // 모달의 가시성 (flase-안보임)
-
-// 게시판의 유저프로필 모달
-const isCommentModal = ref(false);
-const commentUserId = ref(null);
-
-// 게시글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
-const openProfile = (userId) => {
-  user_id.value = userId;
-  isModal.value = true; // 모달 열기
-  // console.log('유저ID', user_id.value);
-};
-
-// 댓글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
-const openCommentProfile = (userId) => {
-  commentUserId.value = userId;
-  isCommentModal.value = true;
-  // console.log('유저ID', commentUserId.value);
-};
-
-// 게시판 모달 닫기
-const closeProfileModal = () => {
-  isModal.value = false;
-};
-
-// 댓글 모달 닫기
-const closeCommentProfileModal = () => {
-  isCommentModal.value = false;
-};
-
 //지원 모달
 
 // 지원 직군을 저장하는 변수
 const positionName = ref('');
 // 완료 모달 표시 여부 제어
 const isConfirmModal = ref(false);
-// 모달의 가시성 상태를 제어하는 변수
-const showModal = ref(false);
-
-// 모달을 열기 위한 함수
-const openModal = (position) => {
-  // 클릭한 직군명 할당
-  positionName.value = position;
-  showModal.value = true;
-};
-
-// 모달을 닫기 위한 함수
-const closeModal = () => {
-  showModal.value = false;
-};
 
 //지원기능
 const isPending = ref(false); // 지원 상태 변수
@@ -473,7 +435,7 @@ const confirmSubmit = async () => {
     if (res.status === 200) {
       isPending.value = true;
       console.log('isPending:', isPending.value);
-      closeModal(); // 기존 지원 모달 닫기
+      closeApplicant(); // 기존 지원 모달 닫기
       isConfirmModal.value = true; // 완료 모달 열기
     } else {
       alert('지원에 실패했습니다.');
@@ -482,6 +444,49 @@ const confirmSubmit = async () => {
     console.error('지원 중 오류 발생:', error);
     alert('지원 중 오류가 발생했습니다.');
   }
+};
+
+// 지원 모달의 가시성 상태를 제어하는 변수
+const applicationModal = ref(false);
+
+// 지원 모달을 열기 위한 함수
+const openApplicant = () => {
+  applicationModal.value = true;
+};
+
+// 유저프로필 모달
+const UserProfileModal = ref(false); // 모달의 가시성 (flase-안보임)
+
+// 게시판 댓글 유저프로필 모달
+const CommentModal = ref(false);
+const commentUserId = ref(null);
+
+// 게시글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+const openProfile = (userId) => {
+  user_id.value = userId;
+  UserProfileModal.value = true; // 모달 열기
+  // console.log('유저ID', user_id.value);
+};
+
+// 댓글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+const openCommentProfile = (userId) => {
+  commentUserId.value = userId;
+  CommentModal.value = true;
+  // console.log('유저ID', commentUserId.value);
+};
+
+// 게시판 프로필 모달 닫기
+const closeProfileModal = () => {
+  UserProfileModal.value = false;
+};
+// 댓글 모달 닫기
+const closeCommentProfileModal = () => {
+  CommentModal.value = false;
+};
+
+// 지원 모달을 닫기 위한 함수
+const closeApplicant = () => {
+  applicationModal.value = false;
 };
 
 // 지원완료 모달 닫기
