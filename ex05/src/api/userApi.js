@@ -2,13 +2,9 @@
 
 import axios from 'axios';
 import { GLOBAL_URL } from './util';
-
-
-// const url = 'http://192.168.0.61:8080';
-// const url = 'http://localhost:8080/api/v1/users';
-const url = `${GLOBAL_URL}/api/v1/boards`;
 // const url = 'http://192.168.0.61:8080';
 
+const url = `${GLOBAL_URL}/api/v1/users`;
 
 //특정 유저 프로필 
 export const getUserInfo = async (user_id) => {

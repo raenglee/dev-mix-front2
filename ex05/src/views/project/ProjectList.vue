@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white">
+  <div class="bg-white mt-20">
     <!--🟥메인 박스-->
     <section class="container mx-auto py-8 w-4/6">
       <img src="/img/devmix.png" class="rounded-xl" />
@@ -309,9 +309,12 @@ const getTotalPages = async () => {
       recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용
     });
 
+    console.log(total);
     // 한 페이지당 16개의 글, 16개 이상일 때 나머지가 남으면 페이지 수를 추가, 안남으면 페이지수를 추가하지 않음
-    const modValue = total.result % 16 > 0 ? 1 : 0;
-    const value = parseInt(total.result / 16) + modValue;
+    // const modValue = total.result % 16 > 0 ? 1 : 0;
+    // + modValue;
+    const value = Math.ceil(total.result / 16);
+    console.log(value);
     totalPages.value = value;
     console.log('총 페이지 수', totalPages.value);
   } catch (error) {

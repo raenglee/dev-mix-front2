@@ -1,5 +1,5 @@
 <template>
-  <div class="w-4/6 mx-auto">
+  <div class="w-4/6 mx-auto mt-20">
     <RouterLink to="/mypage">
       <div class="flex pt-10 mb-10">
         <font-awesome-icon icon="user" class="h-6 w-5 p-1 mr-1 text-gray-300" />

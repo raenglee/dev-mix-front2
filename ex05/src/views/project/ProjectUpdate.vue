@@ -1,6 +1,6 @@
 <template>
-  <div class="w-3/6 mx-auto">
-    <h1 class="pt-10 font-bold text-xl text-gray-800">프로젝트 생성</h1>
+  <div class="w-3/6 mx-auto mt-20">
+    <h1 class="pt-10 font-bold text-xl text-gray-800">프로젝트 수정</h1>
     <div class="my-3 mb-6">
       <hr class="border-t-4 border-[#d10000]" />
       <p class="text-xs my-2 font-bold text-gray-500"><span class="text-[#d10000] mx-1">*</span>프로젝트는 빈 항목이 없이 작성되어야 합니다.</p>

@@ -427,7 +427,6 @@ const handleSubmit = async () => {
     await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
     if (isDuplicateChecked.value ) {
       alert('회원가입이 완료되었습니다.');
-      // isValidNickname.value = false;
       router.push('/'); // 성공 시 프로필 페이지로 이동
     }
   } catch (err) {
