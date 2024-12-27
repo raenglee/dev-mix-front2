@@ -192,7 +192,7 @@
               />
             </div>
             <div class="text-sm mb-2 text-gray-800">모집 마감일 | {{ item.recruitEndDate }}</div>
-            <div class="text-xl font-bold mb-2 text-gray-800 break-words ">{{ item.title }}</div>
+            <div class="text-xl font-bold mb-2 text-gray-800 break-words">{{ item.title }}</div>
             <!--기술 아이콘-->
             <div class="flex pt-2 gap-3 mb-1">
               <!--선택한 기술 다 보이도록-->
@@ -323,6 +323,10 @@ const getTotalPages = async () => {
 };
 
 //검색필터
+
+const pageNumber = ref('');
+
+
 const searchfilter = async (num) => {
   try {
     const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
@@ -551,6 +555,6 @@ watchEffect(() => {
   selectPositions();
   selectLocations();
   getTotalPages();
-  searchfilter();
+  searchfilter(pageNumber);
 });
 </script>
