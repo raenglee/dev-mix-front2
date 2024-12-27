@@ -51,14 +51,12 @@
           </div>
           <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            <template v-if="useStore.userProfile != null">
-                <span class="px-2" v-for="position in userProfile.positions" :key="position">
-                  {{ position.positionName }}
-                </span>
-              </template>
-              <template v-else>
-              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
-            </template>
+            <div v-if="useStore.userProfile != null">
+              <span class="px-2" v-for="position in userProfile.positions" :key="position">
+                {{ position.positionName }}
+              </span>
+            </div>
+            <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
           </div>
         </div>
 
