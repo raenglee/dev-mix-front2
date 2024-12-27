@@ -51,14 +51,12 @@
           </div>
           <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            <template v-if="useStore.userProfile != null">
-                <span class="px-2" v-for="position in userProfile.positions" :key="position">
-                  {{ position.positionName }}
-                </span>
-              </template>
-              <template v-else>
-              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
-            </template>
+            <div v-if="useStore.userProfile != null">
+              <span class="px-2" v-for="position in userProfile.positions" :key="position">
+                {{ position.positionName }}
+              </span>
+            </div>
+            <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
           </div>
         </div>
 
@@ -69,19 +67,16 @@
           </div>
           <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-
-          <template v-if="useStore.userProfile != null">
-            <div class="flex space-x-5 justify-center">
-              <div class="py-2" v-for="tech in userProfile.techStacks" :key="tech">
-                <img :src="tech.techStackImageUrl" class="w-10 h-10" />
-                <span class="text-sm py-4">{{ tech.techStackName }}</span>
+            <div v-if="useStore.userProfile != null">
+              <div class="flex space-x-5 justify-center">
+                <div class="py-2" v-for="tech in userProfile.techStacks" :key="tech">
+                  <img :src="tech.techStackImageUrl" class="w-10 h-10" />
+                  <span class="text-sm py-4">{{ tech.techStackName }}</span>
+                </div>
               </div>
             </div>
-          </template>
-          <template v-else>
-              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
-            </template>
-        </div>
+            <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
+          </div>
         </div>
       </div>
     </div>
@@ -143,6 +138,8 @@ const selelctTechstacks = async () => {
     console.error('실패:', error);
   }
 };
+
+console.log(useStore.positionName)
 
 watchEffect(() => {
   loadUserProfile();
