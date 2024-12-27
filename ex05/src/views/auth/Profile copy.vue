@@ -141,7 +141,6 @@ const useStore = useUserStore();
 const router = useRouter();
 // const route = useRoute();
 
-const newNickname = ref('');
 const checkNickMessage = ref(''); // 닉네임 유효성 메시지
 const isDuplicate = ref(false); //닉넴중복
 const isValidNickname = ref(false); //형식틀림
@@ -171,19 +170,25 @@ const roleOptions = ref([]); // 서버에서 전달 받은 포지션 저장
 const checkNicknameAvailability = async () => {
   try {
     const res = await checkNickname(nickname.value); // API 호출
-    newNickname.value = nickname.value
-
     if (res.code === 'SUCCESS') {
       isDuplicate.value = false; //중복닉
       isValidNickname.value = false; // 형식오류
       isDuplicateChecked.value = true;
+      await useStore.profile(nickname); // 사용자 정보를 Pinia 스토어에 저장
       alert('사용 가능한 닉네임입니다.');
       return true;
     } else if (res.code === 'DUPLICATED_NICKNAME') {
-      isDuplicate.value = true; //중복닉
-      isValidNickname.value = false; // 형식오류
-      isDuplicateChecked.value = true;
-      alert('중복된 닉네임입니다.');
+      if (nickname.value == useStore.nickname) {
+        isDuplicate.value = false; //중복닉
+        isValidNickname.value = false; // 형식오류
+        isDuplicateChecked.value = true;
+        alert('사용 가능한 닉네임입니다.');
+      } else {
+        isDuplicate.value = true; //중복닉
+        isValidNickname.value = false; // 형식오류
+        isDuplicateChecked.value = true;
+        alert('중복된 닉네임입니다.');
+      }
     } else if (res.code === 'VALIDATION_FAILED') {
       isDuplicate.value = false; //중복닉
       isValidNickname.value = true; // 형식오류
@@ -408,28 +413,31 @@ const handleSubmit = async () => {
   formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
   // console.log('폼데이터최종', JSON.stringify(userProfile));
 
+  await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
+  const data = await loginUsers();
+  await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
+  console.log(nickname.value);
+  console.log(useStore.nickname);
+
   try {
     const res = await checkNickname(nickname.value); // API 호출
-    if (res.code === 'DUPLICATED_NICKNAME' || nickname.value !== newNickname.value) {
-      alert('닉네임 중복 확인 하세요');
+
+    if (nickname.value !== useStore.nickname && isDuplicateChecked.value == false) {
       isDuplicateChecked.value = false;
+      alert('닉네임 중복 확인 하세요');
       return;
     }
-    if (nickname.value !== newNickname.value && res.code !== 'SUCCESS') {
+    if (nickname.value !== useStore.nickname && res.code !== 'SUCCESS') {
       alert('닉네임 형식 혹은 중복을 확인 하세요');
       isDuplicateChecked.value = false;
       return;
     } else {
       isDuplicateChecked.value = true;
     }
-    await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
-    const data = await loginUsers();
-    await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
-    if (isDuplicateChecked.value ) {
-      alert('회원가입이 완료되었습니다.');
-      // isValidNickname.value = false;
-      router.push('/'); // 성공 시 프로필 페이지로 이동
-    }
+    if (isDuplicateChecked.value == true && nickname.value == useStore.nickname)
+    alert('회원가입이 완료되었습니다.');
+    // isValidNickname.value = false;
+    router.push('/'); // 성공 시 프로필 페이지로 이동
   } catch (err) {
     // 에러 처리
     alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
