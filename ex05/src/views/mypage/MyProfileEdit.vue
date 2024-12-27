@@ -322,25 +322,31 @@ const handleSubmit = async () => {
 
   formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
   // console.log('폼데이터최종', JSON.stringify(userProfile));
+  console.log(nickname.value);
+  console.log(useStore.nickname);
 
   try {
-    if (nickname.value !== useStore.nickname) {
-      if (isDuplicateChecked.value !== true) {
-        alert('닉네임 중복 확인 하세요');
-        return;
-      }
-      const res = await checkNickname(nickname.value); // API 호출
-      if (res.code !== 'SUCCESS') {
-        alert('닉네임 중복 확인 하세요');
-        isDuplicateChecked.value = false;
-        return;
-      }
+    const res = await checkNickname(nickname.value); // API 호출
+    if (nickname.value !== useStore.nickname && isDuplicateChecked.value == false) {
+      isDuplicateChecked.value = false;
+      alert('닉네임 중복 확인 하세요');
+      return;
     }
+    if (nickname.value !== useStore.nickname && res.code !== 'SUCCESS') {
+      alert('닉네임 형식 혹은 중복을 확인 하세요');
+      isDuplicateChecked.value = false;
+      return;
+    } else {
+      isDuplicateChecked.value = true;
+    }
+
     await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
     const data = await loginUsers();
     await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
-    alert('수정 되었습니다.');
-    await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
+    if (isDuplicateChecked.value == true) {
+      alert('수정 되었습니다.');
+      await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
+    }
   } catch (err) {
     // 에러 처리
     alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
