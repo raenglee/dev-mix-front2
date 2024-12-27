@@ -322,8 +322,6 @@ const handleSubmit = async () => {
 
   formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
   // console.log('폼데이터최종', JSON.stringify(userProfile));
-  console.log(nickname.value);
-  console.log(useStore.nickname);
 
   try {
     const res = await checkNickname(nickname.value); // API 호출
