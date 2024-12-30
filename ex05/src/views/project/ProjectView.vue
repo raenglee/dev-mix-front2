@@ -7,7 +7,7 @@
         </p>
         <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
 
-        <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(user_id)">
+        <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(userId)">
           <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover" />
           <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
           <p>{{ nickname }}</p>
@@ -221,7 +221,7 @@
   </div>
 
   <!--게시글 작성자 프로필-->
-  <UserProfile :isModal="UserProfileModal" :user_id="user_id" @update:isModal="closeProfileModal" />
+  <UserProfile :isModal="UserProfileModal" :user_id="openProfile" @update:isModal="closeProfileModal" />
   <!--댓글 작성자 프로필-->
   <UserProfile :isModal="CommentModal" :user_id="commentUserId" @update:isModal="closeCommentProfileModal" />
 
@@ -244,7 +244,7 @@ import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { applyProject } from '@/api/projectApi'; // API 임포트
 import { useUserStore } from '@/store/userStore';
-import UserProfile from '../Component/UserProfile.vue';
+import UserProfile from '../Component/UserProfileeee.vue';
 
 const useStore = useUserStore();
 const route = useRoute();
@@ -264,7 +264,7 @@ const profileImage = ref('');
 const techStacks = ref([]);
 const positions = ref([]);
 const recruitmentStatus = ref('');
-const user_id = ref('');
+const userId  = ref('');
 const files = ref([]);
 
 
@@ -287,11 +287,12 @@ watchEffect(async () => {
     // console.log('기술스택확인', res.data.result.techStackDtoList);
     // console.log('포지션 배열 확인', res.data.result.positionDtoList);
     // console.log('이미지', res.data.result.imageUrl);
-    user_id.value = res.data.result.userId;
+    userId.value = res.data.result.userId;
     files.value = [{ imageUrl: res.data.result.imageUrl }];
   } else {
     alert('데이터연결안됨', res.response.data.message);
   }
+  console.log('이거'+userId.value)
 });
 
 //프로젝트지원으로 이동
@@ -459,7 +460,6 @@ const confirmSubmit = async () => {
 
 // 지원 모달의 가시성 상태를 제어하는 변수
 const applicationModal = ref(false);
-
 // 지원 모달을 열기 위한 함수
 const openApplicant = () => {
   applicationModal.value = true;
@@ -471,12 +471,13 @@ const UserProfileModal = ref(false); // 모달의 가시성 (flase-안보임)
 // 게시판 댓글 유저프로필 모달
 const CommentModal = ref(false);
 const commentUserId = ref(null);
+const selectedUserId = ref("");
 
 // 게시글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+// 프로필 열기
 const openProfile = (userId) => {
-  user_id.value = userId;
-  UserProfileModal.value = true; // 모달 열기
-  // console.log('유저ID', user_id.value);
+  selectedUserId.value = userId;
+  UserProfileModal.value = true;
 };
 
 // 댓글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수

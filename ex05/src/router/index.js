@@ -13,7 +13,7 @@ import MyProfile from '@/views/mypage/MyProfile.vue';
 import ProjectManagement from '@/views/mypage/ProjectManagement.vue';
 import Projectapplication from '@/views/mypage/ProjectApplication.vue';
 import ProjectApplicants from '@/views/mypage/ProjectApplicants.vue';
-import UserProfile from '@/views/Component/UserProfile.vue';
+import UserProfile from '@/views/Component/UserProfileeee.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

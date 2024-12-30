@@ -234,7 +234,7 @@ import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { applyProject } from '@/api/projectApi'; // API 임포트
 import { useUserStore } from '@/store/userStore';
-import UserProfile from '../Component/UserProfile.vue';
+import UserProfile from '../Component/UserProfileeee.vue';
 
 const useStore = useUserStore();
 const route = useRoute();
