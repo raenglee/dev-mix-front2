@@ -129,8 +129,8 @@
           </div>
         </div>
         <!--댓글목록-->
-        <div class="my-6 mx-7 justify-center flex flex-col gap-5">
-          <div v-for="comment in comments" :key="comment.id" class="">
+        <div class="my-6 mx-7 justify-center flex flex-col gap-5" style="width: 90%">
+          <div v-for="comment in comments" :key="comment.id">
             <!-- 댓글 방식 확인 {{ comment }} -->
             <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
               <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
@@ -139,33 +139,23 @@
             </div>
 
             <!--댓글 수정 시-->
-            <div v-if="!comment.isEditing">
-              <div class="flex justify-between">
-                <!-- 댓글 내용 -->
-                <p class="text-gray-800 ml-4">{{ comment.content }}</p>
-                <div class="mr-4 ">
-                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="startEditing(comment)">수정</button>
-                  <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="commentDelete(comment.commentId)">삭제</button>
-                </div>
-              </div>
-              <p class="text-xs mt-3 mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p>
-              <!-- <p v-if="comment.lastModifiedAt" class="text-xs mt-3 mb-4 mx-2 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
-            </div>
-
-            <div v-else class="">
-              <div class="flex items-center mx-2 mb-4" >
-                <textarea v-model="comment.newContent" class="p-3 h-[10px] w-full border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
-
-                <!-- <p class="text-xs mt-3 mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
-              </div>
-              <div class="flex justify-between pb-4">
-                <p class="items-start text-xs mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p>
-                <div class="mr-4 items-end">
-                  <button @click="updatecancle" class=" ml-4 text-sm hover:underline text-gray-500">취소</button>
-                  <button @click="commentupdate(comment.commentId)" class="ml-4 border border-gray-200 rounded-md h-10 w-20 px-2 text-base hover:bg-gray-100">수정</button>
-                </div>
+            <div v-if="comment.isEditing" class="flex">
+              <textarea v-model="comment.newContent" class="w-full ml-4 p-3 h-10 border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
+              <div class="">
+                <button @click="commentupdate(comment.commentId)" class="ml-4 border border-gray-200 rounded-md h-10 w-20 px-2 text-base hover:bg-gray-100">수정</button>
+                <button @click="updatecancle" class="ml-4 text-sm hover:underline text-gray-500">취소</button>
               </div>
             </div>
+            <div v-else class="flex justify-between">
+              <!-- 댓글 내용 -->
+              <p class="text-gray-800 ml-4">{{ comment.content }}</p>
+              <div>
+                <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="startEditing(comment)">수정</button>
+                <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="commentDelete(comment.commentId)">삭제</button>
+              </div>
+            </div>
+            <!-- <p v-if="comment.lastModifiedAt" class="text-xs mt-3 mb-4 mx-2 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
+            <p class="text-xs mt-3 mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p>
             <div>
               <hr class="border-t border-gray-200" />
             </div>
@@ -266,7 +256,6 @@ const positions = ref([]);
 const recruitmentStatus = ref('');
 const user_id = ref('');
 const files = ref([]);
-
 
 //게시글 가져오기
 watchEffect(async () => {

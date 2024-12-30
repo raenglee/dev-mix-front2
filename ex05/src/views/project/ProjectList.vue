@@ -472,6 +472,8 @@ const selelctTechstacks = async () => {
 //기술 선택 초기화 버튼
 const resetSelection = () => {
   selectedTech.value = [];
+  searchfilter();
+
 };
 
 //지역 데이터 가져오기
@@ -501,15 +503,32 @@ const selectLocation = (option) => {
   activeDropdown.value = ''; // 드롭다운 닫기
 };
 
-//기술선택 토글
+// //기술선택 토글
+// const toggleTechSelection = (option) => {
+//   const index = selectedTech.value.indexOf(option);
+//   if (index === -1) {
+//     selectedTech.value.push(option);
+//   } else {
+//     selectedTech.value.splice(index, 1);
+//   }
+// };
+
+// 기술 스택 선택/해제
 const toggleTechSelection = (option) => {
-  const index = selectedTech.value.indexOf(option);
-  if (index === -1) {
-    selectedTech.value.push(option);
-  } else {
+  const index = selectedTech.value.findIndex(
+    (tech) => tech.techStackName === option.techStackName
+  );
+
+  if (index !== -1) {
+    // 이미 선택된 경우 제거
     selectedTech.value.splice(index, 1);
+  } else {
+    // 선택되지 않은 경우 추가
+    selectedTech.value.push(option);
   }
 };
+
+
 
 // 외부 클릭 시 드롭다운 닫기
 const handleClickOutside = (event) => {

@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center items-center mx-auto my-10">
     <div class="justify-center items-center">
-      <div class="my-3">
+      <div class="my-10">
         <div class="grid grid-cols-6">
           <h2 class="text-2xl col-start-2 font-semibold mb-5 text-center">내 정보 입력</h2>
         </div>
@@ -72,7 +72,7 @@
           </div>
 
           <!-- 포지션 새로운거-->
-          <div class="grid grid-cols-5 items-center gap-x-4" ref="dropdownContainer">
+          <div class="z-0 grid grid-cols-5 items-center gap-x-4" ref="dropdownContainer">
             <h1 class="col-start-2 font-bold text-lg pb-2">포지션</h1>
             <div class="relative min-w-[567px] m-auto flex">
               <div class="bg-white border border-gray-200 rounded-lg min-w-[570px] z-10">

@@ -56,7 +56,7 @@
             <!-- 포지션이 없을 경우 -->
             <div v-if="!myPosition.length" class="text-gray-200 font-bold text-xl">DEVMIX</div>
             <!-- 포지션이 있을 경우 -->
-            <div v-else class="flex items-center">
+            <div v-else class="flex justify-center items-center">
               <span class="px-2" v-for="(position, index) in myPosition" :key="index">
                 {{ position }}
               </span>
@@ -103,7 +103,7 @@ import { useUserStore } from '@/store/userStore';
 
 const useStore = useUserStore();
 const userProfile = ref(null);
-const mySkills = ref([]); // 기술들의 배열const myPosition = ref([]);
+const mySkills = ref([]); 
 const myPosition = ref([]);
 
 // 사용자 정보 API 호출

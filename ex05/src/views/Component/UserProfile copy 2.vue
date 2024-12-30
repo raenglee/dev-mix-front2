@@ -13,30 +13,29 @@
           <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover mb-4" />
           <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover mb-4" />
           <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">닉네임</p>
-          <p class="text-xl">{{ nickname }}</p>
+          <p class="text-xl">{{ userProfile.nickname }}</p>
         </div>
         <div class="flex flex-col items-center gap-1">
           <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">소속</p>
           <div v-if="!groupName" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
-          <p class="whitespace-nowrap mb-1 text-xl">{{ groupName }}</p>
+          <p class="whitespace-nowrap mb-1 text-xl">{{ userProfile.groupName }}</p>
           <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">거주 지역</p>
           <div v-if="!location" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
-
-          <p class="whitespace-nowrap mb-1 text-xl">{{ location }}</p>
+          <p class="whitespace-nowrap mb-1 text-xl">{{ userProfile.location }}</p>
           <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">포지션</p>
-          <div v-if="!positions || positions.length === 0" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
+          <div v-if="!userPosition?.length === 0" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
 
           <ul class="item-center mb-1">
-            <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap text-center text-xl">
+            <p v-for="(position, index) in userPosition" :key="index" class="whitespace-nowrap text-center text-xl">
               {{ position }}
             </p>
           </ul>
           <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">기술 스택</p>
           <div class="flex gap-4 items-center mb-4 flex-wrap">
-            <div class="py-2" v-for="tech in techStacks" :key="tech">
-              <img :src="tech.imageUrl" class="w-8 h-8" />
-              <span class="text-sm py-4">{{ tech.techStackName }}</span>
-              <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+            <div class="py-2" v-for="(skill, index) in userSkills" :key="index">
+              <img :src="skill.imageUrl" class="w-8 h-8" />
+              <span class="text-sm py-4">{{ skill.techStackName }}</span>
+              <div v-if="!userSkills?.length" class="text-gray-200 font-bold text-xl">DEVMIX</div>
             </div>
           </div>
         </div>
@@ -47,49 +46,55 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits,onMounted,ref  } from 'vue';
-import { getUserInfo } from '@/api/userApi';
+import { defineProps, defineEmits, ref, watchEffect } from 'vue';
+import { getUserInfo } from '@/api/userApi'
+import { useRoute } from 'vue-router';
 
-const profileImage = ref('');
-const nickname = ref('');
-const groupName = ref('');
-const location = ref('');
-const positions = ref([]);
-const techStacks = ref([]);
+const route = useRoute();
+
 
 const props = defineProps({
-  isModal: Boolean,
-  user_id: Number // 선택된 유저 ID
+  isModal: Boolean
 });
 
-
 const emit = defineEmits(['update:isModal']);
-
 
 const closeModal = () => {
   emit('update:isModal', false);
 };
-const fetchUserInfo = async (userId) => {
-  try {
-    const res = await getUserInfo(userId); // getUserInfo API 호출
-    const userData = res.data;
 
-    profileImage.value = userData.profileImage;
-    nickname.value = userData.nickname;
-    groupName.value = userData.groupName;
-    location.value = userData.location;
-    positions.value = userData.positions;
-    techStacks.value = userData.techStacks;
+
+//유저정보
+const userProfile = ref(null);
+const userPosition = ref([]);
+const userSkills = ref([]);
+
+
+// 사용자 정보 API 호출
+const loadWriterProfile = async () => {
+
+  try {
+    const profile = await getUserInfo(route.params.user_id);
+    userProfile.value = profile.result;
+
+    // 기술 스택 데이터 처리
+    userSkills.value = profile.result.techStacks.map(({ techStackName, techStackImageUrl }) => ({
+      techStackName,
+      imageUrl: techStackImageUrl
+    }));
+
+    // 포지션 데이터 처리
+    userPosition.value = profile.result.positions.map(({ positionName }) => positionName);
   } catch (error) {
-    console.error('유저 정보 가져오기 실패', error);
+    console.error('프로필 정보를 불러오는 데 실패했습니다.', error);
   }
 };
 
-// 컴포넌트가 마운트될 때 유저 정보 fetch
-onMounted(() => {
-  if (props.user_id) {
-    fetchUserInfo(props.user_id);
-  }
+console.log('플필' + userProfile.value
+)
+
+watchEffect(() => {
+  loadWriterProfile();
 });
 
 </script>
