@@ -25,8 +25,6 @@ export const loginUsers = async () => {
 };
 
 
-
-
 export const uploadprofile = async (formData) => {
   try {
     const res = await axios.put(`${url}/profile`, formData , {

@@ -28,6 +28,7 @@
             <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
           </div>
         </div>
+        <!-- 두 번째 카드: 지역 -->
         <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 지역 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="top-4 flex items-center justify-center">
@@ -43,43 +44,48 @@
       </div>
 
       <div class="m-auto flex justify-center text-cente p-3 mb-2 w-full rounded-xl gap-5">
-        <!-- 첫 번째 카드: 소속 -->
+        <!-- 세 번째 카드: 포지션 -->
         <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
-          <!-- 소속 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
+          <!-- 카드 제목 -->
           <div class="top-4 flex items-center justify-center">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">포지션</div>
           </div>
-          <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            <template v-if="userProfile != null">
+          <!-- 포지션 내용 -->
+           <div class="justify-center items-center  min-h-[100px]">
+          <div class="text-l mb-2 text-gray-800 flex justify-center pt-5">
+            <!-- 포지션이 없을 경우 -->
+            <div v-if="!myPosition.length" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+            <!-- 포지션이 있을 경우 -->
+            <div v-else class="flex items-center">
               <span class="px-2" v-for="(position, index) in myPosition" :key="index">
                 {{ position }}
               </span>
-            </template>
-            <template v-else>
-              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
-            </template>
+            </div>
+          </div>
           </div>
         </div>
 
+        <!-- 네 번째 카드: 기술 스택 -->
         <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
-          <!-- 소속 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
+          <!-- 카드 제목 -->
           <div class="top-4 flex items-center justify-center">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">기술 스택</div>
           </div>
-          <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
+          <!-- 기술 스택 내용 -->
           <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-              <div class="flex space-x-5 justify-center text-center items-center">
-                <div class="py-2" v-for="(skill, index) in mySkills" :key="index">
-                  <span class="text-center text-sm py-4">
-                    <img :src="skill.imageUrl" class="w-10 h-10" />
-                    {{ skill.techStackName }}</span
-                  >
-                </div>
+            <!-- 기술 스택이 없을 경우 -->
+            <div v-if="!mySkills.length">
+              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
+            </div>
+            <!-- 기술 스택이 있을 경우 -->
+            <div v-else class="flex space-x-5 justify-center text-center items-center">
+              <div class="py-2" v-for="(skill, index) in mySkills" :key="index">
+                <span class="text-center text-sm py-4">
+                  <img :src="skill.imageUrl" class="w-10 h-10" />
+                  {{ skill.techStackName }}
+                </span>
               </div>
-              <div v-if="userProfile = null">
-                <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
-              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -103,27 +109,17 @@ const myPosition = ref([]);
 // 사용자 정보 API 호출
 const loadUserProfile = async () => {
   try {
-    const profile = await loginUsers(); // API로부터 사용자 프로필 정보 가져오기
-    userProfile.value = profile.result; // API에서 받은 데이터를 userProfile에 저장
-    // console.log('통신하고 나서 출력' + JSON.stringify(userProfile.value));
+    const profile = await loginUsers();
+    userProfile.value = profile.result;
 
-    // 원래 있는 기술 넣기
-    const updatedTechStacks = userProfile.value.techStacks.map(({ techStackName, techStackImageUrl }) => ({
+    // 기술 스택 데이터 처리
+    mySkills.value = profile.result.techStacks.map(({ techStackName, techStackImageUrl }) => ({
       techStackName,
       imageUrl: techStackImageUrl
     }));
 
-    // 원래 있는 포지션 넣기
-    profile.result.positions.forEach((temp) => {
-      myPosition.value.push(temp.positionName);
-    });
-
-    mySkills.value = updatedTechStacks;
-
-    const excludedTechStacks = [];
-    profile.result.techStacks.map((techStacks) => {
-      excludedTechStacks.push(techStacks.techStackName);
-    });
+    // 포지션 데이터 처리
+    myPosition.value = profile.result.positions.map(({ positionName }) => positionName);
   } catch (error) {
     console.error('프로필 정보를 불러오는 데 실패했습니다.', error);
   }

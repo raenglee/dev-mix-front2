@@ -48,31 +48,6 @@ const closeModal = () => {
 </script>
 
 <style scoped>
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  background-color: rgb(0, 0, 0, 0.3);
-  display: none;
-}
-.isModal {
-  display: block;
-}
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  z-index: 1001;
-  display: none;
-}
-.isView {
-  display: block;
-}
 
 /* 모달 애니메이션 */
 .modal-fade-enter-active,
