@@ -179,18 +179,19 @@ const checkNicknameAvailability = async () => {
       isDuplicateChecked.value = true;
       alert('사용 가능한 닉네임입니다.');
       return true;
-    } else if (res.code === 'DUPLICATED_NICKNAME') {
+    } else if (res.code == 'DUPLICATED_NICKNAME') {
       isDuplicate.value = true; //중복닉
       isValidNickname.value = false; // 형식오류
       isDuplicateChecked.value = true;
       alert('중복된 닉네임입니다.');
-    } else if (res.code === 'VALIDATION_FAILED') {
+      return false;
+    } else if (res.code === 'VALIDATION_FAILED' || !/^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(nickname.value)) {
       isDuplicate.value = false; //중복닉
       isValidNickname.value = true; // 형식오류
       isDuplicateChecked.value = true;
       alert('닉네임 형식 오류입니다.');
     } else {
-      alert('에러입니다 서버관리자에게 문의 하세요');
+      alert('중복된 닉네임입니다.');
     }
   } catch (err) {
     console.error('닉네임 확인 중 오류 발생:', err);
