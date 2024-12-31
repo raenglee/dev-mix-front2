@@ -223,11 +223,11 @@ const initializeSSE = () => {
 
 
 // 토큰이 변경될 때마다 SSE를 재연결
-watch(token, (newToken) => {
-  if (newToken) {
-    initializeSSE();
-  }
-});
+// watch(token, (newToken) => {
+//   if (newToken) {
+//     initializeSSE();
+//   }
+// });
 
 // 로그인 또는 토큰 갱신 시
 const onTokenUpdate = (newToken) => {
@@ -237,17 +237,17 @@ const onTokenUpdate = (newToken) => {
 };
 
 // 최초 SSE 연결
-if (token.value) {
-  initializeSSE();
-}
+// if (token.value) {
+//   initializeSSE();
+// }
 
 // 컴포넌트 마운트 시 처리
-onMounted(() => {
-  // loadNotificationsFromStorage(); // 로컬 스토리지에서 알림 복원
-  if (token.value) {
-    initializeSSE(); // SSE 연결 초기화
-  }
-});
+  // onMounted(() => {
+  //   // loadNotificationsFromStorage(); // 로컬 스토리지에서 알림 복원
+  //   if (token) {
+  //     initializeSSE(); // SSE 연결 초기화
+  //   }
+  // });
 
 // 컴포넌트 언마운트 시 처리
 onBeforeUnmount(() => {
@@ -286,39 +286,46 @@ const router = useRouter();
 const useStore = useUserStore();
 
 watchEffect(async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
+  try {
+    // 로컬스토리지에서 토큰 확인
+    let token = localStorage.getItem('token');
 
-  if (token) {
-    try {
-      // 토큰 저장
-      localStorage.setItem('token', token);
-      console.log('Token saved to localStorage:', token);
+    if (!token) {
+      // URL에서 토큰 가져오기
+      const urlParams = new URLSearchParams(window.location.search);
+      token = urlParams.get('token');
 
-      // URL에서 토큰 제거
-      const cleanUrl = window.location.origin + window.location.pathname;
-      window.history.replaceState(null, '', cleanUrl);
+      if (token) {
+        // 토큰 저장
+        localStorage.setItem('token', token);
+        console.log('Token saved to localStorage:', token);
 
-      // 사용자 정보 요청
-      const data = await loginUsers();
-
-      if (!data.result.nickname) {
-        router.push('/profile'); // 닉네임 없으면 프로필 설정 페이지로 이동
+        // URL에서 토큰 제거
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState(null, '', cleanUrl);
       } else {
-        const userData = data.result;
-
-        // 사용자 정보 저장
-        useStore.profile(userData);
-
-        // 메인 페이지로 이동
-        router.push('/');
-        initializeSSE();
+        console.error('No token found in URL or localStorage');
+        return; // 토큰이 없으면 더 이상 진행하지 않음
       }
-    } catch (error) {
-      console.error('Login failed:', error);
     }
-  } else {
-    console.error('No token found in URL');
+
+    // 사용자 정보 요청
+    const data = await loginUsers();
+
+    if (!data.result.nickname) {
+      router.push('/profile'); // 닉네임 없으면 프로필 설정 페이지로 이동
+    } else {
+      const userData = data.result;
+
+      // 사용자 정보 저장
+      useStore.profile(userData);
+
+      // 메인 페이지로 이동
+      router.push('/');
+      initializeSSE();
+    }
+  } catch (error) {
+    console.error('Login failed:', error);
   }
 });
 

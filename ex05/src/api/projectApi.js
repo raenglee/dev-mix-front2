@@ -219,16 +219,13 @@ export const applyProject = async (board_id, data) => {
   }
 };
 
-// 프로젝트 스크랩(북마크)
-export const scrapProject = async (board_id, data) => {
-  // console.log(`${url}/${board_id}/scrap`);
+export const scrapProject = async (board_id) => {
   try {
-    // console.log('북마크 axios 호출', data, '보드아이디', board_id);
-    const res = await axios.put(`${url}/${board_id}/scrap`, data, {
+    const res = await axios.put(`${url}/${board_id}/scrap`, null, { // 본문 데이터를 null로 설정
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
     });
     return res;
   } catch (e) {
@@ -257,9 +254,12 @@ export const scrapProjectlist = async (board_id, data) => {
 // 검색엔진
 export const searchquery = async (Parameters) => {
   try {
-    // console.log('쿼리dsl api호출', Parameters);
+    const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
     const res = await axios.get(`${url}/querydsl`, {
-      params: Parameters
+      params: Parameters,
+      headers: {
+        'Authorization': `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+      },
     });
     return res;
   } catch (e) {

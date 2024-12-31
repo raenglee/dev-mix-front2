@@ -14,10 +14,8 @@
             <!-- 지역/구분 드롭다운 -->
             <div class="relative">
               <!-- 드롭다운 버튼 -->
-              <div
-                @click="toggleDropdown('location')"
-                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
-              >
+              <div @click="toggleDropdown('location')"
+                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500">
                 <span class="truncate w-full" v-if="selectedLocation">{{ selectedLocation }}</span>
                 <span class="truncate w-full text-gray-800" v-else>지역 / 구분</span>
                 <!-- 화살표 아이콘: 박스 오른쪽에 고정 -->
@@ -45,10 +43,8 @@
           <!-- 포지션 드롭다운 -->
           <div class="relative">
             <!-- 드롭다운 버튼 -->
-            <div
-              @click="toggleDropdown('position')"
-              class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
-            >
+            <div @click="toggleDropdown('position')"
+              class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500">
               <span class="truncate w-full" v-if="selectedPosition">{{ selectedPosition.positionName }}</span>
               <span class="truncate w-full text-gray-800" v-else>포지션</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
@@ -73,8 +69,8 @@
 
           <!-- 기술/언어 드롭다운 -->
           <div class="relative">
-            <div @click="toggleDropdown('tech')" 
-            class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
+            <div @click="toggleDropdown('tech')"
+              class="text-[1.2rem] w-40  max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
               <span class="text-gray-800">기술 / 언어</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
@@ -199,9 +195,9 @@
             <div class="top-4 flex items-center justify-between">
               <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800">{{ item.location }}</div>
               <!--북마크-->
-              <font-awesome-icon :icon="item.isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
-                :class="[item.isBookmarked ? 'text-[#7371fc]' : 'text-gray-400', 'cursor-pointer', 'hover:scale-125']"
-                style="font-size: 22px" @click.stop="toggleBookmark(item)" />
+              <font-awesome-icon :icon="item.bookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
+                :class="[item.bookmarked ? 'text-[#7371fc]' : 'text-gray-400', 'cursor-pointer', 'hover:scale-125']"
+                style="font-size: 22px" @click.stop="toggleBookmark(item.boardId, item.bookmarked)" />
             </div>
             <div class="text-sm mb-2 text-gray-800">모집 마감일 | {{ item.recruitEndDate }}</div>
             <div class="text-xl font-bold mb-2 text-gray-800">{{ item.title }}</div>
@@ -243,7 +239,7 @@
                     class="absolute z-10 bg-white left-14 bottom-2 p-2 shadow-lg rounded-xl mt-2 w-auto whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:block transition-opacity duration-300">
                     <div v-for="count in item.positions" :key="count.positionName" class="text-sm my-1 m-auto">
                       <span class="font-bold rounded-md px-1 text-gray-800">{{ count.positionName }} -</span>{{
-                      count.requiredCount }}명
+                        count.requiredCount }}명
                     </div>
                   </div>
                 </div>
@@ -302,34 +298,34 @@ const closeModal = () => {
 };
 
 // 프로젝트 가져오기
-const getProjects = async (num = 1) => {
-  try {
-    const res = await listProject(num);
-    // console.log('북마크 API 응답 데이터:', res);
-    // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
-    arr.value = res.map((item) => {
-      const totalRequiredCount = item.positions.reduce((sum, position) => {
-        return sum + position.requiredCount;
-      }, 0);
+// const getProjects = async (num = 1) => {
+//   try {
+//     const res = await listProject(num);
+//     // console.log('북마크 API 응답 데이터:', res);
+//     // 각 프로젝트에 'isBookmarked'와 'totalRequiredCount' 속성 추가
+//     arr.value = res.map((item) => {
+//       const totalRequiredCount = item.positions.reduce((sum, position) => {
+//         return sum + position.requiredCount;
+//       }, 0);
 
-      const totalCurrentCount = item.positions.reduce((sum, position) => {
-        return sum + position.currentCount; // currentCount 합산
-      }, 0);
+//       const totalCurrentCount = item.positions.reduce((sum, position) => {
+//         return sum + position.currentCount; // currentCount 합산
+//       }, 0);
 
-      return {
-        ...item,
-        isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
-        totalRequiredCount, // 총 필요한 인원 수
-        totalCurrentCount // 총 현재 인원 수
-      };
-    });
+//       return {
+//         ...item,
+//         isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
+//         totalRequiredCount, // 총 필요한 인원 수
+//         totalCurrentCount // 총 현재 인원 수
+//       };
+//     });
 
-    // applySort();
-    // console.log('프로젝트 내용: ', arr.value);
-  } catch (error) {
-    console.error('프로젝트 가져오기 오류:', error);
-  }
-};
+//     // applySort();
+//     // console.log('프로젝트 내용: ', arr.value);
+//   } catch (error) {
+//     console.error('프로젝트 가져오기 오류:', error);
+//   }
+// };
 
 // 각 게시글과 연결
 const viewPage = (board_id) => {
@@ -348,7 +344,7 @@ const clickneededonly = () => {
 };
 
 // 특정 게시물의 북마크 상태 변경
-const toggleBookmark = async (item) => {
+const toggleBookmark = async (boardId, currentBookmarkState) => {
   // item.isBookmarked = !item.isBookmarked; // 누른 게시물 북마크 상태 반전
 
   if (!useStore.loginCheck) {
@@ -357,14 +353,17 @@ const toggleBookmark = async (item) => {
     return; // 북마크 처리 함수 종료
   }
 
-  const newBookmarkState = !item.isBookmarked;
+  const newBookmarkState = !currentBookmarkState;
   // console.log('보드아이디:', item.boardId);
   // localStorage.setItem('bookmarkedItems', JSON.stringify(arr.value)); // 로컬 스토리지에 저장
   try {
-    const res = await scrapProject(item.boardId, { isBookmarked: newBookmarkState });
+    const res = await scrapProject(boardId);
     if (res.status === 200) {
-      item.isBookmarked = newBookmarkState;
-      console.log('북마크 상태 변경 완료:', item.isBookmarked);
+      const item = arr.value.find((el) => el.boardId === boardId); // 배열에서 해당 아이템 찾기
+      if (item) {
+        item.bookmarked = newBookmarkState;
+        console.log('북마크 상태 변경 완료:', item.bookmarked);
+      }
     } else {
       console.error('북마크 상태 변경 실패:', res);
     }
@@ -553,7 +552,7 @@ const getTotalPages = async () => {
       location: selectedLocation.value,  // 선택된 지역
       positions: position,  // 선택된 포지션
       techStacks: tech, // 선택된 기술 스택
-      bookmarked: false,  // 필요 시 필터링 추가
+      // bookmarked: false,  // 필요 시 필터링 추가
       recruitmentStatus: "",  // 예시, 추가 필터링 필요시 사용
     });
 
@@ -608,13 +607,17 @@ const searchfilter = async (pageNumber = 1) => {
         // arr.value.length = 0; // 기존 데이터 비우기
         // arr.value.push(...res.data.result); // 새로운 데이터 추가
 
+        console.log(res.data.result);
+
         arr.value = res.data.result.map((item) => {
           const totalRequiredCount = item.positions.reduce((sum, position) => sum + position.requiredCount, 0);
           const totalCurrentCount = item.positions.reduce((sum, position) => sum + position.currentCount, 0);
 
+          
+
           return {
             ...item,
-            isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
+            isBookmarked: item.bookmarked, // 기본 북마크 상태
             totalRequiredCount, // 총 모집 인원 수
             totalCurrentCount  // 총 현재 인원 수
           };
