@@ -44,7 +44,6 @@ export const uploadprofile = async (formData) => {
 
 export const checkNickname = async (nickname) => {
   try {
-    // 200...
     const res = await axios.post(
       `${url}/nickname-check`,
       { nickname: nickname },
@@ -55,15 +54,17 @@ export const checkNickname = async (nickname) => {
         }
       }
     );
-    return res.data;// res.code
+    console.log(res.data);
+    return res.data;
   } catch (err) {
-    return err.response.data;
+    console.error(err);
+    return err;
   }
 };
 
 
 
-// 사용자 정보 삭제 -> 없음
+// 사용자 정보 삭제 -> 없음 
 export const deleteUser = async () => {
   try {
     const res = await axios.delete(`${url}/profile`, {

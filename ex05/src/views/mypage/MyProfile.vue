@@ -4,7 +4,7 @@
     <div class="m-auto flex flex-col justify-center text-center border border-gray-200 p-3 mb-2 w-full rounded-xl bg-gray-50">
       <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-20 w-20 m-auto rounded-full" />
       <!-- <img class="h-20 w-20 m-auto" /> -->
-      <img v-else src="/img/people.png" class="h-20 w-20 m-auto rounded-full object-cover" />
+      <img v-else src="/img/people.png" class="h-20 w-20 m-auto rounded-full" />
       <p>{{ useStore.nickname }}님</p>
       <p class="text-sm text-gray-400">{{ useStore.email }}</p>
       <div class="flex justify-center text-center py-3">

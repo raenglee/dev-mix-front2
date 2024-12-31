@@ -26,35 +26,3 @@
 .mypage-tab {
   @apply transition-transform duration-300 transform hover:translate-y-[-5px] hover:bg-[#d1000020] hover:border-b-2 hover:border-[#d10000];
 }
-
-/*모달창*/
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-.isVisible {
-  display: none;
-}
-
-/*줄바꿈*/
-.pre-wrap {
-  white-space: pre-wrap;  /* 줄 바꿈을 그대로 반영 */
-  word-wrap: break-word;  /* 긴 단어는 자동으로 줄 바꿈 */
-}
