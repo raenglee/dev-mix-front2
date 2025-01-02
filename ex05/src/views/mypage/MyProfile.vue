@@ -51,12 +51,12 @@
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">포지션</div>
           </div>
           <!-- 포지션 내용 -->
-           <div class="justify-center items-center  min-h-[100px]">
-          <div class="text-l mb-2 text-gray-800 flex justify-center pt-5">
+           <div class="flex justify-center items-center h-4/5">
+          <div class="text-l mb-2 text-gray-800 flex flex-col justify-center items-center">
             <!-- 포지션이 없을 경우 -->
             <div v-if="!myPosition.length" class="text-gray-200 font-bold text-xl">DEVMIX</div>
             <!-- 포지션이 있을 경우 -->
-            <div v-else class="flex justify-center items-center">
+            <div v-else class="flex flex-wrap  justify-center items-center">
               <span class="px-2" v-for="(position, index) in myPosition" :key="index">
                 {{ position }}
               </span>
@@ -72,16 +72,16 @@
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">기술 스택</div>
           </div>
           <!-- 기술 스택 내용 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
+          <div class="text-l mb-2 text-gray-800 flex justify-center items-center">
             <!-- 기술 스택이 없을 경우 -->
             <div v-if="!mySkills.length">
               <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
             </div>
             <!-- 기술 스택이 있을 경우 -->
-            <div v-else class="flex space-x-5 justify-center text-center items-center">
+            <div v-else class="flex flex-wrap space-x-5 justify-center text-center items-center">
               <div class="py-2" v-for="(skill, index) in mySkills" :key="index">
                 <span class="text-center text-sm py-4">
-                  <img :src="skill.imageUrl" class="w-10 h-10" />
+                  <img :src="skill.imageUrl" class="min-w-10 min-h-10 max-w-10 max-h-10" />
                   {{ skill.techStackName }}
                 </span>
               </div>
