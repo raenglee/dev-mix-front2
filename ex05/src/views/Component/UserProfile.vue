@@ -6,47 +6,46 @@
 
   <!--프로필모달-->
   <transition name="modal" @before-enter="beforeEnter" @enter="enter" @leave="leave">
-  <div v-if="props.isModal" class="modal-container" @click.self="closeModal">
-    <div class="modal-content my-32">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="font-bold text-xl text-center">프로필</h2>
-        <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
-      </div>
+    <div v-if="props.isModal" class="modal-container" @click.self="closeModal">
+      <div class="modal-content my-10">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-bold text-xl text-center">프로필</h2>
+          <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
+        </div>
 
-      <div class="flex flex-col items-center mb-4 gap-2">
-        <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover mb-4" />
-        <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover mb-4" />
-        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">닉네임</p>
-        <p class="text-xl">{{ nickname }}</p>
-      </div>
-      <div class="flex flex-col items-center gap-1">
-        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">소속</p>
-        <div v-if="!groupName" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
-        <p class="whitespace-nowrap mb-1 text-xl">{{ groupName }}</p>
-        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">거주 지역</p>
-        <div v-if="!location" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
-        <p class="whitespace-nowrap mb-1 text-xl">{{ location }}</p>
-        <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">포지션</p>
-        <div v-if="positions.length === 0" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
-        <ul class="item-center mb-1">
-            <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap text-center text-lg">
+        <div class="flex flex-col items-center mb-4">
+          <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
+          <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
+          <p class="text-xl">{{ nickname }}</p>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">소속</p>
+          <div v-if="!groupName" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+          <p class="whitespace-nowrap mb-1 text-xl">{{ groupName }}</p>
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">거주 지역</p>
+          <div v-if="!location" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+          <p class="whitespace-nowrap mb-1 text-xl">{{ location }}</p>
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">포지션</p>
+          <div v-if="positions.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+          <ul class="mb-1 flex flex-wrap justify-center gap-1">
+            <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap text-center text-lg mx-2 px-1">
               {{ position }}
             </p>
           </ul>
-          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">기술 스택</p>
-          <div class="flex gap-4 items-center mb-4 flex-wrap">
-            <div class="py-2" v-for="tech in techStacks" :key="tech">
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">기술 스택</p>
+          <div class="flex gap-4 mb-4 flex-wrap text-center justify-center">
+            <div class="py-1" v-for="tech in techStacks" :key="tech">
               <img :src="tech.imageUrl" class="w-8 h-8" />
-              <span class="text-sm py-4">{{ tech.techStackName }}</span>
+              <span class="text-sm">{{ tech.techStackName }}</span>
               <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
             </div>
           </div>
+        </div>
       </div>
     </div>
-  </div>
-  <!--😀개인 정보 끝-->
-  <!-- </div> -->
-   </transition>
+    <!--😀개인 정보 끝-->
+    <!-- </div> -->
+  </transition>
 </template>
 
 <script setup>
@@ -109,21 +108,58 @@ watchEffect(() => {
 });
 </script>
 
-<style lang="scss" scoped>
-
-/* 모달이 화면에 등장할 때 */
-.modal-enter-active, .modal-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+<style scoped>
+/* 모달 애니메이션 */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
-.modal-enter, .modal-leave-to /* .modal-leave-active in <2.1.8 */ {
+.modal-fade-enter {
   opacity: 0;
-  transform: translateY(50px);
+  transform: translate(-50%, -50%) translateY(-50px); /* 애니메이션 시작 시 위쪽에서 시작 */
 }
 
-/* 모달이 닫힐 때 애니메이션 */
-.modal-leave-to {
+.modal-fade-enter-to {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0); /* 최종 위치는 중앙 */
+  animation: bounceIn 0.5s ease-out; /* 튕기는 애니메이션 추가 */
+}
+
+.modal-fade-leave-to {
   opacity: 0;
-  transform: translateY(50px);
+  transform: translate(-50%, -50%) translateY(50px); /* 닫힐 때 아래로 내려감 */
+  animation: bounceOut 0.5s ease-in; /* 닫히는 애니메이션 */
+}
+
+/* 튕기는 효과 (열릴 때) */
+@keyframes bounceIn {
+  0% {
+    transform: translate(-50%, -50%) translateY(-50px); /* 시작 위치 (살짝 위로) */
+  }
+  30% {
+    transform: translate(-50%, -50%) translateY(10px); /* 살짝 아래로 내려감 */
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-5px); /* 다시 살짝 위로 튕김 */
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(0); /* 최종 위치 (정상 위치) */
+  }
+}
+
+/* 튕기는 효과 (닫힐 때) */
+@keyframes bounceOut {
+  0% {
+    transform: translate(-50%, -50%) translateY(0); /* 시작 위치 */
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(10px); /* 살짝 아래로 내려감 */
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(50px); /* 아래로 내려가며 닫힘 */
+  }
 }
 </style>
