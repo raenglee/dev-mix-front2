@@ -165,10 +165,11 @@ const techOptions = ref([]); // 서버에서 전달 받은 기술 저장
 const checkNicknameAvailability = async () => {
   const res = await checkNickname(nickname.value); // API 호출
   try {
-    if (res.code === 'SUCCESS') {
+    if (res.code === 'SUCCESS' ||nickname.value == useStore.nickname){
       isDuplicate.value = false; //중복닉
       isValidNickname.value = false; // 형식오류
       isDuplicateChecked.value = true;
+      nickname.value == useStore.nickname
       alert('사용 가능한 닉네임입니다.');
     } else if (res.code === 'DUPLICATED_NICKNAME') {
       isDuplicate.value = true; //중복닉
@@ -180,12 +181,9 @@ const checkNicknameAvailability = async () => {
       isValidNickname.value = true; // 형식오류
       isDuplicateChecked.value = true;
       alert('닉네임 형식 오류입니다.');
+    } else {
+      alert('에러입니다 서버관리자에게 문의 하세요');
     }
-    // else if (res.code === 'AUTHORIZATION_FAILED') {
-    //   isDuplicate.value = false; //중복닉
-    //   isValidNickname.value = true; // 형식오류
-    //   isDuplicateChecked.value = true;
-    // }
   } catch (err) {
     console.error('닉네임 확인 중 오류 발생:', err);
     isDuplicateChecked.value = false;
@@ -287,68 +285,72 @@ watchEffect(() => {
 
 // 사용자가 입력한 데이터 저장
 const handleSubmit = async () => {
-  if (!isDuplicateChecked.value) {
-    alert('닉네임 중복확인을 해주세요.');
-  } else if (isDuplicateChecked.value) {
-    const formData = new FormData();
-    const user = await loginUsers(); // 로그인된 사용자 정보 가져오기
+  const formData = new FormData();
+  const user = await loginUsers(); // 로그인된 사용자 정보 가져오기
 
-    positionList.value = Array.from(new Set(positionList.value));
-    const techStackNames = selectedSkills.value.reduce((acc, skill) => {
-      acc.push(skill.techStackName);
-      return acc;
-    }, []);
+  positionList.value = Array.from(new Set(positionList.value));
+  const techStackNames = selectedSkills.value.reduce((acc, skill) => {
+    acc.push(skill.techStackName);
+    return acc;
+  }, []);
 
-    const userProfile = {
-      email: user.result.email,
-      nickname: nickname.value,
-      groupName: groupName.value,
-      location: location.value,
-      positionList: positionList.value,
-      techStackList: techStackNames,
-      profileImage: profileImage.value
-    };
+  const userProfile = {
+    email: user.result.email,
+    nickname: nickname.value,
+    groupName: groupName.value,
+    location: location.value,
+    positionList: positionList.value,
+    techStackList: techStackNames,
+    profileImage: profileImage.value
+  };
 
-    if (profileImage.value) {
-      const file = selectedFile.value; // 실제 파일 객체 사용
-      if (file != null)
-        formData.append('profileImage', file, file.name); // 여기서 file.name으로 파일명 설정
-      else {
-        const imgSrc = document.getElementById('profileImg').src;
+  if (profileImage.value) {
+    const file = selectedFile.value; // 실제 파일 객체 사용
+    if (file != null)
+      formData.append('profileImage', file, file.name); // 여기서 file.name으로 파일명 설정
+    else {
+      const imgSrc = document.getElementById('profileImg').src;
 
-        await fetch(imgSrc)
-          .then((response) => response.blob())
-          .then((blob) => {
-            const file = new File([blob], 'profileImage.png', { type: blob.type });
-            formData.append('profileImage', file, 'aaa.png');
-          })
-          .catch((error) => console.error('Error fetching image:', error));
-      }
+      await fetch(imgSrc)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const file = new File([blob], 'profileImage.png', { type: blob.type });
+          formData.append('profileImage', file, 'aaa.png');
+        })
+        .catch((error) => console.error('Error fetching image:', error));
     }
+  }
 
-    formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
-    // console.log('폼데이터최종', JSON.stringify(userProfile));
+  formData.append('userProfile', new Blob([JSON.stringify(userProfile)], { type: 'application/json; charset=UTF-8' }));
+  // console.log('폼데이터최종', JSON.stringify(userProfile));
 
-    try {
-      await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
-      const data = await loginUsers();
-      await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
+  try {
+    const res = await checkNickname(nickname.value); // API 호출
+    if (res.code === 'DUPLICATED_NICKNAME') {
+      alert('닉네임 중복 확인 하세요');
+      isDuplicateChecked.value = false;
+      return;
+    }else{
+      isDuplicateChecked.value = true;
 
-      if (isDuplicate.value) {
-        alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요.');
-      } else if (isValidNickname.value) {
-        alert('닉네임 형식을 확인해주세요.');
-      } else if (nickname.value) {
-        alert('수정 되었습니다.');
-        await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
-      } else {
-        alert('수정 되었습니다.');
-        await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
-      }
-    } catch (err) {
-      // 에러 처리
-      alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
     }
+    if (nickname.value !== useStore.nickname && res.code === 'VALIDATION_FAILED') {
+      alert('닉네임 형식을 확인 하세요');
+      isDuplicateChecked.value = false;
+      return;
+    } else {
+      isDuplicateChecked.value = true;
+    }
+    await uploadprofile(formData); // formData 대신 userProfile 객체를 전달
+    const data = await loginUsers();
+    await useStore.profile(data.result); // 사용자 정보를 Pinia 스토어에 저장
+    if (isDuplicateChecked.value || nickname.value == useStore.nickname) {
+      alert('수정 되었습니다.');
+      await router.push('/mypage/myprofile'); // 성공 시 프로필 페이지로 이동
+    }
+  } catch (err) {
+    // 에러 처리
+    alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
   }
 };
 
