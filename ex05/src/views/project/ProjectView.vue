@@ -244,7 +244,7 @@ import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { applyProject } from '@/api/projectApi'; // API 임포트
 import { useUserStore } from '@/store/userStore';
-import UserProfile from '../Component/UserProfileeee.vue';
+import UserProfile from '../Component/UserProfile.vue';
 
 const useStore = useUserStore();
 const route = useRoute();
@@ -292,7 +292,7 @@ watchEffect(async () => {
   } else {
     alert('데이터연결안됨', res.response.data.message);
   }
-  console.log('이거'+userId.value)
+  // console.log('유저아이디'+userId.value)
 });
 
 //프로젝트지원으로 이동
@@ -355,6 +355,12 @@ const commentsave = async () => {
       comments.value = updatedComments.data.result; // 댓글 목록 갱신
     }
     return;
+  } if(res.status === 401) {
+    alert('로그인이 필요합니다.');
+    return;
+  } if(res.status === 400) {
+    alert('내용을 입력하세요.');
+    return;
   }
   alert('에러: ' + res.data);
 };
@@ -383,6 +389,9 @@ const commentupdate = async (commentId) => {
     if (updatedComments.status === 200) {
       comments.value = updatedComments.data.result; // 댓글 목록 갱신
     }
+    return;
+  } if(res.status === 400) {
+    alert('내용을 입력하세요.');
     return;
   }
   alert('에러: ' + res.data);
