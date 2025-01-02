@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center mx-auto my-10">
+  <div class="flex justify-center items-center mx-auto my-10 mt-20">
     <div class="justify-center items-center">
       <div class="my-10">
         <div class="grid grid-cols-6">
@@ -75,7 +75,7 @@
           <div class="z-0 grid grid-cols-5 items-center gap-x-4" ref="dropdownContainer">
             <h1 class="col-start-2 font-bold text-lg pb-2">포지션</h1>
             <div class="relative min-w-[567px] m-auto flex">
-              <div class="bg-white border border-gray-200 rounded-lg min-w-[570px] z-10">
+              <div class="bg-white border border-gray-200 rounded-lg min-w-[570px]">
                 <div class="p-3">
                   <div v-for="positionName in roleOptions" :key="positionName" class="flex wrap gap-2">
                     <input
@@ -151,7 +151,6 @@ const isDuplicateChecked = ref(false); // 중복확인 여부
 const isDropdownOpen = ref(false); // 드롭다운 닫힌(false) 상태
 
 const nickname = ref('');
-const validateNickname = ref('');
 const groupName = ref('');
 const location = ref('');
 const profileImage = ref(null); // 프로필 이미지 미리보기용
@@ -186,13 +185,13 @@ const checkNicknameAvailability = async () => {
       isDuplicateChecked.value = true;
       alert('중복된 닉네임입니다.');
       return false;
-    } else if (res.code === 'VALIDATION_FAILED') {
+    } else if (res.code === 'VALIDATION_FAILED' || !/^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(nickname.value)) {
       isDuplicate.value = false; //중복닉
       isValidNickname.value = true; // 형식오류
       isDuplicateChecked.value = true;
       alert('닉네임 형식 오류입니다.');
     } else {
-      alert('오류입니다. 관리자에게 문의하세요');
+      alert('중복된 닉네임입니다.');
     }
   } catch (err) {
     console.error('닉네임 확인 중 오류 발생:', err);

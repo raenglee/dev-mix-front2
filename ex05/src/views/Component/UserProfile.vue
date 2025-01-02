@@ -9,33 +9,30 @@
           <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
         </div>
 
-        <div class="flex flex-col items-center mb-4 gap-2">
-          <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover mb-4" />
-          <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover mb-4" />
-          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">닉네임</p>
-          <span class="text-xl">{{ nickname }}</span>
+        <div class="flex flex-col items-center mb-4">
+          <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
+          <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
+          <p class="text-xl">{{ nickname }}</p>
         </div>
         <div class="flex flex-col items-center gap-1">
-          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">소속</p>
-          <div v-if="!groupName" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">소속</p>
+          <div v-if="!groupName" class="text-gray-200 font-bold text-xl">DEVMIX</div>
           <p class="whitespace-nowrap mb-1 text-xl">{{ groupName }}</p>
-          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">거주 지역</p>
-          <div v-if="!location" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
-
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">거주 지역</p>
+          <div v-if="!location" class="text-gray-200 font-bold text-xl">DEVMIX</div>
           <p class="whitespace-nowrap mb-1 text-xl">{{ location }}</p>
-          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">포지션</p>
-          <div v-if="!positions || positions.length === 0" class="text-gray-200 font-bold text-xl mb-1">DEVMIX</div>
-
-          <ul class="item-center mb-1">
-            <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap text-center text-xl">
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">포지션</p>
+          <div v-if="positions.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+          <ul class="mb-1 flex flex-wrap justify-center gap-1">
+            <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap text-center text-lg mx-2 px-1">
               {{ position }}
             </p>
           </ul>
-          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">기술 스택</p>
-          <div class="flex gap-4 items-center mb-4 flex-wrap">
-            <div class="py-2" v-for="tech in techStacks" :key="tech">
+          <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">기술 스택</p>
+          <div class="flex gap-4 mb-4 flex-wrap text-center justify-center">
+            <div class="py-1" v-for="tech in techStacks" :key="tech">
               <img :src="tech.imageUrl" class="w-8 h-8" />
-              <span class="text-sm py-4">{{ tech.techStackName }}</span>
+              <span class="text-sm">{{ tech.techStackName }}</span>
               <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
             </div>
           </div>
@@ -47,54 +44,65 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, watch, ref } from 'vue';
+import { ref, watchEffect } from 'vue';
+import { defineProps, defineEmits } from 'vue';
+
 import { getUserInfo } from '@/api/userApi';
 
+// props 정의
+const props = defineProps({
+  isModal: Boolean, // 모달의 가시성 상태
+  user_id: Number // 유저 ID
+});
+
+//console.log(JSON.stringify(props));
+
+// emit 정의
+const emit = defineEmits(['update:isModal']);
+
+// 모달을 닫는 함수
+
+const closeModal = () => {
+  emit('update:isModal', false); // 부모 컴포넌트로 모달 닫기 이벤트 전송
+};
+// const usersInfoarr = ref([]);
+
+// 유저 정보
+const userId = ref('');
 const profileImage = ref('');
 const nickname = ref('');
+const email = ref('');
 const groupName = ref('');
 const location = ref('');
 const positions = ref([]);
 const techStacks = ref([]);
 
-// Props
-const props = defineProps({
-  isModal: Boolean,
-  user_id: Number,
-});
-
-// Emits
-const emit = defineEmits(["update:isModal"]);
-
-// Close modal
-const closeModal = () => {
-  emit("update:isModal", false);
-};
-// Fetch user info
-const openProfile = async () => {
-  if (!props.user_id) return;
-
+// 유저정보 가져오기
+const getUsersInfo = async () => {
   try {
-    const { res } = await getUserInfo();
-    profileImage.value = res.profileImage
-    nickname.value = res.nickname
-    groupName.value = res.groupName 
-    location.value = res.location 
-    positions.value = res.positions 
-    techStacks.value = res.techStacks 
-    console.log('나오나' + props.user_id)
-  } catch (err) {
-    console.error("사용자 정보 불러오기 실패:", err);
+    const res = await getUserInfo(props.user_id);
+
+    if (res.status === 200 && res.data && res.data.result) {
+      profileImage.value = res.data.result.profileImage;
+      nickname.value = res.data.result.nickname;
+      email.value = res.data.result.email;
+      groupName.value = res.data.result.groupName;
+      location.value = res.data.result.location;
+      positions.value = res.data.result.positions;
+      techStacks.value = res.data.result.techStacks;
+    }
+    console.log(res.data.result);
+  } catch (error) {
+    console.error('유저 정보 가져오기 실패:', error);
   }
 };
 
-// Watch for modal open
-watch(
-  () => props.isModal,
-  (newVal) => {
-    if (newVal) openProfile();
+// user_id가 변경되면 유저 정보를 다시 가져오기
+watchEffect(() => {
+  if (props.user_id) {
+    getUsersInfo(); // user_id가 있을 때만 호출
   }
-);
+});
 </script>
 
 <style scoped>

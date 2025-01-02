@@ -7,13 +7,13 @@
         </p>
         <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
 
-        <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(userId)">
+        <div class="flex space-x-2 items-center cursor-pointer" @click.stop="openProfile(user_id)">
           <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover" />
           <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
           <p>{{ nickname }}</p>
+          <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
         </div>
-
-        <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
+        
         <div class="my-3 mb-20">
           <hr class="border-t-4 border-[#d10000]" />
         </div>
@@ -132,10 +132,12 @@
         <div class="my-6 mx-7 justify-center flex flex-col gap-5">
           <div v-for="comment in comments" :key="comment.id" class="">
             <!-- 댓글 방식 확인 {{ comment }} -->
-            <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
+            <div class="flex mx-2 mb-4">
+              <div class="flex items-center cursor-pointer" @click.stop="openCommentProfile(comment.userId)">
               <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
               <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
               <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
+            </div>
             </div>
 
             <!--댓글 수정 시-->
@@ -221,7 +223,7 @@
   </div>
 
   <!--게시글 작성자 프로필-->
-  <UserProfile :isModal="UserProfileModal" :user_id="openProfile" @update:isModal="closeProfileModal" />
+  <UserProfile :isModal="UserProfileModal" :user_id="user_id" @update:isModal="closeProfileModal" />
   <!--댓글 작성자 프로필-->
   <UserProfile :isModal="CommentModal" :user_id="commentUserId" @update:isModal="closeCommentProfileModal" />
 
@@ -238,7 +240,7 @@
 </template>
 
 <script setup>
-import { listProject, getProjectView, getCommentsView, saveComments, deleteProject, deleteComments, updateComments } from '@/api/projectApi';
+import { getProjectView, getCommentsView, saveComments, deleteProject, deleteComments, updateComments } from '@/api/projectApi';
 import router from '@/router';
 import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
@@ -264,7 +266,7 @@ const profileImage = ref('');
 const techStacks = ref([]);
 const positions = ref([]);
 const recruitmentStatus = ref('');
-const userId  = ref('');
+const user_id = ref('');
 const files = ref([]);
 
 
@@ -287,12 +289,11 @@ watchEffect(async () => {
     // console.log('기술스택확인', res.data.result.techStackDtoList);
     // console.log('포지션 배열 확인', res.data.result.positionDtoList);
     // console.log('이미지', res.data.result.imageUrl);
-    userId.value = res.data.result.userId;
+    user_id.value = res.data.result.userId;
     files.value = [{ imageUrl: res.data.result.imageUrl }];
   } else {
     alert('데이터연결안됨', res.response.data.message);
   }
-  console.log('이거'+userId.value)
 });
 
 //프로젝트지원으로 이동
@@ -355,6 +356,12 @@ const commentsave = async () => {
       comments.value = updatedComments.data.result; // 댓글 목록 갱신
     }
     return;
+  } if(res.status === 401) {
+    alert('로그인이 필요합니다.');
+    return;
+  } if(res.status === 400) {
+    alert('내용을 입력하세요.');
+    return;
   }
   alert('에러: ' + res.data);
 };
@@ -383,6 +390,9 @@ const commentupdate = async (commentId) => {
     if (updatedComments.status === 200) {
       comments.value = updatedComments.data.result; // 댓글 목록 갱신
     }
+    return;
+  } if(res.status === 400) {
+    alert('내용을 입력하세요.');
     return;
   }
   alert('에러: ' + res.data);
@@ -471,13 +481,12 @@ const UserProfileModal = ref(false); // 모달의 가시성 (flase-안보임)
 // 게시판 댓글 유저프로필 모달
 const CommentModal = ref(false);
 const commentUserId = ref(null);
-const selectedUserId = ref("");
 
 // 게시글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
-// 프로필 열기
 const openProfile = (userId) => {
-  selectedUserId.value = userId;
-  UserProfileModal.value = true;
+  user_id.value = userId;
+  UserProfileModal.value = true; // 모달 열기
+  // console.log('유저ID', user_id.value);
 };
 
 // 댓글에서 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수

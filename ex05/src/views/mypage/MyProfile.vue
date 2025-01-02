@@ -45,43 +45,43 @@
 
       <div class="m-auto flex justify-center text-cente p-3 mb-2 w-full rounded-xl gap-5">
         <!-- 세 번째 카드: 포지션 -->
-        <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
+        <div class="items-center border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 카드 제목 -->
           <div class="top-4 flex items-center justify-center">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">포지션</div>
           </div>
           <!-- 포지션 내용 -->
-           <div class="justify-center items-center  min-h-[100px]">
-          <div class="text-l mb-2 text-gray-800 flex justify-center pt-5">
-            <!-- 포지션이 없을 경우 -->
-            <div v-if="!myPosition.length" class="text-gray-200 font-bold text-xl">DEVMIX</div>
-            <!-- 포지션이 있을 경우 -->
-            <div v-else class="flex justify-center items-center">
-              <span class="px-2" v-for="(position, index) in myPosition" :key="index">
-                {{ position }}
-              </span>
+          <div class="flex justify-center items-center h-4/5 py-3">
+            <div class="text-l text-gray-800 justify-center items-center">
+              <!-- 포지션이 없을 경우 -->
+              <div v-if="!myPosition.length" class="text-gray-200 justify-center items-center font-bold text-xl">DEVMIX</div>
+              <!-- 포지션이 있을 경우 -->
+              <div class="flex flex-wrap gap-x-3 justify-center items-center">
+                <span class="p-2" v-for="(position, index) in myPosition" :key="index">
+                  {{ position }}
+                </span>
+              </div>
             </div>
-          </div>
           </div>
         </div>
 
         <!-- 네 번째 카드: 기술 스택 -->
         <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 카드 제목 -->
-          <div class="top-4 flex items-center justify-center">
+          <div class="flex items-center justify-center mb-3">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">기술 스택</div>
           </div>
           <!-- 기술 스택 내용 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
+          <div class="text-l mb-2 text-gray-800 justify-center items-center">
             <!-- 기술 스택이 없을 경우 -->
             <div v-if="!mySkills.length">
               <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
             </div>
             <!-- 기술 스택이 있을 경우 -->
-            <div v-else class="flex space-x-5 justify-center text-center items-center">
-              <div class="py-2" v-for="(skill, index) in mySkills" :key="index">
-                <span class="text-center text-sm py-4">
-                  <img :src="skill.imageUrl" class="w-10 h-10" />
+            <div v-else class="flex flex-wrap justify-center text-center items-center">
+              <div class="text-sm py-4 w-1/5" v-for="(skill, index) in mySkills" :key="index">
+                <span class="flex flex-col justify-center items-center">
+                  <img :src="skill.imageUrl" class="min-w-10 min-h-10 max-w-10 max-h-10" />
                   {{ skill.techStackName }}
                 </span>
               </div>
@@ -103,7 +103,7 @@ import { useUserStore } from '@/store/userStore';
 
 const useStore = useUserStore();
 const userProfile = ref(null);
-const mySkills = ref([]); 
+const mySkills = ref([]);
 const myPosition = ref([]);
 
 // 사용자 정보 API 호출
