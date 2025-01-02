@@ -238,13 +238,13 @@
 </template>
 
 <script setup>
-import { getProjectView, getCommentsView, saveComments, deleteProject, deleteComments, updateComments } from '@/api/projectApi';
+import { listProject, getProjectView, getCommentsView, saveComments, deleteProject, deleteComments, updateComments } from '@/api/projectApi';
 import router from '@/router';
 import { ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { applyProject } from '@/api/projectApi'; // API 임포트
 import { useUserStore } from '@/store/userStore';
-import UserProfile from '../Component/UserProfileeee.vue';
+import UserProfile from '../Component/UserProfile.vue';
 
 const useStore = useUserStore();
 const route = useRoute();

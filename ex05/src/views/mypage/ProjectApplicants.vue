@@ -101,7 +101,7 @@
 import { admitApplicants, getApplicants } from '@/api/applyApi';
 import { useUserStore } from '@/store/userStore';
 import { ref, watchEffect } from 'vue';
-import UserProfile from '@/views/Component/UserProfileeee.vue';
+import UserProfile from '@/views/Component/UserProfile.vue';
 
 // user_id 가져오기
 const useStore = useUserStore();

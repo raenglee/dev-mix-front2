@@ -151,6 +151,7 @@ const isDuplicateChecked = ref(false); // 중복확인 여부
 const isDropdownOpen = ref(false); // 드롭다운 닫힌(false) 상태
 
 const nickname = ref('');
+const validateNickname = ref('');
 const groupName = ref('');
 const location = ref('');
 const profileImage = ref(null); // 프로필 이미지 미리보기용
@@ -185,13 +186,13 @@ const checkNicknameAvailability = async () => {
       isDuplicateChecked.value = true;
       alert('중복된 닉네임입니다.');
       return false;
-    } else if (res.code === 'VALIDATION_FAILED' || !/^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(nickname.value)) {
+    } else if (res.code === 'VALIDATION_FAILED') {
       isDuplicate.value = false; //중복닉
       isValidNickname.value = true; // 형식오류
       isDuplicateChecked.value = true;
       alert('닉네임 형식 오류입니다.');
     } else {
-      alert('중복된 닉네임입니다.');
+      alert('오류입니다. 관리자에게 문의하세요');
     }
   } catch (err) {
     console.error('닉네임 확인 중 오류 발생:', err);

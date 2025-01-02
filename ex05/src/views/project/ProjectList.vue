@@ -268,7 +268,7 @@
 
 <script setup>
 import { ref, watchEffect } from 'vue';
-import { getLocation, getPositions, getTechstacks, scrapProject, searchquery, totalPage } from '@/api/projectApi';
+import { listProject, getLocation, getPositions, getTechstacks, scrapProject, searchquery, totalPage } from '@/api/projectApi';
 import router from '@/router';
 import { useUserStore } from '@/store/userStore';
 import LoginModal from '@/views/Component/LoginModal.vue';
@@ -279,6 +279,24 @@ const onlyNeeded = ref(false);
 const totalPages = ref(0);
 const arr = ref([]); // 게시물 배열
 const isModal = ref(false); // 로그인 모달 상태
+
+const projectMain = ref(null);
+
+
+// 플젝 정보 API 호출
+const loadMainList = async () => {
+  try {
+    const mainList = await listProject();
+    projectMain.value = mainList.result;
+
+  } catch (error) {
+    console.error('프로필 정보를 불러오는 데 실패했습니다.', error);
+  }
+};
+
+watchEffect(() => {
+  loadMainList();
+});
 
 // 포지션 드롭다운
 const positionOptions = ref([]);
@@ -314,7 +332,7 @@ const getTotalPages = async () => {
     // const modValue = total.result % 16 > 0 ? 1 : 0;
     // + modValue;
     const value = Math.ceil(total.result / 16);
-    console.log(value);
+    console.log('페이지수'+value);
     totalPages.value = value;
     console.log('총 페이지 수', totalPages.value);
   } catch (error) {
@@ -323,16 +341,19 @@ const getTotalPages = async () => {
 };
 
 //검색필터
-
 const pageNumber = ref('');
+// const currentPage = ref(1);
 
-
+// // //페이지네이션
+// // if (num >= 1 && num <= totalPages.value) {
+// //   currentPage.value = num;
+// // }
 const searchfilter = async (num) => {
   try {
     const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
     // const recruitmentStatus: ref('');
     const position = selectedPosition.value?.positionName || ''; // null-safe 처리
-
+    
     // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
     const currentQuery = router.currentRoute.value.query;
     const queryParams = {
@@ -342,7 +363,7 @@ const searchfilter = async (num) => {
       techStacks: tech,
       bookmarked: onlyBookmarked.value
     };
-
+    
     // 파라미터가 이전과 다를 때만 push
     const isParamsChanged = Object.keys(queryParams).some((key) => currentQuery[key] !== queryParams[key]);
     if (isParamsChanged) {
