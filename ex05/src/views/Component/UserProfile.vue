@@ -13,7 +13,7 @@
           <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover mb-4" />
           <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover mb-4" />
           <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">닉네임</p>
-          <span class="text-xl">{{ nickname }}</span>
+          <p class="text-xl">{{ nickname }}</p>
         </div>
         <div class="flex flex-col items-center gap-1">
           <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">소속</p>
@@ -47,54 +47,17 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, watch, ref } from 'vue';
-import { getUserInfo } from '@/api/userApi';
+import { defineProps, defineEmits } from 'vue';
 
-const profileImage = ref('');
-const nickname = ref('');
-const groupName = ref('');
-const location = ref('');
-const positions = ref([]);
-const techStacks = ref([]);
-
-// Props
 const props = defineProps({
-  isModal: Boolean,
-  user_id: Number,
+  isModal: Boolean
 });
 
-// Emits
-const emit = defineEmits(["update:isModal"]);
+const emit = defineEmits(['update:isModal']);
 
-// Close modal
 const closeModal = () => {
-  emit("update:isModal", false);
+  emit('update:isModal', false);
 };
-// Fetch user info
-const openProfile = async () => {
-  if (!props.user_id) return;
-
-  try {
-    const { res } = await getUserInfo();
-    profileImage.value = res.profileImage
-    nickname.value = res.nickname
-    groupName.value = res.groupName 
-    location.value = res.location 
-    positions.value = res.positions 
-    techStacks.value = res.techStacks 
-    console.log('나오나' + props.user_id)
-  } catch (err) {
-    console.error("사용자 정보 불러오기 실패:", err);
-  }
-};
-
-// Watch for modal open
-watch(
-  () => props.isModal,
-  (newVal) => {
-    if (newVal) openProfile();
-  }
-);
 </script>
 
 <style scoped>
