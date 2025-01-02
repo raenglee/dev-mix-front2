@@ -7,13 +7,15 @@
         </p>
         <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
 
-        <div class="flex space-x-2 items-center justify-center cursor-pointer" @click.stop="openProfile(user_id)">
-          <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover" />
-          <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
-          <p>{{ nickname }}</p>
+        <div class="flex justify-between">
+          <!-- <div @click.stop="openProfile(user_id)" class="flex cursor-pointer">
+            <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover mr-2 ml-10" />
+            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover mr-2 ml-10" />
+            <p>{{ nickname }}</p>
+          </div> -->
+          
         </div>
-
-        <p class="text-gray-500 text-l text-right pr-10">조회수: {{ viewCount }}</p>
+        <p class="text-gray-500 text-l text-right mr-10">조회수: {{ viewCount }}</p>
         <div class="my-3 mb-20">
           <hr class="border-t-4 border-[#d10000]" />
         </div>
@@ -31,7 +33,14 @@
         </div>
         <!--상세정보 스크롤 따라 내려오도록-->
         <div class="sticky top-[100px] p-8 mb-10 bg-white text-gray-700 rounded border shadow-md w-96 h-[calc(100%-100px)] right-0">
+         
           <div class="flex flex-col flex-wrap gap-y-4">
+            <div @click.stop="openProfile(user_id)" class="flex flex-col cursor-pointer text-center">
+              <img v-if="profileImage" :src="profileImage" class="h-20 w-20 rounded-full object-cover" />
+              <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
+              <p class="text-lg">{{ nickname }}</p>
+            </div>
+
             <div class="flex flex-wrap">
               <p for="region" class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">지역 / 구분</p>
               <p class="py-1 pl-4 text-lg">{{ location }}</p>
@@ -131,37 +140,36 @@
         <!--댓글목록-->
         <div class="my-6 mx-7 justify-center flex flex-col gap-5">
           <div v-for="comment in comments" :key="comment.id" class="">
-            <!-- 댓글 방식 확인 {{ comment }} -->
-            <div class="flex items-center mx-2 mb-4 cursor-pointer bg-gray-200" @click.stop="openCommentProfile(comment.userId)">
-              <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
-              <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
-              <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
+            <!-- 댓글 내용 -->
+            <div class="flex mx-2 mb-4">
+              <div class="flex items-center cursor-pointer" @click.stop="openCommentProfile(comment.userId)">
+                <img v-if="comment.profileImage" :src="comment.profileImage" class="h-8 w-8 rounded-full object-cover" />
+                <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
+                <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
+              </div>
             </div>
 
             <!--댓글 수정 시-->
             <div v-if="!comment.isEditing">
               <div class="flex justify-between">
-                <!-- 댓글 내용 -->
+                <!-- 댓글 수정시 내용 -->
                 <p class="text-gray-800 ml-4">{{ comment.content }}</p>
-                <div class="mr-4 ">
+                <div class="mr-4">
                   <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="startEditing(comment)">수정</button>
                   <button v-if="comment.userNickName == loggedInUserNickname" class="text-sm hover:underline ml-2" @click="commentDelete(comment.commentId)">삭제</button>
                 </div>
               </div>
               <p class="text-xs mt-3 mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p>
-              <!-- <p v-if="comment.lastModifiedAt" class="text-xs mt-3 mb-4 mx-2 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
             </div>
 
-            <div v-else class="">
-              <div class="flex items-center mx-2 mb-4" >
+            <div v-else>
+              <div class="flex items-center mx-2 mb-4">
                 <textarea v-model="comment.newContent" class="p-3 h-[10px] w-full border border-gray-200 rounded-md focus:outline-none ring-gray-100 resize-none bg-gray-100"></textarea>
-
-                <!-- <p class="text-xs mt-3 mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p> -->
               </div>
               <div class="flex justify-between pb-4">
                 <p class="items-start text-xs mb-4 mx-2 ml-4 text-gray-500">{{ comment.lastModifiedAt }}</p>
                 <div class="mr-4 items-end">
-                  <button @click="updatecancle" class=" ml-4 text-sm hover:underline text-gray-500">취소</button>
+                  <button @click="updatecancle" class="ml-4 text-sm hover:underline text-gray-500">취소</button>
                   <button @click="commentupdate(comment.commentId)" class="ml-4 border border-gray-200 rounded-md h-10 w-20 px-2 text-base hover:bg-gray-100">수정</button>
                 </div>
               </div>
@@ -267,7 +275,6 @@ const recruitmentStatus = ref('');
 const user_id = ref('');
 const files = ref([]);
 
-
 //게시글 가져오기
 watchEffect(async () => {
   const res = await getProjectView(route.params.board_id);
@@ -354,10 +361,12 @@ const commentsave = async () => {
       comments.value = updatedComments.data.result; // 댓글 목록 갱신
     }
     return;
-  } if(res.status === 401) {
+  }
+  if (res.status === 401) {
     alert('로그인이 필요합니다.');
     return;
-  } if(res.status === 400) {
+  }
+  if (res.status === 400) {
     alert('내용을 입력하세요.');
     return;
   }
@@ -389,7 +398,8 @@ const commentupdate = async (commentId) => {
       comments.value = updatedComments.data.result; // 댓글 목록 갱신
     }
     return;
-  } if(res.status === 400) {
+  }
+  if (res.status === 400) {
     alert('내용을 입력하세요.');
     return;
   }

@@ -83,11 +83,12 @@
             </div>
             <div v-if="activeDropdown === 'tech'" class="absolute bg-white border border-gray rounded-md z-20 p-4 shadow" style="width: 600px">
               <!--드롭다운 내부-->
-              <div class="flex gap-2">
+              <p class="text-gray-700">기술 / 언어</p>
+              <!-- <div class="flex gap-2">
                 <button type="button" class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500 active:bg-gray-300">전체</button>
                 <button type="button" class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500">백 엔드</button>
                 <button type="button" class="bg-whith border border-gray-200 px-2 py-1 rounded-full text-sm hover:border-gray-500">프론트 엔드</button>
-              </div>
+              </div> -->
 
               <div class="grid grid-cols-10 gap-x-3 gap-y-3 mt-3">
                 <div v-for="(option, index) in techOptions" :key="index" class="flex items-center m-auto">
@@ -326,7 +327,6 @@ const getTotalPages = async () => {
 
 const pageNumber = ref('');
 
-
 const searchfilter = async (num) => {
   try {
     const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
@@ -473,7 +473,6 @@ const selelctTechstacks = async () => {
 const resetSelection = () => {
   selectedTech.value = [];
   searchfilter();
-
 };
 
 //지역 데이터 가져오기
@@ -515,9 +514,7 @@ const selectLocation = (option) => {
 
 // 기술 스택 선택/해제
 const toggleTechSelection = (option) => {
-  const index = selectedTech.value.findIndex(
-    (tech) => tech.techStackName === option.techStackName
-  );
+  const index = selectedTech.value.findIndex((tech) => tech.techStackName === option.techStackName);
 
   if (index !== -1) {
     // 이미 선택된 경우 제거
@@ -527,8 +524,6 @@ const toggleTechSelection = (option) => {
     selectedTech.value.push(option);
   }
 };
-
-
 
 // 외부 클릭 시 드롭다운 닫기
 const handleClickOutside = (event) => {

@@ -1,9 +1,13 @@
 <template>
-  <div>
-    <!--🙎유저프로필 모달-->
-    <div class="overlay" :class="{ isModal: isModal }" @click="closeModal"></div>
-    <transition name="modal-fade">
-      <div v-if="isModal" class="modal p-5 w-96 rounded-lg" :class="{ isView: isModal }">
+  <!--😀개인 정보-->
+
+  <!-- <p @click="getUsersInfo(user_id)">다른사람 프로필보기</p> -->
+  <!-- <div v-for="(board, index) in usersInfoarr" :key="index"> -->
+
+  <!--프로필모달-->
+  <transition name="modal" @before-enter="beforeEnter" @enter="enter" @leave="leave">
+    <div v-if="props.isModal" class="modal-container" @click.self="closeModal">
+      <div class="modal-content my-10">
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-bold text-xl text-center">프로필</h2>
           <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
@@ -38,15 +42,14 @@
           </div>
         </div>
       </div>
-    </transition>
-    <!--🙎‍♂️모달 끝-->
-  </div>
+    </div>
+    <!--😀개인 정보 끝-->
+    <!-- </div> -->
+  </transition>
 </template>
 
 <script setup>
 import { ref, watchEffect } from 'vue';
-import { defineProps, defineEmits } from 'vue';
-
 import { getUserInfo } from '@/api/userApi';
 
 // props 정의
