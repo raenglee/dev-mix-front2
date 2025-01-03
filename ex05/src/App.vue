@@ -40,8 +40,10 @@ const deleteUserData = async () => {
   <!-- <LayoutHeadercopy /> -->
   <!--로그인 안하고 로그인한상태의 헤더 보는 법-->
   <LayoutHeader @headerClick="handleHeaderClick" />
-  <RouterView />
-  <Footerlayout/>
+  <div class="h-screen flex flex-col">
+      <RouterView />
+      <Footerlayout class="mt-auto" />
+  </div>
   
 </template>
 
