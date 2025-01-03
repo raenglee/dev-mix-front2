@@ -38,12 +38,16 @@
 
           <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100">
             <tr>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400" @click.stop="openProfile(applicant.userId)">{{ applicant.userNickname }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400"
+                  @click.stop="openProfile(applicant.userId)">{{ applicant.userNickname }}</td>
               <RouterLink :to="`/projectview/${applicant.boardId}`">
                 <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer hover:text-gray-400" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
               </RouterLink>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer" @click="openModal(applicant, applicant.userId)">{{ applicant.positionName }}</td>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400" @click="openModal(applicant)">
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer"
+                  @click="openModal(applicant)">{{ applicant.positionName }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate
+                        max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400"
+                  @click="openModal(applicant)">
                 {{ applicant.applyNote }}
               </td>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap">{{ applicant.applyDate }}</td>
@@ -53,57 +57,18 @@
         </table>
       </div>
 
-      <!--지원한 모달-->
+      <!--지원 모달-->
       <div v-if="showModal" class="modal-container" @click.self="closeModal">
         <div class="modal-content">
           <div class="flex items-center justify-between mb-4">
             <h2 class="font-bold text-xl text-center">지원 상세 내용</h2>
             <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
           </div>
-
-          <div class="flex">
-            <div>
-              <div class="flex items-center justify-between mb-4">
-                <h2 class="font-bold text-xl text-center">프로필</h2>
-                <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
-              </div>
-
-              <div class="flex flex-col items-center mb-4">
-                <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
-                <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
-                <p class="text-xl">{{ nickname }}</p>
-              </div>
-              <div class="flex flex-col items-center gap-1">
-                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">소속</p>
-                <div v-if="!groupName" class="text-gray-200 font-bold text-xl">DEVMIX</div>
-                <p class="whitespace-nowrap mb-1 text-xl">{{ groupName }}</p>
-                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">거주 지역</p>
-                <div v-if="!location" class="text-gray-200 font-bold text-xl">DEVMIX</div>
-                <p class="whitespace-nowrap mb-1 text-xl">{{ location }}</p>
-                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">포지션</p>
-                <div v-if="positions.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
-                <ul class="mb-1 flex flex-wrap justify-center gap-1">
-                  <p v-for="(position, index) in positions" :key="index" class="whitespace-nowrap text-center text-lg mx-2 px-1">
-                    {{ position }}
-                  </p>
-                </ul>
-                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">기술 스택</p>
-                <div class="flex gap-4 mb-4 flex-wrap text-center justify-center">
-                  <div class="py-1" v-for="tech in techStacks" :key="tech">
-                    <img :src="tech.imageUrl" class="w-8 h-8" />
-                    <span class="text-sm">{{ tech.techStackName }}</span>
-                    <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex flex-col mb-4 gap-2">
-              <p class="font-bold">지원 직군</p>
-              <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.positionName }}</p>
-              <p class="font-bold">지원 사유 및 한마디</p>
-              <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.applyNote }}</p>
-            </div>
+          <div class="flex flex-col mb-4 gap-2">
+            <p class="font-bold">지원 직군</p>
+            <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.positionName }}</p>
+            <p class="font-bold">지원 사유 및 한마디</p>
+            <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.applyNote }}</p>
           </div>
           <div class="flex justify-center gap-3 mb-4">
             <button type="button" class="border border-gray-300 bg-gray-300 rounded-full py-1 px-3" @click="reject">거절</button>
@@ -115,7 +80,19 @@
       </div>
 
       <!-- 프로필 모달-->
-      <!-- <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" /> -->
+      <UserProfile
+                :isModal="isModal"
+                :user_id="user_id"
+                @update:isModal="closeProfileModal" />
+
+      <!-- 승인대기 모달
+      <div v-if="isConfirmModal" class="modal-container" @click.self="closeConfirmModal">
+        <div class="modal-content">
+          <h2 class="modal-title">지원이 완료되었습니다!</h2>
+          <p>작성자가 승인하면 프로젝트에 참가하게 됩니다.</p>
+          <button @click="closeConfirmModal">확인</button>
+        </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -124,14 +101,28 @@
 import { admitApplicants, getApplicants } from '@/api/applyApi';
 import { useUserStore } from '@/store/userStore';
 import { ref, watchEffect } from 'vue';
-import { getUserInfo } from '@/api/userApi';
+import UserProfile from '@/views/Component/UserProfile.vue';
 
 // user_id 가져오기
 const useStore = useUserStore();
 const applicantsarr = ref([]);
 
-// 유저프로필 모달
-const user_id = ref(''); // 클릭된 유저의 ID
+// //유저프로필 모달
+const isModal = ref(false);  // 모달의 가시성 상태
+const user_id = ref(null);  // 클릭된 유저의 ID
+
+// // 프로필 클릭 시 모달을 열고 user_id를 설정하는 함수
+const openProfile = (userId) => {
+  user_id.value = userId;
+  isModal.value = true;  // 모달을 열기
+  console.log(user_id.value);
+  console.log(isModal.value);
+};
+
+// 회원정보 모달을 닫는 함수
+const closeProfileModal = () => {
+  isModal.value = false;
+};
 
 // 지원자 정보 Api
 const applicants = async () => {
@@ -153,7 +144,6 @@ const applicants = async () => {
 // const selectedApplicant = ref(null);
 const selectedApplicant = ref({
   boardId: 0,
-  userId: '',
   userNickname: '',
   positionName: '',
   applyNote: '',
@@ -239,43 +229,6 @@ const closeModal = () => {
 
 watchEffect(() => {
   applicants();
-});
-
-// 유저 정보
-const userId = ref('');
-const profileImage = ref('');
-const nickname = ref('');
-const email = ref('');
-const groupName = ref('');
-const location = ref('');
-const positions = ref([]);
-const techStacks = ref([]);
-
-// 유저정보 가져오기
-const getUsersInfo = async () => {
-  try {
-    const res = await getUserInfo(user_id);
-
-    if (res.status === 200 && res.data && res.data.result) {
-      profileImage.value = res.data.result.profileImage;
-      nickname.value = res.data.result.nickname;
-      email.value = res.data.result.email;
-      groupName.value = res.data.result.groupName;
-      location.value = res.data.result.location;
-      positions.value = res.data.result.positions;
-      techStacks.value = res.data.result.techStacks;
-    }
-    console.log(res.data.result);
-  } catch (error) {
-    console.error('유저 정보 가져오기 실패:', error);
-  }
-};
-
-// user_id가 변경되면 유저 정보를 다시 가져오기
-watchEffect(() => {
-  if (userId) {
-    getUsersInfo(); // user_id가 있을 때만 호출
-  }
 });
 </script>
 
