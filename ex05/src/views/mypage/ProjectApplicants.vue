@@ -1,5 +1,5 @@
 <template>
-  <div class="w-4/6 mx-auto">
+  <div class="w-4/6 mx-auto mt-20">
     <div class="pt-10 mb-10">
       <p class="font-bold text-2xl">지원자</p>
 

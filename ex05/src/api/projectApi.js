@@ -32,9 +32,9 @@ export const getProjectView = async (board_id) => {
 };
 
 // 프로젝트 총 페이지 수
-export const totalPage = async () => {
+export const totalPage = async (params) => {
   try {
-    const res = await axios.get(`${url}/total-boards`);
+    const res = await axios.get(`${url}/total-boards`, { params });
     return res.data;
   } catch (e) {
     console.log('토탈 페이지수 Api 에러 발생', e);

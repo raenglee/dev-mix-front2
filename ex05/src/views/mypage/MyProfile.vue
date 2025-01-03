@@ -28,6 +28,7 @@
             <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
           </div>
         </div>
+        <!-- 두 번째 카드: 지역 -->
         <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 지역 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
           <div class="top-4 flex items-center justify-center">
@@ -42,112 +43,90 @@
         </div>
       </div>
 
-      <div class="flex justify-center text-cente p-3 mb-2 w-full rounded-xl gap-5">
-        <!-- 첫 번째 카드: 소속 -->
+      <div class="m-auto flex justify-center text-cente p-3 mb-2 w-full rounded-xl gap-5">
+        <!-- 세 번째 카드: 포지션 -->
         <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
-          <!-- 소속 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
+          <!-- 카드 제목 -->
           <div class="top-4 flex items-center justify-center">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">포지션</div>
           </div>
-          <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            <template v-if="useStore.userProfile != null">
-                <span class="px-2" v-for="position in userProfile.positions" :key="position">
-                  {{ position.positionName }}
-                </span>
-              </template>
-              <template v-else>
-              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
-            </template>
+          <!-- 포지션 내용 -->
+           <div class="flex justify-center items-center h-4/5">
+          <div class="text-l mb-2 text-gray-800 flex flex-col justify-center items-center">
+            <!-- 포지션이 없을 경우 -->
+            <div v-if="!myPosition.length" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+            <!-- 포지션이 있을 경우 -->
+            <div v-else class="flex flex-wrap  justify-center items-center">
+              <span class="px-2" v-for="(position, index) in myPosition" :key="index">
+                {{ position }}
+              </span>
+            </div>
+          </div>
           </div>
         </div>
 
-        <div class="border bg-gray-50 rounded-2xl p-4 item-center w-1/2">
-          <!-- 소속 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
+        <!-- 네 번째 카드: 기술 스택 -->
+        <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
+          <!-- 카드 제목 -->
           <div class="top-4 flex items-center justify-center">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">기술 스택</div>
           </div>
-          <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-
-          <template v-if="useStore.userProfile != null">
-            <div class="flex space-x-5 justify-center">
-              <div class="py-2" v-for="tech in userProfile.techStacks" :key="tech">
-                <img :src="tech.techStackImageUrl" class="w-10 h-10" />
-                <span class="text-sm py-4">{{ tech.techStackName }}</span>
+          <!-- 기술 스택 내용 -->
+          <div class="text-l mb-2 text-gray-800 flex justify-center items-center">
+            <!-- 기술 스택이 없을 경우 -->
+            <div v-if="!mySkills.length">
+              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
+            </div>
+            <!-- 기술 스택이 있을 경우 -->
+            <div v-else class="flex flex-wrap space-x-5 justify-center text-center items-center">
+              <div class="py-2" v-for="(skill, index) in mySkills" :key="index">
+                <span class="text-center text-sm py-4">
+                  <img :src="skill.imageUrl" class="min-w-10 min-h-10 max-w-10 max-h-10" />
+                  {{ skill.techStackName }}
+                </span>
               </div>
             </div>
-          </template>
-          <template v-else>
-              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
-            </template>
-        </div>
+          </div>
         </div>
       </div>
     </div>
     <p class="text-xs text-gray-500 hover:text-gray-700 text-right pr-4">회원탈퇴</p>
   </div>
-  <div></div>
   <!--😀개인 정보 끝-->
 </template>
 
 <script setup>
-import { getPositions, getTechstacks } from '@/api/projectApi';
+// import { getPositions, getTechstacks } from '@/api/projectApi';
 import { loginUsers } from '@/api/loginApi';
 import { ref, watchEffect } from 'vue';
 import { useUserStore } from '@/store/userStore';
 
 const useStore = useUserStore();
 const userProfile = ref(null);
-const techOptions = ref([]);
+const mySkills = ref([]); 
+const myPosition = ref([]);
 
 // 사용자 정보 API 호출
 const loadUserProfile = async () => {
   try {
-    const profile = await loginUsers(); // API로부터 사용자 프로필 정보 가져오기
-    userProfile.value = profile.result; // API에서 받은 데이터를 userProfile에 저장
-    console.log(userProfile.value);
+    const profile = await loginUsers();
+    userProfile.value = profile.result;
+
+    // 기술 스택 데이터 처리
+    mySkills.value = profile.result.techStacks.map(({ techStackName, techStackImageUrl }) => ({
+      techStackName,
+      imageUrl: techStackImageUrl
+    }));
+
+    // 포지션 데이터 처리
+    myPosition.value = profile.result.positions.map(({ positionName }) => positionName);
   } catch (error) {
     console.error('프로필 정보를 불러오는 데 실패했습니다.', error);
   }
 };
 
-const selectPositions = async () => {
-  try {
-    const res = await getPositions();
-    // console.log('updatePsotions 데이터 확인: ', res);
-    if (Array.isArray(res.data.result)) {
-      // positionOptions.value = res.data.result;
-    } else {
-      console.error('분야별 모집 인원 배열 저장 에러', res);
-    }
-  } catch (error) {
-    console.error('실패:', error);
-  }
-};
-
-const selelctTechstacks = async () => {
-  try {
-    const res = await getTechstacks();
-    // console.log('updateTechstacks 데이터 확인: ', res);
-    // techOptions.value = res.result;
-    if (Array.isArray(res.data.result)) {
-      techOptions.value = res.data.result.map((item) => ({
-        techStackName: item.techStackName,
-        imageUrl: item.imageUrl
-      }));
-    } else {
-      console.error('기술/언어 배열 저장 에러', res);
-    }
-  } catch (error) {
-    console.error('실패:', error);
-  }
-};
-
 watchEffect(() => {
   loadUserProfile();
-  selectPositions();
-  selelctTechstacks();
 });
 </script>
 
