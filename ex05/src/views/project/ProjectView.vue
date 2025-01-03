@@ -143,7 +143,7 @@
             <!-- 댓글 내용 -->
             <div class="flex mx-2 mb-4">
               <div class="flex items-center cursor-pointer" @click.stop="openCommentProfile(comment.userId)">
-                <img v-if="comment.userprofileImage" :src="comment.userprofileImage" class="h-8 w-8 rounded-full object-cover" />
+                <img v-if="comment.userProfileImage" :src="comment.userProfileImage" class="h-8 w-8 rounded-full object-cover" />
                 <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover" />
                 <p class="font-semibold ml-2 text-gray-800">{{ comment.userNickName }}</p>
               </div>
