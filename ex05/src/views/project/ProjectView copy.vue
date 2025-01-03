@@ -77,10 +77,9 @@
                   지원
                 </button>
 
-                <button v-if="isPending && nickname !== loggedInUserNickname"
-                      class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
-                      이미 지원하였습니다.
-                    </button>
+                <button v-if="isPending && nickname !== loggedInUserNickname" class="border font-bold border-gray-200 whitespace-nowrap mt-4 p-2 bg-gray-200 item-center cursor-not-allowed rounded-lg">
+                  승인 대기
+                </button>
 
                 <button
                   v-if="nickname == loggedInUserNickname"
@@ -90,7 +89,7 @@
                   지원자 확인하기
                 </button>
 
-              </div>
+\              </div>
             </div>
           </div>
         </div>
@@ -266,7 +265,6 @@ const positions = ref([]);
 const recruitmentStatus = ref('');
 const user_id = ref('');
 const files = ref([]);
-const isPending = ref(false);
 
 //게시글 가져오기
 watchEffect(async () => {
@@ -284,9 +282,6 @@ watchEffect(async () => {
     techStacks.value = res.data.result.techStackDtoList;
     positions.value = res.data.result.positionDtoList;
     recruitmentStatus.value = res.data.result.recruitmentStatus;
-    isPending.value = res.data.result.applied;
-    console.log('지원상태',isPending.value);
-
     // console.log('기술스택확인', res.data.result.techStackDtoList);
     // console.log('포지션 배열 확인', res.data.result.positionDtoList);
     // console.log('이미지', res.data.result.imageUrl);
@@ -442,7 +437,7 @@ const positionName = ref('');
 const isConfirmModal = ref(false);
 
 //지원기능
-// const isPending = ref(false); // 지원 상태 변수
+const isPending = ref(false); // 지원 상태 변수
 const note = ref('');
 
 // 지원 API 호출

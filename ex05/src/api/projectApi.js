@@ -6,7 +6,6 @@ import { GLOBAL_URL } from './util';
 const url = `${GLOBAL_URL}/api/v1/boards`;
 // const url = 'http://192.168.0.110:8080/api/v1/boards';
 
-
 // 프로젝트 전체 리스트
 export const listProject = async (pageNumber = 1, pageSize = 16) => {
   if (pageNumber == undefined) pageNumber = 0; // 예외방지
@@ -25,7 +24,11 @@ export const listProject = async (pageNumber = 1, pageSize = 16) => {
 export const getProjectView = async (board_id) => {
   // console.log('게시판 주소: ', `${url}/${board_id}`);
   try {
-    const res = await axios.get(`${url}/${board_id}`);
+    const res = await axios.get(`${url}/${board_id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
     return res;
   } catch (e) {
     console.log('프로젝트 상세페이지 가져오기 Api 에러 발생', e);
