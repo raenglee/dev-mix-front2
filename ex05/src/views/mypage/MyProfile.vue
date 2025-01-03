@@ -1,15 +1,15 @@
 <template>
   <!--😀개인 정보-->
   <div class="m-auto w-full flex flex-col">
-    <div class="m-auto flex flex-col justify-center text-center border border-gray-200 p-3 mb-2 w-full rounded-xl bg-gray-50">
+    <div class="m-auto flex flex-col justify-center text-center border border-gray-200 pt-5 pb-3 mb-2 w-full rounded-xl bg-gray-50">
       <img v-if="useStore.profileImage" :src="useStore.profileImage" class="h-20 w-20 m-auto rounded-full" />
       <!-- <img class="h-20 w-20 m-auto" /> -->
       <img v-else src="/img/people.png" class="h-20 w-20 m-auto rounded-full object-cover" />
-      <p>{{ useStore.nickname }}님</p>
+      <p class="pt-2">{{ useStore.nickname }}님</p>
       <p class="text-sm text-gray-400">{{ useStore.email }}</p>
       <div class="flex justify-center text-center py-3">
         <RouterLink to="/myprofileedit"><button class="border bg-white border-gray-300 rounded-md py-1 px-3 mx-1">프로필 수정</button> </RouterLink>
-        <button class="border border-gray-300 bg-white rounded-md py-1 px-2">공유</button>
+        <!-- <button class="border border-gray-300 bg-white rounded-md py-1 px-2">공유</button> -->
       </div>
     </div>
 
@@ -23,9 +23,10 @@
             <div class="text-lg font-bold px-2 rounded-full text-gray-800">소속</div>
           </div>
           <!-- useStore.groupName 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            <span v-if="useStore.groupName">{{ useStore.groupName }}</span>
-            <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
+           
+          <div class="text-l mb-2 text-gray-800 flex justify-center items-center h-4/5 py-3">
+            <span v-if="!useStore.groupName" class="flex justify-center text-center items-center text-gray-200 font-bold text-xl">DEVMIX</span>
+            <span v-else>{{ useStore.groupName }}</span>
           </div>
         </div>
         <!-- 두 번째 카드: 지역 -->
@@ -36,51 +37,51 @@
           </div>
 
           <!-- useStore.location 텍스트 세로 중앙 정렬 및 가로 중앙 정렬 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center pt-5">
-            <span v-if="useStore.location">{{ useStore.location }}</span>
-            <span v-else class="text-gray-200 font-bold text-xl">DEVMIX</span>
-          </div>
+            <div class="text-l mb-2 text-gray-800 flex justify-center items-center h-4/5 py-3">
+              <span v-if="!useStore.location" class="flex justify-center text-center items-center text-gray-200 font-bold text-xl">DEVMIX</span>
+              <span v-else>{{ useStore.location }}</span>
+            </div>
         </div>
       </div>
 
       <div class="m-auto flex justify-center text-cente p-3 mb-2 w-full rounded-xl gap-5">
         <!-- 세 번째 카드: 포지션 -->
-        <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
+        <div class="items-center border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 카드 제목 -->
           <div class="top-4 flex items-center justify-center">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">포지션</div>
           </div>
           <!-- 포지션 내용 -->
-           <div class="flex justify-center items-center h-4/5">
-          <div class="text-l mb-2 text-gray-800 flex flex-col justify-center items-center">
-            <!-- 포지션이 없을 경우 -->
-            <div v-if="!myPosition.length" class="text-gray-200 font-bold text-xl">DEVMIX</div>
-            <!-- 포지션이 있을 경우 -->
-            <div v-else class="flex flex-wrap  justify-center items-center">
-              <span class="px-2" v-for="(position, index) in myPosition" :key="index">
-                {{ position }}
-              </span>
+          <div class="flex justify-center items-center h-4/5 py-3">
+            <div class="text-l text-gray-800 justify-center items-center">
+              <!-- 포지션이 없을 경우 -->
+              <div v-if="!myPosition.length" class="flex justify-center text-center items-center text-gray-200 font-bold text-xl">DEVMIX</div>
+              <!-- 포지션이 있을 경우 -->
+              <div class="flex flex-wrap gap-x-3 justify-center items-center">
+                <span class="p-2" v-for="(position, index) in myPosition" :key="index">
+                  {{ position }}
+                </span>
+              </div>
             </div>
-          </div>
           </div>
         </div>
 
         <!-- 네 번째 카드: 기술 스택 -->
         <div class="border bg-gray-50 rounded-2xl p-4 w-1/2">
           <!-- 카드 제목 -->
-          <div class="top-4 flex items-center justify-center">
+          <div class="flex items-center justify-center mb-3">
             <div class="px-2 text-lg font-bold rounded-full text-gray-800">기술 스택</div>
           </div>
           <!-- 기술 스택 내용 -->
-          <div class="text-l mb-2 text-gray-800 flex justify-center items-center">
+          <div class="text-l mb-2 text-gray-800 justify-center items-center">
             <!-- 기술 스택이 없을 경우 -->
             <div v-if="!mySkills.length">
-              <span class="text-gray-200 font-bold text-xl">DEVMIX</span>
+              <span class="flex justify-center text-center items-center text-gray-200 font-bold text-xl">DEVMIX</span>
             </div>
             <!-- 기술 스택이 있을 경우 -->
-            <div v-else class="flex flex-wrap space-x-5 justify-center text-center items-center">
-              <div class="py-2" v-for="(skill, index) in mySkills" :key="index">
-                <span class="text-center text-sm py-4">
+            <div v-else class="flex flex-wrap justify-center text-center items-center">
+              <div class="text-sm py-4 w-1/5" v-for="(skill, index) in mySkills" :key="index">
+                <span class="flex flex-col justify-center items-center">
                   <img :src="skill.imageUrl" class="min-w-10 min-h-10 max-w-10 max-h-10" />
                   {{ skill.techStackName }}
                 </span>
@@ -103,7 +104,7 @@ import { useUserStore } from '@/store/userStore';
 
 const useStore = useUserStore();
 const userProfile = ref(null);
-const mySkills = ref([]); 
+const mySkills = ref([]);
 const myPosition = ref([]);
 
 // 사용자 정보 API 호출

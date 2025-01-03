@@ -354,6 +354,11 @@ const handleSubmit = async () => {
   }
 };
 
+const handleCancel = async () => {
+  
+  router.push('/mypage/myprofile');
+};
+
 // 기술 / 언어 서버 연결
 const updateTechstacks = async () => {
   try {
