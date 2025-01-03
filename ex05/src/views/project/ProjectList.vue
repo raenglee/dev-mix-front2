@@ -323,28 +323,33 @@ const getTotalPages = async () => {
   }
 };
 
+//검색필터 
+
+// const pageNumber = ref('');  
+
 //검색필터
-
-const pageNumber = ref('');
-
-const searchfilter = async (num) => {
+const searchfilter = async (pageNumber = 1) => {
   try {
-    const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
+    const tech = selectedTech.value?.length > 0
+      ? selectedTech.value.map((item) => item.techStackName).join(', ')
+      : '';
     // const recruitmentStatus: ref('');
     const position = selectedPosition.value?.positionName || ''; // null-safe 처리
+
 
     // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
     const currentQuery = router.currentRoute.value.query;
     const queryParams = {
-      pageNumber: num,
+      pageNumber: pageNumber,
       location: selectedLocation.value,
       positions: position,
       techStacks: tech,
       bookmarked: onlyBookmarked.value
     };
 
+
     // 파라미터가 이전과 다를 때만 push
-    const isParamsChanged = Object.keys(queryParams).some((key) => currentQuery[key] !== queryParams[key]);
+    const isParamsChanged = Object.keys(queryParams).some(key => currentQuery[key] !== queryParams[key]);
     if (isParamsChanged) {
       router.push({ query: queryParams });
     }
@@ -360,17 +365,22 @@ const searchfilter = async (num) => {
         // arr.value.length = 0; // 기존 데이터 비우기
         // arr.value.push(...res.data.result); // 새로운 데이터 추가
 
+        console.log(res.data.result);
+
         arr.value = res.data.result.map((item) => {
           const totalRequiredCount = item.positions.reduce((sum, position) => sum + position.requiredCount, 0);
           const totalCurrentCount = item.positions.reduce((sum, position) => sum + position.currentCount, 0);
 
+          
+
           return {
             ...item,
-            isBookmarked: item.isBookmarked || false, // 기본 북마크 상태
+            isBookmarked: item.bookmarked, // 기본 북마크 상태
             totalRequiredCount, // 총 모집 인원 수
-            totalCurrentCount // 총 현재 인원 수
+            totalCurrentCount  // 총 현재 인원 수
           };
         });
+
       } else {
         console.error('배열이아님:', res.data);
       }

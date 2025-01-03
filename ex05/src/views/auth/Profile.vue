@@ -432,7 +432,7 @@ const handleSubmit = async () => {
       router.push('/'); // 성공 시 프로필 페이지로 이동
     // } else {
     //   alert('닉네임 중복확인을 하세요');
-    // }
+     }
   } catch (err) {
     // 에러 처리
     alert('프로필 저장에 실패했습니다. 다시 시도해주세요.');
