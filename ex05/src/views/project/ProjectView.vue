@@ -78,7 +78,7 @@
                 </button>
 
                 <button v-if="isPending && nickname !== loggedInUserNickname"
-                      class="border border-gray-200 rounded-full whitespace-nowrap px-4 py-1 bg-gray-300 item-center cursor-not-allowed">
+                      class="border whitespace-nowrap mt-4 p-2 rounded-lg font-bold  border-gray-200 bg-gray-200 cursor-not-allowed">
                       이미 지원하였습니다.
                     </button>
 
