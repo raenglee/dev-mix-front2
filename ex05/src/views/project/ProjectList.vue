@@ -74,8 +74,9 @@
               </div>
             </div>
           </div>
- <!-- 기술/언어 드롭다운 -->
- <div class="relative">
+
+          <!-- 기술/언어 드롭다운 -->
+          <div class="relative">
             <div @click="toggleDropdown('tech')" class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
               <span class="text-gray-800">기술 / 언어</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
@@ -257,7 +258,8 @@
       <!--페이지네이션 수-->
       <div class="flex justify-center mt-5">
         <ul class="flex space-x-2">
-          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" @click="searchfilter(num)">
+          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" 
+            @click="searchfilter(num)">
             {{ num }}
           </li>
         </ul>
@@ -267,7 +269,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import { getLocation, getPositions, getTechstacks, scrapProject, searchquery, totalPage } from '@/api/projectApi';
 import router from '@/router';
 import { useUserStore } from '@/store/userStore';
@@ -296,14 +298,13 @@ const selectedLocation = ref('');
 const getTotalPages = async () => {
   try {
     // const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
-    // const position = selectedPosition.value?.positionName || '';
-
+    const position = selectedPosition.value?.positionName || '';
     const tech = selectedTech.value.map((item) => item.techStackName).join(', ');
 
     const total = await totalPage({
       location: selectedLocation.value, // 선택된 지역
-      // positions: position, // 선택된 포지션
-      positions: selectedPosition.value.positionName,
+      positions: position, // 선택된 포지션
+      // positions: selectedPosition.value.positionName,
       techStacks: tech, // 선택된 기술 스택
       bookmarked: false, // 필요 시 필터링 추가
       recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용
@@ -324,8 +325,7 @@ const getTotalPages = async () => {
 
 //검색필터
 
-const pageNumber = ref('');
-
+const pageNumber = ref(1);
 
 const searchfilter = async (num) => {
   try {
@@ -473,7 +473,6 @@ const selelctTechstacks = async () => {
 const resetSelection = () => {
   selectedTech.value = [];
   searchfilter();
-
 };
 
 //지역 데이터 가져오기
@@ -515,9 +514,7 @@ const selectLocation = (option) => {
 
 // 기술 스택 선택/해제
 const toggleTechSelection = (option) => {
-  const index = selectedTech.value.findIndex(
-    (tech) => tech.techStackName === option.techStackName
-  );
+  const index = selectedTech.value.findIndex((tech) => tech.techStackName === option.techStackName);
 
   if (index !== -1) {
     // 이미 선택된 경우 제거
@@ -527,8 +524,6 @@ const toggleTechSelection = (option) => {
     selectedTech.value.push(option);
   }
 };
-
-
 
 // 외부 클릭 시 드롭다운 닫기
 const handleClickOutside = (event) => {
@@ -568,12 +563,18 @@ const removeTechStack = (index) => {
 //     console.error('북마크 오류:', error);
 //   }
 
+watch( pageNumber.value, ()=>{
+  searchfilter(pageNumber.value);
+},
+{
+  immediate: true,
+});
+
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
   selelctTechstacks();
   selectPositions();
   selectLocations();
   getTotalPages();
-  searchfilter(pageNumber);
 });
 </script>

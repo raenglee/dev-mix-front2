@@ -40,7 +40,7 @@ export const admitApplicants = async (data) => {
 // 내가 지원한 목록
 export const getMyApplies = async (user_id) => {
   try {
-    const res = await axios.get(`${url}/${user_id}/applies`, {
+    const res = await axios.get(`${url}/${user_id}/applies`,  {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
