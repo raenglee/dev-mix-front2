@@ -299,7 +299,7 @@ watchEffect(async () => {
       console.error('Login failed:', error);
     }
   } else {
-    console.error('No token found in URL');
+    // console.error('No token found in URL');
   }
 });
 

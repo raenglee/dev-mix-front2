@@ -35,11 +35,13 @@
         <div class="sticky top-[100px] p-8 mb-10 bg-white text-gray-700 rounded border shadow-md w-96 h-[calc(100%-100px)] right-0">
          
           <div class="flex flex-col flex-wrap gap-y-4">
-            <div @click.stop="openProfile(user_id)" class="flex flex-col cursor-pointer text-center">
-              <img v-if="profileImage" :src="profileImage" class="h-20 w-20 rounded-full object-cover" />
-              <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
-              <p class="text-lg">{{ nickname }}</p>
+            <div @click.stop="openProfile(user_id)" class="flex flex-col cursor-pointer text-center m-auto">
+              <img v-if="profileImage" :src="profileImage" class="h-20 w-20 rounded-full object-cover mb-1" />
+              <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover mb-1" />
+              <p class="text-lg font-bold hover:underline hover:text-[#7371fc]">{{ nickname }}</p>
             </div>
+
+            <hr>
 
             <div class="flex flex-wrap">
               <p for="region" class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">지역 / 구분</p>

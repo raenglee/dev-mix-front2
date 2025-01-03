@@ -258,7 +258,8 @@
       <!--페이지네이션 수-->
       <div class="flex justify-center mt-5">
         <ul class="flex space-x-2">
-          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" @click="searchfilter(num)">
+          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" 
+            @click="searchfilter(num)">
             {{ num }}
           </li>
         </ul>
@@ -268,7 +269,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import { getLocation, getPositions, getTechstacks, scrapProject, searchquery, totalPage } from '@/api/projectApi';
 import router from '@/router';
 import { useUserStore } from '@/store/userStore';
@@ -325,7 +326,7 @@ const getTotalPages = async () => {
 
 //검색필터
 
-const pageNumber = ref('');
+const pageNumber = ref(1);
 
 const searchfilter = async (num) => {
   try {
@@ -563,12 +564,18 @@ const removeTechStack = (index) => {
 //     console.error('북마크 오류:', error);
 //   }
 
+watch( pageNumber.value, ()=>{
+  searchfilter(pageNumber.value);
+},
+{
+  immediate: true,
+});
+
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
   selelctTechstacks();
   selectPositions();
   selectLocations();
   getTotalPages();
-  searchfilter(pageNumber);
 });
 </script>
