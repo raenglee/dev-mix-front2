@@ -573,12 +573,21 @@ const removeTechStack = (index) => {
 //     console.error('북마크 오류:', error);
 //   }
 
+const previousPageNumber = ref(0);
+
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);
   selelctTechstacks();
   selectPositions();
   selectLocations();
   getTotalPages();
-  searchfilter(pageNumber);
+  // 페이지 상태(예: pageNumber)만 변경될 때 호출하도록 조건 추가
+  const currentPageNumber = router.currentRoute.value.query.pageNumber || 1;
+
+  // 페이지 번호가 바뀌면 searchfilter 호출
+  if (currentPageNumber !== previousPageNumber.value) {
+    searchfilter(currentPageNumber);
+    previousPageNumber.value = currentPageNumber;
+  }
 });
 </script>
