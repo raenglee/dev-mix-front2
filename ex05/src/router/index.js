@@ -34,7 +34,7 @@ const router = createRouter({
           component: MyProfile
         },
         {
-          path: '/myprofileedit',
+          path: 'myprofileedit',
           name: 'myprofileedit',
           component: MyProfileEdit
         },

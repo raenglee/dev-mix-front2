@@ -1,5 +1,5 @@
 
 
 
-docker build -t 06171002/devmix-vue:0.1.6 .
-docker push 06171002/devmix-vue:0.1.6
+docker build -t 06171002/devmix-vue:0.1.9 .
+docker push 06171002/devmix-vue:0.1.9
