@@ -34,7 +34,12 @@ export const getProjectView = async (board_id) => {
 // 프로젝트 총 페이지 수
 export const totalPage = async (params) => {
   try {
-    const res = await axios.get(`${url}/total-boards`, { params });
+    const token = localStorage.getItem('token');
+    const res = await axios.get(`${url}/total-boards`, {
+      params,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      } });
     return res.data;
   } catch (e) {
     console.log('토탈 페이지수 Api 에러 발생', e);
@@ -213,11 +218,11 @@ export const applyProject = async (board_id, data) => {
 };
 
 // 프로젝트 스크랩(북마크)
-export const scrapProject = async (board_id, data) => {
+export const scrapProject = async (board_id) => {
   // console.log(`${url}/${board_id}/scrap`);
   try {
     // console.log('북마크 axios 호출', data, '보드아이디', board_id);
-    const res = await axios.put(`${url}/${board_id}/scrap`, data, {
+    const res = await axios.put(`${url}/${board_id}/scrap`, null, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -250,9 +255,12 @@ export const scrapProjectlist = async (board_id, data) => {
 // 검색엔진
 export const searchquery = async (Parameters) => {
   try {
-    // console.log('쿼리dsl api호출', Parameters);
+    const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 가져오기
     const res = await axios.get(`${url}/querydsl`, {
-      params: Parameters
+      params: Parameters,
+      headers: {
+        'Authorization': `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+      },
     });
     return res;
   } catch (e) {

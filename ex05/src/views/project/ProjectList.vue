@@ -185,12 +185,9 @@
             <div class="top-4 flex items-center justify-between">
               <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800">{{ item.location }}</div>
               <!--북마크-->
-              <font-awesome-icon
-                :icon="item.isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
-                :class="[item.isBookmarked ? 'text-[#7371fc]' : 'text-gray-400', 'cursor-pointer', 'hover:scale-125']"
-                style="font-size: 22px"
-                @click.stop="toggleBookmark(item)"
-              />
+              <font-awesome-icon :icon="item.bookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
+                                 :class="[item.bookmarked ? 'text-[#7371fc]' : 'text-gray-400', 'cursor-pointer', 'hover:scale-125']"
+                                 style="font-size: 22px" @click.stop="toggleBookmark(item.boardId, item.bookmarked)" />
             </div>
             <div class="text-sm mb-2 text-gray-800">모집 마감일 | {{ item.recruitEndDate }}</div>
             <div class="text-xl font-bold mb-2 text-gray-800 break-words">{{ item.title }}</div>
@@ -297,16 +294,16 @@ const selectedLocation = ref('');
 const getTotalPages = async () => {
   try {
     // const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
-    // const position = selectedPosition.value?.positionName || '';
+    const position = selectedPosition.value?.positionName || '';
 
     const tech = selectedTech.value.map((item) => item.techStackName).join(', ');
 
     const total = await totalPage({
       location: selectedLocation.value, // 선택된 지역
-      // positions: position, // 선택된 포지션
-      positions: selectedPosition.value.positionName,
+      positions: position, // 선택된 포지션
+      // positions: selectedPosition.value.positionName,
       techStacks: tech, // 선택된 기술 스택
-      bookmarked: false, // 필요 시 필터링 추가
+      bookmarked: onlyBookmarked.value, // 필요 시 필터링 추가
       recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용
     });
 
@@ -331,11 +328,12 @@ const getTotalPages = async () => {
 const searchfilter = async (pageNumber = 1) => {
   try {
     const tech = selectedTech.value?.length > 0
-      ? selectedTech.value.map((item) => item.techStackName).join(', ')
-      : '';
+        ? selectedTech.value.map((item) => item.techStackName).join(', ')
+        : '';
     // const recruitmentStatus: ref('');
     const position = selectedPosition.value?.positionName || ''; // null-safe 처리
 
+    console.log(pageNumber);
 
     // 현재 URL의 쿼리 파라미터를 가져와서 변경되었는지 확인
     const currentQuery = router.currentRoute.value.query;
@@ -371,7 +369,7 @@ const searchfilter = async (pageNumber = 1) => {
           const totalRequiredCount = item.positions.reduce((sum, position) => sum + position.requiredCount, 0);
           const totalCurrentCount = item.positions.reduce((sum, position) => sum + position.currentCount, 0);
 
-          
+
 
           return {
             ...item,
@@ -392,6 +390,7 @@ const searchfilter = async (pageNumber = 1) => {
     console.error('검색필터 실패:', errorMessage);
   }
 };
+
 
 // 모달 닫기 (배경 클릭 시)
 const closeModal = () => {
@@ -415,7 +414,7 @@ const clickneededonly = () => {
 };
 
 // 특정 게시물의 북마크 상태 변경
-const toggleBookmark = async (item) => {
+const toggleBookmark = async (boardId, currentBookmarkState) => {
   // item.isBookmarked = !item.isBookmarked; // 누른 게시물 북마크 상태 반전
 
   if (!useStore.loginCheck) {
@@ -424,14 +423,17 @@ const toggleBookmark = async (item) => {
     return; // 북마크 처리 함수 종료
   }
 
-  const newBookmarkState = !item.isBookmarked;
-  console.log('보드아이디:', item.boardId);
+  const newBookmarkState = !currentBookmarkState;
+  // console.log('보드아이디:', item.boardId);
   // localStorage.setItem('bookmarkedItems', JSON.stringify(arr.value)); // 로컬 스토리지에 저장
   try {
-    const res = await scrapProject(item.boardId, { isBookmarked: newBookmarkState });
+    const res = await scrapProject(boardId);
     if (res.status === 200) {
-      item.isBookmarked = newBookmarkState;
-      console.log('북마크 상태 변경 완료:', item.isBookmarked);
+      const item = arr.value.find((el) => el.boardId === boardId); // 배열에서 해당 아이템 찾기
+      if (item) {
+        item.bookmarked = newBookmarkState;
+        console.log('북마크 상태 변경 완료:', item.bookmarked);
+      }
     } else {
       console.error('북마크 상태 변경 실패:', res);
     }
