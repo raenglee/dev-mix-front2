@@ -298,14 +298,13 @@ const selectedLocation = ref('');
 const getTotalPages = async () => {
   try {
     // const tech = selectedTech.value?.length > 0 ? selectedTech.value.map((item) => item.techStackName).join(', ') : '';
-    // const position = selectedPosition.value?.positionName || '';
-
+    const position = selectedPosition.value?.positionName || '';
     const tech = selectedTech.value.map((item) => item.techStackName).join(', ');
 
     const total = await totalPage({
       location: selectedLocation.value, // 선택된 지역
-      // positions: position, // 선택된 포지션
-      positions: selectedPosition.value.positionName,
+      positions: position, // 선택된 포지션
+      // positions: selectedPosition.value.positionName,
       techStacks: tech, // 선택된 기술 스택
       bookmarked: false, // 필요 시 필터링 추가
       recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용

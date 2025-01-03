@@ -6,15 +6,6 @@
           {{ recruitmentStatus }}
         </p>
         <h1 class="text-center font-bold text-2xl">{{ title }}</h1>
-
-        <div class="flex justify-between">
-          <!-- <div @click.stop="openProfile(user_id)" class="flex cursor-pointer">
-            <img v-if="profileImage" :src="profileImage" class="h-8 w-8 rounded-full object-cover mr-2 ml-10" />
-            <img v-else src="/img/people.png" class="h-8 w-8 rounded-full object-cover mr-2 ml-10" />
-            <p>{{ nickname }}</p>
-          </div> -->
-          
-        </div>
         <p class="text-gray-500 text-l text-right mr-10">조회수: {{ viewCount }}</p>
         <div class="my-3 mb-20">
           <hr class="border-t-4 border-[#d10000]" />
@@ -33,7 +24,6 @@
         </div>
         <!--상세정보 스크롤 따라 내려오도록-->
         <div class="sticky top-[100px] p-8 mb-10 bg-white text-gray-700 rounded border shadow-md w-96 h-[calc(100%-100px)] right-0">
-         
           <div class="flex flex-col flex-wrap gap-y-4">
             <div @click.stop="openProfile(user_id)" class="flex flex-col cursor-pointer text-center m-auto">
               <img v-if="profileImage" :src="profileImage" class="h-20 w-20 rounded-full object-cover mb-1" />
@@ -41,7 +31,7 @@
               <p class="text-lg font-bold hover:underline hover:text-[#7371fc]">{{ nickname }}</p>
             </div>
 
-            <hr>
+            <hr />
 
             <div class="flex flex-wrap">
               <p for="region" class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100">지역 / 구분</p>
