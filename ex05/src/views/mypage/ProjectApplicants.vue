@@ -1,17 +1,17 @@
 <template>
   <div class="w-4/6 mx-auto mt-20">
     <div class="pt-10 mb-10">
-      <p class="font-bold text-2xl">지원자</p>
+      <p class="font-bold text-2xl mb-4">지원자</p>
 
       <div class="flex flex-col w-full mb-4">
         <!-- 정렬 필터 -->
-        <div class="flex text-sm text-gray-700 gap-2 mb-4 justify-end">
+        <!-- <div class="flex text-sm text-gray-700 gap-2 mb-4 justify-end">
           <p class="cursor-pointer hover:text-gray-500 transition-colors">신청 순</p>
           <i>|</i>
           <p class="cursor-pointer hover:text-gray-500 transition-colors">닉네임 순</p>
           <i>|</i>
           <p class="cursor-pointer hover:text-gray-500 transition-colors">프로젝트 순</p>
-        </div>
+        </div> -->
 
         <!-- 테이블 -->
 
@@ -36,14 +36,14 @@
             </tr>
           </tbody>
 
-          <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100">
+          <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100 hover:underline" @click="openModal(applicant, applicant.userId)">
             <tr>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400" @click.stop="openProfile(applicant.userId)">{{ applicant.userNickname }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400">🔍 {{ applicant.userNickname }}</td>
               <RouterLink :to="`/projectview/${applicant.boardId}`">
                 <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer hover:text-gray-400" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
               </RouterLink>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer" @click="openModal(applicant, applicant.userId)">{{ applicant.positionName }}</td>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400" @click="openModal(applicant)">
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer">{{ applicant.positionName }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400">
                 {{ applicant.applyNote }}
               </td>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap">{{ applicant.applyDate }}</td>
@@ -61,13 +61,9 @@
             <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
           </div>
 
-          <div class="flex">
+          <div class="flex justify-around w-full">
             <div>
-              <div class="flex items-center justify-between mb-4">
-                <h2 class="font-bold text-xl text-center">프로필</h2>
-                <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
-              </div>
-
+              <h2 class="font-bold text-md text-center mb-2">지원자 프로필</h2>
               <div class="flex flex-col items-center mb-4">
                 <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
                 <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
@@ -102,7 +98,7 @@
               <p class="font-bold">지원 직군</p>
               <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.positionName }}</p>
               <p class="font-bold">지원 사유 및 한마디</p>
-              <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.applyNote }}</p>
+              <p class="text-sm border border-gray-200 h-full rounded-md p-4">{{ selectedApplicant?.applyNote }}</p>
             </div>
           </div>
           <div class="flex justify-center gap-3 mb-4">
@@ -130,9 +126,6 @@ import { getUserInfo } from '@/api/userApi';
 const useStore = useUserStore();
 const applicantsarr = ref([]);
 
-// 유저프로필 모달
-const user_id = ref(''); // 클릭된 유저의 ID
-
 // 지원자 정보 Api
 const applicants = async () => {
   try {
@@ -140,7 +133,7 @@ const applicants = async () => {
     // 데이터 구조 확인 후, applicantsarr에 할당
     if (Array.isArray(res.data.result)) {
       applicantsarr.value = res.data.result;
-      console.log(res.data.result);
+      console.log('지원자 정보', res.data.result);
     } else {
       console.error('지원자 res, data, result 확인해보기: ', res);
     }
@@ -162,8 +155,11 @@ const selectedApplicant = ref({
 
 // 지원자 지원내용 상세 정보 모달
 const showModal = ref(false);
-const openModal = (applicant) => {
-  selectedApplicant.value = applicant; // 클릭한 지원자 정보를 모달에 전달
+const openModal = (applicant, userId) => {
+  selectedApplicant.value = applicant; // 클릭한 지원자 정보 모달에 전달
+  // console.log('지원자내용에서 userId뽑기',selectedApplicant.value.userId);
+  selectedApplicant.value.userId = userId; // 클릭한 유저 아이디 모달에 전달
+  // console.log('지원자Id', userId)
   showModal.value = true;
 };
 
@@ -237,10 +233,6 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-watchEffect(() => {
-  applicants();
-});
-
 // 유저 정보
 const userId = ref('');
 const profileImage = ref('');
@@ -254,18 +246,18 @@ const techStacks = ref([]);
 // 유저정보 가져오기
 const getUsersInfo = async () => {
   try {
-    const res = await getUserInfo(user_id);
+    const res = await getUserInfo(userId);
 
-    if (res.status === 200 && res.data && res.data.result) {
-      profileImage.value = res.data.result.profileImage;
-      nickname.value = res.data.result.nickname;
-      email.value = res.data.result.email;
-      groupName.value = res.data.result.groupName;
-      location.value = res.data.result.location;
-      positions.value = res.data.result.positions;
-      techStacks.value = res.data.result.techStacks;
+    if (res.status === 200 && res.data && res.data) {
+      profileImage.value = res.data.profileImage;
+      nickname.value = res.data.nickname;
+      email.value = res.data.email;
+      groupName.value = res.data.groupName;
+      location.value = res.data.location;
+      positions.value = res.data.positions;
+      techStacks.value = res.data.techStacks;
     }
-    console.log(res.data.result);
+    console.log('유저정보', res);
   } catch (error) {
     console.error('유저 정보 가져오기 실패:', error);
   }
@@ -273,9 +265,10 @@ const getUsersInfo = async () => {
 
 // user_id가 변경되면 유저 정보를 다시 가져오기
 watchEffect(() => {
-  if (userId) {
-    getUsersInfo(); // user_id가 있을 때만 호출
+  if (userId.value && userId.value !== '') {
+    getUsersInfo(); // userId가 비어 있지 않을 때만 호출
   }
+  applicants();
 });
 </script>
 
@@ -296,7 +289,7 @@ watchEffect(() => {
   background-color: white;
   padding: 2rem;
   border-radius: 15px;
-  width: 400px;
+  width: 550px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
 }

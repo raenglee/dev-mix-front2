@@ -30,8 +30,11 @@
 <script setup>
 import { LOGIN_URL } from '@/api/util.js';
 
-const google_url = `http://${LOGIN_URL}/oauth2/authorization/google`;
-const kakao_url = `http://${LOGIN_URL}/oauth2/authorization/kakao`;
+const google_url = `http://localhost:8080/oauth2/authorization/google`;
+const kakao_url = `http://localhost:8080/oauth2/authorization/kakao`;
+
+// const google_url = `http://${LOGIN_URL}/oauth2/authorization/google`;
+// const kakao_url = `http://${LOGIN_URL}/oauth2/authorization/kakao`;
 const naver_url = `http://${LOGIN_URL}/oauth2/authorization/naver`;
 
 import { defineProps, defineEmits } from 'vue';
