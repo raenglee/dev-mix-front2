@@ -10,14 +10,9 @@ const url = `${GLOBAL_URL}/api/v1/users`;
 export const getUserInfo = async (user_id) => {
   // console.log('특정 유저 프로필api user_id: ',user_id);
     try {
-      const res = await axios.get(`${url}/${user_id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const res = await axios.get(`${url}/${user_id}`);
       // console.log('타유저정보 res값',res);
-      return res;
+      return res.data;
     } catch (err) {
       console.error(err);
       return err;

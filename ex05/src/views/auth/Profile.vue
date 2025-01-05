@@ -190,7 +190,13 @@ const checkNicknameAvailability = async () => {
       isValidNickname.value = true; // 형식오류
       isDuplicateChecked.value = true;
       alert('닉네임 형식 오류입니다.');
-    } else {
+    } else if (res.code === 'ERR_BAD_REQUEST'){
+      isDuplicate.value = false;
+      isValidNickname.value = true;
+      isDuplicateChecked.value = true;
+      alert('닉네임 형식 오류입니다.');
+    }
+    else {
       alert('중복된 닉네임입니다.');
     }
   } catch (err) {
@@ -413,6 +419,11 @@ const handleSubmit = async () => {
     const res = await checkNickname(nickname.value); // API 호출
     if (res.code === 'DUPLICATED_NICKNAME' || nickname.value !== newNickname.value) {
       alert('닉네임 중복 확인 하세요');
+      isDuplicateChecked.value = false;
+      return;
+    }
+    if (res.code === 'ERR_BAD_REQUEST'){
+      alert('닉네임 형식 오류입니다. 입력하신 닉네임 형식을 확인해주세요.')
       isDuplicateChecked.value = false;
       return;
     }
