@@ -32,8 +32,9 @@
             <div class="py-1" v-for="tech in techStacks" :key="tech">
               <img :src="tech.imageUrl" class="w-8 h-8" />
               <span class="text-sm">{{ tech.techStackName }}</span>
-              <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+              
             </div>
+            <div v-if="techStacks == null || techStacks?.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
           </div>
         </div>
       </div>

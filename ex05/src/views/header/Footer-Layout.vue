@@ -8,9 +8,21 @@
       </div>
       <p>전화번호: 053-572-1005</p>
     </div>
+
+    <button 
+      @click="scrollToTop" 
+      class="fixed bottom-5 right-5 bg-white border-2 border-[#d10000] text-[#d10000] hover:bg-red-100 p-4 rounded-full shadow-lg transition duration-300 ease-in-out">
+      ↑
+    </button>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+};</script>
 
 <style lang="scss" scoped></style>

@@ -36,18 +36,23 @@
             </tr>
           </tbody>
 
-          <tbody v-for="(applicant, index) in applicantsarr" :key="applicant.id" class="text-center hover:bg-gray-100 hover:underline" @click="openModal(applicant, applicant.userId)">
+          <tbody
+            v-for="(applicant, index) in applicantsarr"
+            :key="applicant.id"
+            class="text-center hover:bg-gray-100 hover:underline hover:text-gray-400"
+            @click="openModal(applicant, applicant.userId)"
+          >
             <tr>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer hover:text-gray-400">🔍 {{ applicant.userNickname }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-700 cursor-pointer">🔍 {{ applicant.userNickname }}</td>
               <RouterLink :to="`/projectview/${applicant.boardId}`">
-                <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer hover:text-gray-400" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
+                <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer" @click="goProject" style="display: block">{{ applicant.boardTitle }}</td>
               </RouterLink>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap cursor-pointer">{{ applicant.positionName }}</td>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer hover:text-gray-400">
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap truncate max-w-[500px] overflow-hidden cursor-pointer">
                 {{ applicant.applyNote }}
               </td>
               <td class="py-3 px-4 text-sm border-b whitespace-nowrap">{{ applicant.applyDate }}</td>
-              <td class="py-3 px-4 text-sm border-b whitespace-nowrap text-gray-400">{{ applicant.participationStatus }}</td>
+              <td class="py-3 px-4 text-sm border-b whitespace-nowrap font-bold">{{ applicant.participationStatus }}</td>
             </tr>
           </tbody>
         </table>
@@ -62,7 +67,7 @@
           </div>
 
           <div class="flex justify-between w-full">
-            <div class=" w-72">
+            <div class="w-72">
               <div class="flex flex-col mb-4">
                 <img v-if="selectedApplicant.profileImage" :src="selectedApplicant.profileImage" class="h-20 w-20 rounded-full object-cover m-auto" />
                 <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover m-auto" />
@@ -70,36 +75,42 @@
                 <p class="text-center text-sm text-gray-500">{{ selectedApplicant.email }}</p>
               </div>
               <div class="flex flex-col gap-1">
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">소속</p>
-                <div v-if="!selectedApplicant.groupName" class="text-gray-200 font-bold text-lg">DEVMIX</div>
-                <p class="whitespace-nowrap mb-1">{{ selectedApplicant.groupName }}</p>
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">거주 지역</p>
-                <div v-if="!selectedApplicant.location" class="text-gray-200 font-bold text-lg">DEVMIX</div>
-                <p class="whitespace-nowrap mb-1">{{ selectedApplicant.location }}</p>
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">포지션</p>
-                <div v-if="selectedApplicant.positions.length === 0" class="text-gray-200 font-bold text-lg">DEVMIX</div>
+                <div class="mb-4 flex">
+                  <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 mr-2">소속</p>
+                  <p v-if="!selectedApplicant.groupName" class="text-gray-200 font-bold text-lg">DEVMIX</p>
+                  <p class="whitespace-nowrap py-1">{{ selectedApplicant.groupName }}</p>
+                </div>
+
+                <div class="mb-4 flex">
+                  <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 mr-2">지역</p>
+                  <p v-if="!selectedApplicant.location" class="text-gray-200 font-bold text-lg">DEVMIX</p>
+                  <p class="whitespace-nowrap py-1">{{ selectedApplicant.location }}</p>
+                </div>
+
+                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 mb-1">포지션</p>
+                <div v-if="selectedApplicant.positions.length === 0" class="text-gray-200 font-bold text-lg ml-3">DEVMIX</div>
                 <ul class="mb-1 flex flex-wrap gap-1">
                   <p v-for="(position, index) in selectedApplicant.positions" :key="index" class="whitespace-nowrap mx-2 px-1">
                     {{ position }}
                   </p>
                 </ul>
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">기술 스택</p>
-                <div class="flex gap-4 mb-4 flex-wrap">
-                  <div class="py-1" v-for="tech in selectedApplicant.techStacks" :key="tech">
+                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 mb-1">기술 스택</p>
+                <div class="flex gap-4 flex-wrap">
+                  <div class="py-1 ml-2" v-for="tech in selectedApplicant.techStacks" :key="tech">
                     <img :src="tech.imageUrl" class="w-8 h-8" />
                     <span class="text-sm">{{ tech.techStackName }}</span>
-                    <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-lg">DEVMIX</div>
                   </div>
+                  <div v-if="selectedApplicant.techStacks == null || selectedApplicant.techStacks?.length === 0" class="text-gray-200 font-bold text-lg ml-2">DEVMIX</div>
                 </div>
               </div>
             </div>
 
             <div v-if="currentApplicant">
-              <div class="flex flex-col mb-4 gap-2 w-80">
+              <div class="flex flex-col mb-4 gap-3 w-80 h-full">
                 <p class="font-bold">지원 직군</p>
                 <p class="text-sm border border-gray-200 rounded-md p-4">{{ currentApplicant.positionName }}</p>
                 <p class="font-bold">지원 사유 및 한마디</p>
-                <p class="text-sm border border-gray-200 h-full rounded-md p-4">{{ currentApplicant.applyNote }}</p>
+                <p class="text-sm border border-gray-200 rounded-md p-4 h-full mb-8">{{ currentApplicant.applyNote }}</p>
               </div>
             </div>
           </div>

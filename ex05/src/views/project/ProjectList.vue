@@ -16,7 +16,7 @@
               <!-- 드롭다운 버튼 -->
               <div
                 @click="toggleDropdown('location')"
-                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+                class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-[#d10000] hover:bg-red-50 duration-300 ease-in-out"
               >
                 <span class="truncate w-full" v-if="selectedLocation">{{ selectedLocation }}</span>
                 <span class="truncate w-full text-gray-800" v-else>지역 / 구분</span>
@@ -49,7 +49,7 @@
             <!-- 드롭다운 버튼 -->
             <div
               @click="toggleDropdown('position')"
-              class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-gray-500"
+              class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none flex items-center justify-between hover:border-[#d10000] hover:bg-red-50 duration-300 ease-in-out"
             >
               <span class="truncate w-full" v-if="selectedPosition">{{ selectedPosition.positionName }}</span>
               <span class="truncate w-full text-gray-800" v-else>포지션</span>
@@ -77,7 +77,7 @@
 
           <!-- 기술/언어 드롭다운 -->
           <div class="relative">
-            <div @click="toggleDropdown('tech')" class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500">
+            <div @click="toggleDropdown('tech')" class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-[#d10000] hover:bg-red-50 duration-300 ease-in-out">
               <span class="text-gray-800">기술 / 언어</span>
               <font-awesome-icon icon="chevron-down" class="text-gray-300 pl-2" />
             </div>
@@ -126,17 +126,18 @@
           </div>
           <!-- <div class="flex flex-wrap gap-3"> -->
           <button
-            class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
+            class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-[#d10000] hover:bg-red-50 duration-300 ease-in-out"
             :class="{
               'bg-[#d10000] text-white': onlyBookmarked,
               'bg-white text-black': !onlyBookmarked
             }"
-            @click="clickBookmarkonly"
+            @click="clickBookmarkonly();
+            searchfilter();"
           >
             북마크만 보기
           </button>
 
-          <button
+          <!-- <button
             class="text-[1.2rem] w-40 max-h-10 px-4 py-1 mt-5 mb-1 border border-gray rounded-full cursor-pointer outline-none hover:border-gray-500"
             :class="{
               'bg-[#d10000] text-white': onlyNeeded,
@@ -145,7 +146,7 @@
             @click="clickneededonly"
           >
             모집중만 보기
-          </button>
+          </button> -->
           <!-- </div> -->
         </div>
       </div>
@@ -169,13 +170,13 @@
       </div>
 
       <!--정렬-->
-      <div class="flex mb-3 justify-end text-sm">
+      <!-- <div class="flex mb-3 justify-end text-sm"> -->
         <!-- <button class="cursor-pointer hover:font-bold" @click="latestSort" :class="{ 'font-bold underline': activeButton === 'latest' }">최신순</button> -->
-        <i>ㆍ</i>
+        <!-- <i>ㆍ</i> -->
         <!-- <button class="cursor-pointer hover:font-bold" @click="famousSort" :class="{ 'font-bold underline': activeButton === 'famous' }">인기순</button> -->
-        <i>ㆍ</i>
+        <!-- <i>ㆍ</i> -->
         <!-- <button class="cursor-pointer hover:font-bold" @click="registerSort" :class="{ 'font-bold underline': activeButton === 'register' }">등록순</button> -->
-      </div>
+      <!-- </div> -->
 
       <!--📝프로젝트 글 박스-->
       <template v-if="arr && arr.length > 0">
@@ -186,10 +187,10 @@
               <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800">{{ item.location }}</div>
               <!--북마크-->
               <font-awesome-icon
-                :icon="item.isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
-                :class="[item.isBookmarked ? 'text-[#7371fc]' : 'text-gray-400', 'cursor-pointer', 'hover:scale-125']"
+                :icon="item.bookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']"
+                :class="[item.bookmarked ? 'text-[#7371fc]' : 'text-gray-400', 'cursor-pointer', 'hover:scale-125', 'duration-300']"
                 style="font-size: 22px"
-                @click.stop="toggleBookmark(item)"
+                @click.stop="toggleBookmark(item.boardId, item.bookmarked)"
               />
             </div>
             <div class="text-sm mb-2 text-gray-800">모집 마감일 | {{ item.recruitEndDate }}</div>
@@ -258,8 +259,7 @@
       <!--페이지네이션 수-->
       <div class="flex justify-center mt-5">
         <ul class="flex space-x-2">
-          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" 
-            @click="searchfilter(num)">
+          <li class="cursor-pointer p-3 text-gray-800" v-for="num in totalPages" v-bind:key="num" @click="searchfilter(num)">
             {{ num }}
           </li>
         </ul>
@@ -277,7 +277,7 @@ import LoginModal from '@/views/Component/LoginModal.vue';
 
 const useStore = useUserStore();
 const onlyBookmarked = ref(false);
-const onlyNeeded = ref(false);
+// const onlyNeeded = ref(false);
 const totalPages = ref(0);
 const arr = ref([]); // 게시물 배열
 const isModal = ref(false); // 로그인 모달 상태
@@ -306,7 +306,7 @@ const getTotalPages = async () => {
       positions: position, // 선택된 포지션
       // positions: selectedPosition.value.positionName,
       techStacks: tech, // 선택된 기술 스택
-      bookmarked: false, // 필요 시 필터링 추가
+      bookmarked: onlyBookmarked.value, // 필요 시 필터링 추가
       recruitmentStatus: '' // 예시, 추가 필터링 필요시 사용
     });
 
@@ -400,12 +400,12 @@ const clickBookmarkonly = () => {
 };
 
 // 모집중만 보기
-const clickneededonly = () => {
-  onlyNeeded.value = !onlyNeeded.value;
-};
+// const clickneededonly = () => {
+//   onlyNeeded.value = !onlyNeeded.value;
+// };
 
 // 특정 게시물의 북마크 상태 변경
-const toggleBookmark = async (item) => {
+const toggleBookmark = async (boardId, currentBookmarkState) => {
   // item.isBookmarked = !item.isBookmarked; // 누른 게시물 북마크 상태 반전
 
   if (!useStore.loginCheck) {
@@ -414,14 +414,17 @@ const toggleBookmark = async (item) => {
     return; // 북마크 처리 함수 종료
   }
 
-  const newBookmarkState = !item.isBookmarked;
-  console.log('보드아이디:', item.boardId);
+  const newBookmarkState = !currentBookmarkState;
+  // console.log('보드아이디:', item.boardId);
   // localStorage.setItem('bookmarkedItems', JSON.stringify(arr.value)); // 로컬 스토리지에 저장
   try {
-    const res = await scrapProject(item.boardId, { isBookmarked: newBookmarkState });
+    const res = await scrapProject(boardId);
     if (res.status === 200) {
-      item.isBookmarked = newBookmarkState;
-      console.log('북마크 상태 변경 완료:', item.isBookmarked);
+      const item = arr.value.find((el) => el.boardId === boardId); // 배열에서 해당 아이템 찾기
+      if (item) {
+        item.bookmarked = newBookmarkState;
+        console.log('북마크 상태 변경 완료:', item.bookmarked);
+      }
     } else {
       console.error('북마크 상태 변경 실패:', res);
     }
@@ -429,7 +432,6 @@ const toggleBookmark = async (item) => {
     console.error('북마크 오류:', error);
   }
 };
-
 // 포지션 데이터 가져오기
 const selectPositions = async () => {
   try {
@@ -563,12 +565,15 @@ const removeTechStack = (index) => {
 //     console.error('북마크 오류:', error);
 //   }
 
-watch( pageNumber.value, ()=>{
-  searchfilter(pageNumber.value);
-},
-{
-  immediate: true,
-});
+watch(
+  pageNumber.value,
+  () => {
+    searchfilter(pageNumber.value);
+  },
+  {
+    immediate: true
+  }
+);
 
 watchEffect(() => {
   window.addEventListener('click', handleClickOutside);

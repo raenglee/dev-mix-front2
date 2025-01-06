@@ -10,6 +10,7 @@
         <!--🌐로그인 한 후 아이콘-->
         <template v-if="useStore.loginCheck">
           <div class="flex flex-wrap space-x-1">
+            
             <div class="relative" @mouseenter="openAlarmDropdown" @mouseleave="closeAlarmDropdown">
               <p
                 class="mt-1 px-3 py-1 whitespace-nowrap rounded-t-md font-bold cursor-pointer text-[1.3rem]"
