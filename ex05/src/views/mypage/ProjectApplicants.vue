@@ -257,28 +257,28 @@ const closeModal = () => {
 
 // 유저 정보
 const userId = ref('');
-const profileImage = ref('');
-const nickname = ref('');
-const email = ref('');
-const groupName = ref('');
-const location = ref('');
-const positions = ref([]);
-const techStacks = ref([]);
+// const profileImage = ref('');
+// const nickname = ref('');
+// const email = ref('');
+// const groupName = ref('');
+// const location = ref('');
+// const positions = ref([]);
+// const techStacks = ref([]);
 
 // 유저정보 가져오기
 const getUsersInfo = async (userId) => {
   try {
     const res = await getUserInfo(userId);
 
-    if (res.status === 200 && res.data && res.data) {
-      profileImage.value = res.data.profileImage;
-      nickname.value = res.data.nickname;
-      email.value = res.data.email;
-      groupName.value = res.data.groupName;
-      location.value = res.data.location;
-      positions.value = res.data.positions;
-      techStacks.value = res.data.techStacks;
-    }
+    // if (res.status === 200 && res.data && res.data) {
+    //   profileImage.value = res.data.profileImage;
+    //   nickname.value = res.data.nickname;
+    //   email.value = res.data.email;
+    //   groupName.value = res.data.groupName;
+    //   location.value = res.data.location;
+    //   positions.value = res.data.positions;
+    //   techStacks.value = res.data.techStacks;
+    // }
     // console.log('유저정보', res.data);
     return res.result;
   } catch (error) {

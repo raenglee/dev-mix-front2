@@ -22,6 +22,9 @@
               >
                 알림
               </p>
+              <div v-if="notifications?.length > 0" class="flex justify-center items-center absolute bottom-6 left-[53px] text-gray-800 bg-yellow-300 rounded-full w-5 h-5 border border-white">
+                <span class="text-[0.9rem] font-bold">{{ notifications.length }}</span>
+              </div>
               <!-- 알람 드롭다운 메뉴 -->
               <transition @before-enter="beforeEnter" @enter="enter" @leave="leave">
                 <div
@@ -30,19 +33,18 @@
                   @mouseleave="isAlarmHovered = false"
                   class="absolute right-0 top-10 w-max min-w-[250px] max-w-[500px] bg-red-50 rounded-tl-md rounded-b-md z-10 shadow-[0_4px_3px_0_rgba(0,0,0,0.1)]"
                 >
-                  <div v-if="!notifications || notifications.length==0" class="text-center text-gray-800 py-4">알림이 없습니다.</div>
+                  <div v-if="!notifications || notifications.length == 0" class="text-center text-gray-800 py-4">알림이 없습니다.</div>
 
                   <template v-if="notifications?.length > 0">
                     <div class="cursor-pointer">
                       <!-- <h1 class=" font-bold text-lg pt-2 px-3 bg-red-50 rounded-tl-md">알림</h1> -->
                       <div class="bg-red-50">
                         <ul class="text-sm">
-                          <template v-if="notifications.length>0">
+                          <template v-if="notifications.length > 0">
                             <li v-for="notification in notifications" :key="notification" class="p-2 rounded-lg m-2 bg-white">
                               🔔 {{ notification.content }}
                               <!-- 알림 내용을 표시 -->
-                              <button class="hover:bg-[#d10000] hover:text-white px-2 m-2 rounded-full border border-[#d10000]"
-                                      @click="markAsRead(notification.id)">확인</button>
+                              <button class="hover:bg-[#d10000] hover:text-white px-2 m-2 rounded-full border border-[#d10000]" @click="markAsRead(notification.id)">확인</button>
                             </li>
                           </template>
                         </ul>
@@ -136,7 +138,7 @@ const markAsRead = async (notification_id) => {
   console.log('읽음 처리할 알림 ID:', notification_id);
   try {
     // await axios.patch(`http://localhost:8080/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
-      await axios.patch(`${GLOBAL_URL}/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
+    await axios.patch(`${GLOBAL_URL}/api/v1/notifications/${notification_id}/read?token=${encodeURIComponent(localStorage.getItem('token'))}`, null, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -194,14 +196,14 @@ const initializeSSE = () => {
   eventSource.value.addEventListener('sse', (event) => {
     try {
       const data = JSON.parse(event.data);
-      console.log("-------------")
+      console.log('-------------');
       console.log(`SSE ${JSON.stringify(data)}`);
-      console.log("-------------")
+      console.log('-------------');
       console.log(`SSE ${JSON.stringify(notifications.value)}`);
 
-      if( notifications.value == null || notifications.value.length == 0 ){
+      if (notifications.value == null || notifications.value.length == 0) {
         notifications.value = data;
-      }else{
+      } else {
         notifications.value.push(data);
       }
       // else{

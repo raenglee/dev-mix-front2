@@ -8,7 +8,6 @@
           <h2 class="font-bold text-xl text-center">프로필</h2>
           <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
         </div>
-
         <div class="flex flex-col items-center mb-4">
           <img v-if="profileImage" :src="profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
           <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
@@ -82,29 +81,19 @@ const getUsersInfo = async () => {
   try {
     const res = await getUserInfo(props.user_id);
 
-    // if (res.status === 200 && res.data && res.data.result) {
-    //   profileImage.value = res.data.result.profileImage;
-    //   nickname.value = res.data.result.nickname;
-    //   email.value = res.data.result.email;
-    //   groupName.value = res.data.result.groupName;
-    //   location.value = res.data.result.location;
-    //   positions.value = res.data.result.positions;
-    //   techStacks.value = res.data.result.techStacks;
-    // }
-    // console.log('유저정보', res.data.result);
-
-    if (res.status === 200 && res.result) {
-      // profileImage.value = res.result.profileImage;
-      // nickname.value = res.result.nickname;
-      // email.value = res.result.email;
-      // groupName.value = res.result.groupName;
-      // location.value = res.result.location;
-      // positions.value = res.result.positions;
-      // techStacks.value = res.result.techStacks;
-      res.result;
+    if (res.code ==='SUCCESS') {
+      console.log("ㅅㄷㄴㅅ");
+      profileImage.value = res.result.profileImage;
+      nickname.value = res.result.nickname;
+      email.value = res.result.email;
+      groupName.value = res.result.groupName;
+      location.value = res.result.location;
+      positions.value = res.result.positions;
+      techStacks.value = res.result.techStacks;
     }
     console.log('유저정보', res.result);
-    console.log('이메일:',email.value)
+    console.log('닉네임:', res.result.nickname)
+    console.log("profileImage:", profileImage.value);
     
   } catch (error) {
     console.error('유저 정보 가져오기 실패:', error);
