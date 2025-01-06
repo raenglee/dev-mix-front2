@@ -13,11 +13,10 @@ export const getUserInfo = async (user_id) => {
       const res = await axios.get(`${url}/${user_id}`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       // console.log('타유저정보 res값',res);
-      return res;
+      return res.data;
     } catch (err) {
       console.error(err);
       return err;

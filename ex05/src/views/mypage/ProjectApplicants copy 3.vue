@@ -61,71 +61,57 @@
             <button class="h-4 w-4" @click="closeModal"><img src="/img/x.png" /></button>
           </div>
 
-          <div class="flex justify-between w-full">
-            <div class=" w-72">
-              <div class="flex flex-col mb-4">
-                <img v-if="selectedApplicant.profileImage" :src="selectedApplicant.profileImage" class="h-20 w-20 rounded-full object-cover m-auto" />
-                <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover m-auto" />
-                <p class="font-bold text-center">{{ selectedApplicant.nickname }}</p>
-                <p class="text-center text-sm text-gray-500">{{ selectedApplicant.email }}</p>
+          <div class="flex justify-around w-full">
+            <div>
+              <h2 class="font-bold text-md text-center mb-2">지원자 프로필</h2>
+              <div class="flex flex-col items-center mb-4">
+                <img v-if="selectedApplicant.profileImage" :src="selectedApplicant.profileImage" class="h-20 w-20 m-auto rounded-full object-cover" />
+                <img v-else src="/img/people.png" class="h-20 w-20 rounded-full object-cover" />
+                <p class="text-xl">{{ selectedApplicant.nickname }}</p>
               </div>
-              <div class="flex flex-col gap-1">
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">소속</p>
-                <div v-if="!selectedApplicant.groupName" class="text-gray-200 font-bold text-lg">DEVMIX</div>
-                <p class="whitespace-nowrap mb-1">{{ selectedApplicant.groupName }}</p>
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">거주 지역</p>
-                <div v-if="!selectedApplicant.location" class="text-gray-200 font-bold text-lg">DEVMIX</div>
-                <p class="whitespace-nowrap mb-1">{{ selectedApplicant.location }}</p>
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">포지션</p>
-                <div v-if="selectedApplicant.positions.length === 0" class="text-gray-200 font-bold text-lg">DEVMIX</div>
-                <ul class="mb-1 flex flex-wrap gap-1">
-                  <p v-for="(position, index) in selectedApplicant.positions" :key="index" class="whitespace-nowrap mx-2 px-1">
-                    {{ position }}
+              <div class="flex flex-col items-center gap-1">
+                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">소속</p>
+                <div v-if="!selectedApplicant.groupName" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+                <p class="whitespace-nowrap mb-1 text-xl">{{ selectedApplicant.groupName }}</p>
+                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">거주 지역</p>
+                <div v-if="!selectedApplicant.location" class="text-gray-200 font-bold text-xl">DEVMIX</div>
+                <p class="whitespace-nowrap mb-1 text-xl">{{ selectedApplicant.location }}</p>
+                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">포지션</p>
+                <!-- <div v-if="selectedApplicant.positions.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div> -->
+                <ul class="mb-1 flex flex-wrap justify-center gap-1">
+                  <p v-for="(position, index) in selectedApplicant.positions" :key="index" class="whitespace-nowrap text-center text-lg mx-2 px-1">
+                    {{ selectedApplicant.position }}
                   </p>
                 </ul>
-                <p class="font-bold border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2" style="font-size: 1rem;">기술 스택</p>
-                <div class="flex gap-4 mb-4 flex-wrap">
+                <p class="font-bold text-lg border rounded-full px-3 py-1 bg-gray-100 border-gray-100 my-2">기술 스택</p>
+                <div class="flex gap-4 mb-4 flex-wrap text-center justify-center">
                   <div class="py-1" v-for="tech in selectedApplicant.techStacks" :key="tech">
                     <img :src="tech.imageUrl" class="w-8 h-8" />
                     <span class="text-sm">{{ tech.techStackName }}</span>
-                    <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-lg">DEVMIX</div>
+                    <div v-if="tech.techStackName?.length === 0" class="text-gray-200 font-bold text-xl">DEVMIX</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div v-if="currentApplicant">
-              <div class="flex flex-col mb-4 gap-2 w-80">
-                <p class="font-bold">지원 직군</p>
-                <p class="text-sm border border-gray-200 rounded-md p-4">{{ currentApplicant.positionName }}</p>
-                <p class="font-bold">지원 사유 및 한마디</p>
-                <p class="text-sm border border-gray-200 h-full rounded-md p-4">{{ currentApplicant.applyNote }}</p>
-              </div>
+            <div class="flex flex-col mb-4 gap-2">
+              <p class="font-bold">지원 직군</p>
+              <p class="text-sm border border-gray-200 rounded-md p-4">{{ selectedApplicant?.positionName }}</p>
+              <p class="font-bold">지원 사유 및 한마디</p>
+              <p class="text-sm border border-gray-200 h-full rounded-md p-4">{{ selectedApplicant?.applyNote }}</p>
             </div>
           </div>
-
-          <div v-if="currentApplicant">
-            <div class="flex justify-center gap-3 mb-4">
-              <button
-                type="button"
-                class="border border-gray-300 bg-gray-300 rounded-full py-1 px-3"
-                @click="reject(currentApplicant.boardId, currentApplicant.positionName, selectedApplicant.nickname)"
-              >
-                거절
-              </button>
-              <button
-                type="submit"
-                class="border border-[#d10000] bg-[#d10000] text-white rounded-full py-1 px-3"
-                @click="admit(currentApplicant.boardId, currentApplicant.positionName, selectedApplicant.nickname)"
-              >
-                승인
-              </button>
-            </div>
+          <div class="flex justify-center gap-3 mb-4">
+            <button type="button" class="border border-gray-300 bg-gray-300 rounded-full py-1 px-3" @click="reject">거절</button>
+            <button type="submit" class="border border-[#d10000] bg-[#d10000] text-white rounded-full py-1 px-3" @click="admit">승인</button>
           </div>
 
           <p class="text-center text-sm text-gray-500 mb-3">승인을 누르시면, 해당 지원자는 정식으로 프로젝트 참가자가 됩니다.</p>
         </div>
       </div>
+
+      <!-- 프로필 모달-->
+      <!-- <UserProfile :isModal="isModal" :user_id="user_id" @update:isModal="closeProfileModal" /> -->
     </div>
   </div>
 </template>
@@ -139,8 +125,6 @@ import { getUserInfo } from '@/api/userApi';
 // user_id 가져오기
 const useStore = useUserStore();
 const applicantsarr = ref([]);
-
-const currentApplicant = ref(null);
 
 // 지원자 정보 Api
 const applicants = async () => {
@@ -161,71 +145,73 @@ const applicants = async () => {
 // 지원자 정보
 // const selectedApplicant = ref(null);
 const selectedApplicant = ref({
-  // boardId: 0,
+  boardId: 0,
   profileImage: '',
   userId: '',
   nickname: '',
-  eamil: '',
-  groupName: '',
-  location: '',
   positions: '',
-  techStacks: '',
-  applyNote: ''
+  applyNote: '',
+  techStacks:'',
   // participationStatus: ''
 });
 
 // 지원자 지원내용 상세 정보 모달
 const showModal = ref(false);
 const openModal = async (applicant, userId) => {
-  // selectedApplicant.value = applicant; // 클릭한 지원자 정보 모달에 전달
-  // selectedApplicant.value.userId = userId; // 클릭한 유저 아이디 모달에 전달
-  showModal.value = true;
-
-  // console.log (userId)
-
-  currentApplicant.value = applicant;
+  selectedApplicant.value = applicant; // 클릭한 지원자 정보 모달에 전달
+  // console.log('지원자내용에서 userId뽑기',selectedApplicant.value.userId);
+  selectedApplicant.value.userId = userId; // 클릭한 유저 아이디 모달에 전달
+  // console.log('지원자Id', userId)
   showModal.value = true;
 
   const info = await getUsersInfo(userId); // 유저 정보 가져오기
   if (info) {
     selectedApplicant.value = info;
   }
-
-  console.log('신청자정보', info);
 };
 
 // 지원자 승인 모달상태
 const isConfirmModal = ref(false);
 
 //지원자 거절 Api
-const reject = async (boardId, positionName, userNickname) => {
-  const data = {
-    boardId,
-    userNickname,
-    positionName,
-    participationStatus: '거절'
-  };
+const reject = async () => {
+  //console.log('거절 시 지원정보', selectedApplicant.value);
 
-  try {
-    const res = await admitApplicants(data); // API 호출
-    if (res.status === 200) {
-      alert('신청을 거절하였습니다.');
-      isConfirmModal.value = true;
-      closeModal(); // 모달 닫기
-      applicants(); // 지원자 목록 업데이트
-    } else {
-      console.error('거절 실패', res);
+  if (selectedApplicant.value) {
+    const { boardId, userNickname, positionName } = selectedApplicant.value;
+    // console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
+
+    const data = {
+      boardId,
+      userNickname,
+      positionName,
+      participationStatus: '거절'
+    };
+
+    try {
+      const res = await admitApplicants(data); // API 호출
+      if (res.status === 200) {
+        alert('신청을 거절하였습니다.');
+        isConfirmModal.value = true;
+        closeModal(); // 모달 닫기
+        applicants(); // 지원자 목록 업데이트
+      } else {
+        console.error('거절 실패', res);
+      }
+    } catch (error) {
+      console.error('지원자 거절 API 호출 에러', error);
     }
-  } catch (error) {
-    console.error('지원자 거절 API 호출 에러', error);
   }
 };
 
 //지원자 승인 Api
-const admit = async (boardId, positionName, userNickname) => {
+const admit = async () => {
   //console.log('승인 시 지원정보', selectedApplicant.value);
 
   if (selectedApplicant.value) {
+    const { boardId, userNickname, positionName, participationStatus } = selectedApplicant.value;
+    // console.log('보드아이디,닉네임,포지션, 승인상태', boardId, userNickname, positionName, participationStatus);
+
     const data = {
       boardId,
       userNickname,
@@ -252,7 +238,6 @@ const admit = async (boardId, positionName, userNickname) => {
 // 지원정보 모달을 닫기 위한 함수
 const closeModal = () => {
   showModal.value = false;
-  currentApplicant.value = null;
 };
 
 // 유저 정보
@@ -279,8 +264,8 @@ const getUsersInfo = async (userId) => {
       positions.value = res.data.positions;
       techStacks.value = res.data.techStacks;
     }
-    // console.log('유저정보', res.data);
-    return res.result;
+    console.log('유저정보', res);
+    return res.result
   } catch (error) {
     console.error('유저 정보 가져오기 실패:', error);
   }
@@ -312,7 +297,7 @@ watchEffect(() => {
   background-color: white;
   padding: 2rem;
   border-radius: 15px;
-  width: 750px;
+  width: 550px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
 }

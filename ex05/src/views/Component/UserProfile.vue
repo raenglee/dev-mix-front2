@@ -82,16 +82,30 @@ const getUsersInfo = async () => {
   try {
     const res = await getUserInfo(props.user_id);
 
-    if (res.status === 200 && res.data && res.data.result) {
-      profileImage.value = res.data.result.profileImage;
-      nickname.value = res.data.result.nickname;
-      email.value = res.data.result.email;
-      groupName.value = res.data.result.groupName;
-      location.value = res.data.result.location;
-      positions.value = res.data.result.positions;
-      techStacks.value = res.data.result.techStacks;
+    // if (res.status === 200 && res.data && res.data.result) {
+    //   profileImage.value = res.data.result.profileImage;
+    //   nickname.value = res.data.result.nickname;
+    //   email.value = res.data.result.email;
+    //   groupName.value = res.data.result.groupName;
+    //   location.value = res.data.result.location;
+    //   positions.value = res.data.result.positions;
+    //   techStacks.value = res.data.result.techStacks;
+    // }
+    // console.log('유저정보', res.data.result);
+
+    if (res.status === 200 && res.result) {
+      // profileImage.value = res.result.profileImage;
+      // nickname.value = res.result.nickname;
+      // email.value = res.result.email;
+      // groupName.value = res.result.groupName;
+      // location.value = res.result.location;
+      // positions.value = res.result.positions;
+      // techStacks.value = res.result.techStacks;
+      res.result;
     }
-    console.log(res.data.result);
+    console.log('유저정보', res.result);
+    console.log('이메일:',email.value)
+    
   } catch (error) {
     console.error('유저 정보 가져오기 실패:', error);
   }
