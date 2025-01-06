@@ -11,9 +11,9 @@
 
         <div class="m-5 justify-center">
           <div class="flex flex-col gap-3">
-            <a href="http://login.devmix.store/oauth2/authorization/google"><img src="/img/sns_G.png" /></a>
-            <a href="http://localhost:8080/oauth2/authorization/kakao"><img src="/img/sns_k.png" /></a>
-            <a href="http://localhost:8080/oauth2/authorization/naver"><img src="/img/sns_n.png" /></a>
+            <a :href="google_url"><img src="/img/sns_G.png" /></a>
+            <a :href="kakao_url"><img src="/img/sns_k.png" /></a>
+            <a :href="naver_url"><img src="/img/sns_n.png" /></a>
           </div>
         </div>
 
@@ -28,6 +28,15 @@
 </template>
 
 <script setup>
+import { LOGIN_URL } from '@/api/util.js';
+
+// const google_url = `http://localhost:8080/oauth2/authorization/google`;
+// const kakao_url = `http://localhost:8080/oauth2/authorization/kakao`;
+
+const google_url = `http://${LOGIN_URL}/oauth2/authorization/google`;
+const kakao_url = `http://${LOGIN_URL}/oauth2/authorization/kakao`;
+const naver_url = `http://${LOGIN_URL}/oauth2/authorization/naver`;
+
 import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
