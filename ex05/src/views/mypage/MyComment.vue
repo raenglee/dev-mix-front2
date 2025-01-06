@@ -9,7 +9,7 @@
         </div>
 
         <!-- 댓글이 없을 경우 -->
-        <div v-if="commentsarr.length === 0" class="text-center text-gray-500 py-8" style="height: 500px">작성한 댓글이 없습니다.</div>
+        <div v-if="commentsarr.length === 0" class="text-center text-gray-500 py-8">작성한 댓글이 없습니다.</div>
 
         <!-- 내가 작성한 댓글 내용 반복 -->
         <div v-for="(comment, index) in commentsarr" :key="comment.id" class="flex flex-col space-y-1">

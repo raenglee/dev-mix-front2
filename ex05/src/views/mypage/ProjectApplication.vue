@@ -1,8 +1,8 @@
 <template>
   <div class="m-auto w-full">
-    <p class="text-lg font-bold my-4">보낸 신청</p>
+    <p class="text-2xl font-bold">보낸 신청</p>
 
-    <div v-if="myAppliesarr.length === 0" class="text-center text-gray-500 py-8" style="height: 100px">작성한 신청이 없습니다.</div>
+    <div v-if="myAppliesarr.length === 0" class="text-center text-gray-500 py-8">보낸 신청이 없습니다.</div>
 
     <div v-for="(myApplies, index) in myAppliesarr" :key="index">
       <div class="flex items-center justify-between w-full mb-2">

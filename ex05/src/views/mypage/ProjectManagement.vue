@@ -6,7 +6,7 @@
         <div class="flex justify-end">
           <button class="text-[1.1rem] border px-5 py-2 rounded-full text-sm hover:bg-gray-200" @click="goProCreate">프로젝트 생성하기</button>
         </div>
-        <div v-if="boardsarr.length === 0" class="text-center text-gray-500 py-8" style="height: 100px">작성한 글이 없습니다.</div>
+        <div v-if="boardsarr.length === 0" class="text-center text-gray-500 py-8">작성한 글이 없습니다.</div>
         <div class="p-1">
           <!-- 내가 작성한 프로젝트 배열 -->
           <div v-for="(board, index) in boardsarr" :key="index">
@@ -81,30 +81,24 @@
     </div> -->
 
     <!-- <div v-if="boardsarr.length === 0" class="text-center text-gray-500 py-8" style="height: 100px;">참여중인 프로젝트가 없습니다.</div> -->
-    <p class="my-4 text-2xl font-bold mt-10">참여 중인 프로젝트</p>
+    <!-- <p class="my-4 text-2xl font-bold mt-10">참여 중인 프로젝트</p> -->
     <!--내가 참여중인 프로젝트 카드 시작-->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10">
+    <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-10">
       <div class="cursor-pointer border rounded-2xl p-4 relative project-card">
         <div class="top-4 flex items-center justify-between">
           <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800">지역</div>
         </div>
         <div class="text-sm mb-2 text-gray-800">모집 마감일 |</div>
         <div class="text-xl font-bold mb-2 text-gray-800">제목</div>
-        <!--기술 아이콘-->
         <div class="flex pt-2 gap-3 mb-1">
           <div>
-            <!-- <img class="w-10 h-10" :src="tech.techStackImageUrl" /> -->
           </div>
         </div>
         <div class="flex flex-col">
           <p class="flex-grow text-right text-sm py-2 text-gray-800">작성자</p>
-          <!-- <p class="flex-grow text-right text-sm py-2" v-else>&nbsp;</p> -->
           <div class="flex justify-between items-center mt-3">
-            <!-- 인원 정보 (0 / 총 인원) -->
             <div class="relative group">
-              <!-- 인원 0 / 총 인원 표시 -->
               <div class="text-sm cursor-pointer text-gray-800">인원 남은 / 총인원</div>
-              <!-- 개별 인원 수 출력, 마우스를 올리면 나타나도록 -->
               <div
                 class="absolute z-10 bg-white left-14 bottom-2 p-2 shadow-lg rounded-xl mt-2 w-auto whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:block transition-opacity duration-300"
               >
@@ -114,7 +108,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!--내가 참여중인 프로젝트 카드 끝-->
   </div>
 </template>
