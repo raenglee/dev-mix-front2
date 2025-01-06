@@ -5,12 +5,12 @@
     <div v-if="myAppliesarr.length === 0" class="text-center text-gray-500 py-8" style="height: 100px">작성한 신청이 없습니다.</div>
 
     <div v-for="(myApplies, index) in myAppliesarr" :key="index">
-      <div class="flex items-center justify-between w-full mb-2">
+      <div class="flex items-center justify-between w-full">
 
-        <div class="flex items-center justify-between mb-2 cursor-pointer" @click="openModal">
+        <div class="flex items-center justify-between my-4 cursor-pointer" @click="openModal">
         <div class="top-4 items-center justify-between">
-          <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800 min-w-20 text-center mr-2">읽음</div>
-          <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800 min-w-20 text-center mr-2">{{ myApplies.participationStatus }}</div>
+          <!-- <div class="border px-2 rounded-full mb-2 bg-gray-200 text-gray-800 min-w-20 text-center mr-2">읽음</div> -->
+          <div class="border px-2 rounded-full my-2 bg-gray-200 text-gray-800 min-w-20 text-center mr-2">{{ myApplies.participationStatus }}</div>
         </div>
         <div class="flex justify-between gap-2 items-center">
           <!-- 댓글내용 텍스트, 말줄임표 적용 -->
@@ -83,6 +83,7 @@ const myApplies = async () => {
     // console.log(useStore.userId);
     
     console.log('지원한 내용들', res.data.result);
+    console.log('배열', Array.isArray(res.data.result));
     if (Array.isArray(res.data.result)) {
       myAppliesarr.value = res.data.result;
     } else {
