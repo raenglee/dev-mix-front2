@@ -21,6 +21,7 @@
         </tr>
       </tbody>
 
+      
       <tbody class="hover:underline text-gray-500">
         <tr v-for="(myApplies, index) in myAppliesarr" :key="index" class="cursor-pointer hover:bg-gray-50">
           <td
